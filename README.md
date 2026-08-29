@@ -367,7 +367,7 @@ src/task.py          the Inspect task: rules + chart + typing list, six fixed op
 src/models.py        the ladder: params (total, active), quant, pinned host, token budget
 src/run_ladder.py    runs the ladder on the pinned set, one inspect eval per (model, format)
 src/analyze.py       logs -> results JSON + scaling-curve CSV in data/results/
-src/plot_curve.py    curve CSV -> SVG (exact vs log params, both formats, stderr bars, baselines)
+src/plot_curve.py    curve CSV -> SVG (exact vs log params, both formats, 95% CI bars, baselines)
 tests/               key, sampler, prompt, scorer and analyze, each negative-tested
 data/raw/            PokeAPI CSVs frozen at commit 7af36d9, sha256 beside them
 data/processed/      the key, its manifest, the pinned set, the dev set
