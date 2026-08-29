@@ -21,6 +21,9 @@ Ids are permanent. PLAN.md is never edited; a mistake in it is a D entry here.
 | [D-005](#d-005) | scope and budget | PLAN.md's four conditions, three Anthropic models and $30 ceiling were written without the multiplication; the budget is $7 on OpenRouter; one condition (chart + full typing list in context), four models across four labs, a closeness scorer beside exact match; predictions P2, P4, P5, P6 retired and three addendum predictions registered here before any run | deviation declared |
 | [D-006](#d-006) | chart format | the markdown table costs 3,032 input tokens per call, not the ~1,600 the addendum assumed, and the dev run shows the table itself is what Haiku misreads; a second chart format (one line per attacking type) is registered as a variant before any pinned run, with prediction A6 | deviation declared |
 | [O-001](#o-001) | Haiku 4.5, dev set | 84% exact, 0 parse failures; 14 of 16 misses are the chart read transposed (cell (a, b) answered with (b, a)); 0 wrong-Pokemon lookups, 0 multiply errors | observed on dev, not scored against a prediction |
+| [D-007](#d-007) | max_tokens | gpt-5-nano hit the 1,024 cap on 30 of 100 dev items with an empty completion: hidden reasoning tokens ate the budget; the 5% rule fired; nano runs at 4,096 | fixed, rule applied |
+| [D-008](#d-008) | transposition count | the hand count in O-001 (14 of 16) and the code count (10 of 16) use different definitions: any mirrored cell vs the fully mirrored product; both kept, both named | definitions pinned |
+| [O-002](#o-002) | four models, dev set, two chart formats | rows beats table for every model (+0.07 to +0.19 exact); for Haiku and Qwen the transposed misses fall with the format, for Gemini Flash-Lite they do not: its mirror-cell answers come from its prior, not the grid | observed on dev, not scored against a prediction |
 
 ## Defects in this harness
 
@@ -230,3 +233,74 @@ The 16 misses read one by one, which is the method A3 prescribes:
 
 Not scored against a prediction (dev set, by D-002). It is the reason for
 D-006.
+
+### D-007
+**A reasoning model spent the whole token budget thinking and never wrote the answer line**
+`max_tokens` · gpt-5-nano · 2026-08-29 · fixed, rule applied
+
+At `max_tokens` 1024 gpt-5-nano returned an empty completion with
+`stop_reason: max_tokens` on 30 of 100 dev items in table format and 11 of
+100 in rows: about 800 hidden reasoning tokens per item, then nothing left
+for the `ANSWER:` line. `choice()` scores those as wrong, which is why the
+`parse_failures` metric exists: the table would have read 0.69 and meant
+"truncated", not "wrong". The 5% rule from ADDENDUM fired. Rerun at 4,096:
+0.98 in both formats, zero failures, about 900 output tokens per item.
+
+nano runs the pinned set at 4,096; the other three, which had 0 to 1
+failures in 100 at 1,024, stay at 1,024. Recorded per run in the log's
+`task_args` and in the analyze table's `max_tok` column. A budget that
+cuts one model's reasoning and not another's is a confound, so it is
+printed beside every number rather than hidden.
+
+### D-008
+**Two counts of "transposed", one by hand and one by code, and they disagree**
+`src/analyze.py` transposed_misses · 2026-08-29 · definitions pinned
+
+O-001 was read by hand: 14 of 16 Haiku misses were called transpositions.
+The code count added for O-002 says 10 of 16. Both are right about
+different things. The hand count called a miss transposed if *any* chart
+cell in the reasoning was read mirrored (Rock vs Articuno: Rock→Ice read
+correctly, Rock→Flying read as Flying→Rock). The code count calls a miss
+transposed only if the predicted multiplier equals the product of *every*
+cell mirrored, which on a dual-type defender is a stricter thing.
+
+Both stay. The code count is the one in the tables, because it is
+recomputable from the log without a reader; the hand count is the one
+that describes what the model did, and A3-style hand reading of misses
+stays in the method. The difference between them is itself reported. This
+is the known-answer box firing the other way from D-001: this time the
+hand was not wrong, but it was measuring something the code had to be told
+about.
+
+### O-002
+**Rows beats table for every model; for one of them the mirror answers survive the format**
+four models · dev set, 100 items, 1 epoch each · 2026-08-29
+
+From `data/results/20260829_021421_analyze_dev.json`. Exact accuracy, then
+transposed misses over misses on asymmetric cells over all misses:
+
+| model | table | rows | transposed / asym / misses (table) | same (rows) |
+|---|---|---|---|---|
+| gpt-5-nano (4,096) | 0.98 | 0.98 | 2 / 2 / 2 | 0 / 2 / 2 |
+| claude-haiku-4.5 | 0.84 | 0.96 | 10 / 16 / 16 | 2 / 4 / 4 |
+| qwen3-235b-a22b-2507 | 0.75 | 0.82 | 7 / 19 / 25 | 4 / 12 / 18 |
+| gemini-2.5-flash-lite | 0.55 | 0.64 | 18 / 36 / 45 | 20 / 29 / 36 |
+
+Three things, in order of confidence:
+
+1. **The format moves every model in the same direction**, +0.07 to +0.12
+   exact for the three that had headroom. That is the A6 direction. It is
+   one epoch on the dev set and is not scored.
+2. **For Haiku the misses are the grid.** Ten of sixteen table misses are
+   full-mirror answers; under rows, two of four. The multiply and the list
+   lookup were never the problem (O-001).
+3. **For Gemini Flash-Lite the mirror answers are not the grid.** Under
+   rows there is no axis to confuse, and it still answers the mirrored
+   cell on 20 of 29 asymmetric-cell misses. A mirrored answer on a rows
+   prompt can only come from the model's own stored relation ("Rock is
+   weak to Water" retrieved when asked about Water attacking Rock) winning
+   over the line in front of it. Same symptom as Haiku, different cause;
+   the format change separates them. Qwen sits between.
+
+nano at 1,024 is in the results file too (0.69 / 0.88) and is D-007, not a
+capability number.

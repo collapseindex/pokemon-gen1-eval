@@ -22,7 +22,7 @@ from pathlib import Path
 
 from inspect_ai.log import EvalLog, list_eval_logs, read_eval_log
 
-from .key import MULTIPLIERS, ROOT
+from .key import MULTIPLIERS, ROOT, efficacy, typings
 
 LETTERS = "ABCDEF"
 CHANCE = 1 / len(MULTIPLIERS)
@@ -39,10 +39,30 @@ def _rate(hits: int, n: int) -> float | None:
     return round(hits / n, 4) if n else None
 
 
+def _transposed_key(chart: str) -> dict[str, dict[str, str]]:
+    """pokemon -> attack type -> the multiplier you get by reading every chart
+    cell mirrored (defender attacking attacker). Equals the true key on
+    symmetric cells, so a transposition is only detectable where they differ."""
+    eff = efficacy(past=(chart != "modern"))
+    out: dict[str, dict[str, str]] = {}
+    labels = {0.0: "0", 0.25: "1/4", 0.5: "1/2", 1.0: "1", 2.0: "2", 4.0: "4"}
+    for _, (name, ts) in typings().items():
+        out[name] = {}
+        for a in {k[0] for k in eff}:
+            v = 1.0
+            for t in ts:
+                v *= eff[(t, a)] / 100
+            out[name][a] = labels[v]
+    return out
+
+
 def summarize(log: EvalLog) -> dict:
     samples = log.samples or []
     args = log.eval.task_args or {}
     chart = args.get("chart", "none")
+    mirror = _transposed_key(chart)
+    transposed_misses = 0
+    detectable_misses = 0  # misses on cells where the mirror differs from the key
     per_epoch: dict[int, list[int]] = defaultdict(list)
     parse_fail = 0
     by = {"stratum": defaultdict(list), "answer_class": defaultdict(list), "attack_type": defaultdict(list)}
@@ -76,6 +96,12 @@ def summarize(log: EvalLog) -> dict:
         by["stratum"][meta.get("stratum", "?")].append(hit)
         by["answer_class"][target].append(hit)
         by["attack_type"][meta.get("attack_type", "?")].append(hit)
+        if not hit and predicted is not None:
+            mirrored = mirror.get(meta.get("pokemon", ""), {}).get(meta.get("attack_type", ""))
+            if mirrored is not None and mirrored != target:
+                detectable_misses += 1
+                if predicted == mirrored:
+                    transposed_misses += 1
         if chart == "modern" and meta.get("stratum") == "differs":
             if predicted == meta.get("modern_multiplier"):
                 prior["followed_table"] += 1
@@ -102,6 +128,13 @@ def summarize(log: EvalLog) -> dict:
         "accuracy_epoch_range": round(max(accs) - min(accs), 4) if accs else None,
         "accuracy_per_epoch": epoch_acc,
         "parse_failures": _rate(parse_fail, n_total),
+        "misses": n_total - sum(sum(v) for v in per_epoch.values()),
+        "misses_on_asymmetric_cells": detectable_misses,
+        "transposed_misses": transposed_misses,
+        "chart_format": args.get("chart_format", "table"),
+        "max_tokens": args.get("max_tokens"),
+        "input_tokens_per_sample": round(sum(u.input_tokens for u in log.stats.model_usage.values()) / n_total) if n_total and log.stats and log.stats.model_usage else None,
+        "output_tokens_per_sample": round(sum(u.output_tokens for u in log.stats.model_usage.values()) / n_total) if n_total and log.stats and log.stats.model_usage else None,
         "bucket_accuracy": round(sum(bucket_hits) / len(bucket_hits), 4) if bucket_hits else None,
         "mean_steps_off": round(sum(steps) / len(steps), 4) if steps else None,
         "bucket_by_stratum": {k: round(sum(v) / len(v), 4) for k, v in sorted(bucket_by_stratum.items())},
@@ -117,16 +150,16 @@ def summarize(log: EvalLog) -> dict:
 
 
 def table(rows: list[dict]) -> str:
-    head = "| model | chart | types | cot | n | epochs | acc | bucket | steps | range | parse fail | majority | immune | quad | dual | single | differs |"
-    sep = "|" + "---|" * 17
+    head = "| model | format | max_tok | n | epochs | acc | bucket | steps | range | parse fail | transposed / asym misses / misses | majority | immune | quad | dual | single | differs |"
+    sep = "|" + "---|" * 18
     out = [head, sep]
     for r in rows:
         st = r["by_stratum"]
         cell = lambda k: (f"{st[k]['accuracy']:.2f}" if k in st and st[k]["accuracy"] is not None else "-")
         out.append(
-            f"| {r['model']} | {r['condition']['chart']} | {r['condition']['show_types']} | {r['condition']['cot']} | {r['n_samples']} | {r['epochs']} "
+            f"| {r['model'].replace('openrouter/', '')} | {r['chart_format']} | {r['max_tokens'] or 1024} | {r['n_samples']} | {r['epochs']} "
             f"| {r['accuracy_mean']:.3f} | {(r['bucket_accuracy'] if r['bucket_accuracy'] is not None else float('nan')):.3f} | {(r['mean_steps_off'] if r['mean_steps_off'] is not None else float('nan')):.2f} "
-            f"| {r['accuracy_epoch_range']:.3f} | {r['parse_failures']:.2f} | {r['baseline_majority']:.2f} "
+            f"| {r['accuracy_epoch_range']:.3f} | {r['parse_failures']:.2f} | {r['transposed_misses']} / {r['misses_on_asymmetric_cells']} / {r['misses']} | {r['baseline_majority']:.2f} "
             f"| {cell('immune')} | {cell('quad')} | {cell('dual')} | {cell('single')} | {cell('differs')} |"
         )
     return "\n".join(out)

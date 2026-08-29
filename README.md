@@ -192,10 +192,30 @@ costs 3,032 input tokens per call, double the addendum's estimate, so Haiku
 moves to the half-price batch route and the cheap models carry both
 formats.
 
-### 11. Next
+### 11. The other three, both formats, on the dev set (D-007, D-008, O-002)
 
-Five items through the `:batch` route to confirm Inspect accepts it; the
-three cheap models on the dev set in both formats; then the pinned set.
+Cheap models next, ~$0.30 for six runs. gpt-5-nano came back at 0.69 with
+30% parse failures: a reasoning model that spent the 1,024 budget thinking
+and never wrote the answer line. The 5% rule fired, nano reruns at 4,096:
+0.98 in both formats. The metric earned its place on the first day.
+
+Then the format question, which was the question you asked: chart or
+model? Rows beats table for every model. For Haiku, the table misses were
+the grid (10 of 16 full-mirror answers; 2 of 4 under rows) and rows takes
+it to 0.96. For Gemini Flash-Lite, 20 of 29 asymmetric misses are still
+the mirror cell under rows, where there is no axis to confuse; that is the
+model's stored relation winning over the line in front of it. Same
+symptom, two causes, and the second format is what separates them.
+
+Also caught: my hand count of Haiku's transpositions (14 of 16) and the
+code's (10 of 16) use different definitions. Both kept and named (D-008).
+
+### 12. Next
+
+The pinned set. Haiku once at list price (the `:batch` route is
+batch-endpoint only); the three cheap models at three epochs, table, then
+rows as budget allows. Under the $5 ceiling or the shortfall is a ledger
+entry.
 
 ## Reproduce
 
