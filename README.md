@@ -210,7 +210,21 @@ symptom, two causes, and the second format is what separates them.
 Also caught: my hand count of Haiku's transpositions (14 of 16) and the
 code's (10 of 16) use different definitions. Both kept and named (D-008).
 
-### 12. Next
+### 12. Two Siri-sized models, and the provider behind the provider (D-009, O-003)
+
+Added `llama-3.2-3b-instruct` and `gemma-3-4b-it`, the on-device class. The
+first llama run read 0.17 with 31% parse failures cut mid-word. Not the
+token budget: the raw responses showed OpenRouter had split the run across
+two hosts and one of them was returning HTTP 500 mid-generation, scored as
+wrong answers. Pinned to the healthy host: 0.18 in both formats, which is
+chance. gemma: 0.26 table, 0.34 rows, below always-answering-"1".
+
+Analyze now records the upstream host per call. That census showed the Qwen
+runs had been served by ten different hosts. For the pinned runs every
+model is pinned to one host and the host is in the results file: the host
+is part of the instrument.
+
+### 13. Next
 
 The pinned set. Haiku once at list price (the `:batch` route is
 batch-endpoint only); the three cheap models at three epochs, table, then

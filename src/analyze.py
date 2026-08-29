@@ -74,10 +74,20 @@ def summarize(log: EvalLog) -> dict:
     steps: list[float] = []
     bucket_by_stratum: dict[str, list[float]] = defaultdict(list)
 
+    providers: Counter = Counter()
+    provider_errors: Counter = Counter()
     for s in samples:
         sc = s.scores.get("choice") if s.scores else None
         if sc is None:
             continue
+        for ev in s.events or []:
+            if getattr(ev, "event", None) == "model" and getattr(ev, "call", None) and ev.call.response:
+                r = ev.call.response
+                prov = r.get("provider") or "?"
+                providers[prov] += 1
+                ch = (r.get("choices") or [{}])[0]
+                if ch.get("error") or ch.get("finish_reason") == "error":
+                    provider_errors[prov] += 1
         hit = 1 if sc.value == "C" else 0
         cl = s.scores.get("closeness")
         if cl is not None and isinstance(cl.value, dict):
@@ -132,6 +142,8 @@ def summarize(log: EvalLog) -> dict:
         "misses_on_asymmetric_cells": detectable_misses,
         "transposed_misses": transposed_misses,
         "chart_format": args.get("chart_format", "table"),
+        "upstream_providers": dict(providers),
+        "upstream_provider_errors": dict(provider_errors),
         "max_tokens": args.get("max_tokens"),
         "input_tokens_per_sample": round(sum(u.input_tokens for u in log.stats.model_usage.values()) / n_total) if n_total and log.stats and log.stats.model_usage else None,
         "output_tokens_per_sample": round(sum(u.output_tokens for u in log.stats.model_usage.values()) / n_total) if n_total and log.stats and log.stats.model_usage else None,
@@ -185,6 +197,7 @@ def main() -> None:
         print(f"\n{r['log']}")
         print("  by answer class:", {k: f"{v['accuracy']:.2f} (n={v['n']})" for k, v in r["by_answer_class"].items()})
         print("  predicted letters:", r["predicted_letters"])
+        print("  upstream providers:", r["upstream_providers"], "| errors:", r["upstream_provider_errors"] or "none")
         if r["differs_under_modern_chart"]:
             print("  differs under modern chart:", r["differs_under_modern_chart"])
     print(f"\nwrote {out}")

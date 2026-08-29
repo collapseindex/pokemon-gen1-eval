@@ -24,6 +24,8 @@ Ids are permanent. PLAN.md is never edited; a mistake in it is a D entry here.
 | [D-007](#d-007) | max_tokens | gpt-5-nano hit the 1,024 cap on 30 of 100 dev items with an empty completion: hidden reasoning tokens ate the budget; the 5% rule fired; nano runs at 4,096 | fixed, rule applied |
 | [D-008](#d-008) | transposition count | the hand count in O-001 (14 of 16) and the code count (10 of 16) use different definitions: any mirrored cell vs the fully mirrored product; both kept, both named | definitions pinned |
 | [O-002](#o-002) | four models, dev set, two chart formats | rows beats table for every model (+0.07 to +0.19 exact); for Haiku and Qwen the transposed misses fall with the format, for Gemini Flash-Lite they do not: its mirror-cell answers come from its prior, not the grid | observed on dev, not scored against a prediction |
+| [D-009](#d-009) | upstream routing | OpenRouter split one llama run across two hosts and one of them returned HTTP 500 mid-generation on 31 of 100 items, scored as parse failures; provider pinned, host recorded per run; Qwen was served by ten different hosts in one run | fixed, census added |
+| [O-003](#o-003) | two on-device-class models, dev set | llama-3.2-3b at chance (0.18) in both formats; gemma-3-4b below the majority baseline (0.26 table, 0.34 rows) with immunities the worst stratum | observed on dev, not scored against a prediction |
 
 ## Defects in this harness
 
@@ -304,3 +306,56 @@ Three things, in order of confidence:
 
 nano at 1,024 is in the results file too (0.69 / 0.88) and is D-007, not a
 capability number.
+
+### D-009
+**The provider behind the provider: one run, two hosts, one of them broken**
+OpenRouter routing · 2026-08-29 · fixed, census added
+
+Two on-device-class models were added (the addendum allows additions):
+`meta-llama/llama-3.2-3b-instruct` and `google/gemma-3-4b-it`. The first
+llama dev run came back 0.17 with 31% parse failures, stop reason
+`unknown`, completions cut mid-word at about 56 tokens. Not `max_tokens`.
+Reading the raw responses in the log: OpenRouter had split the 100 calls
+between two upstream hosts, Parasail (30, all clean) and Cloudflare (70, of
+which 31 returned `finish_reason: error` with `{"code": 500, "message":
+"Internal Server Error"}` and a partial completion). The rows run was the
+same: 22 of 66 Cloudflare calls failed. `choice()` scored every one as
+wrong, and without the parse-failure metric the model would have read as
+"worse than chance" when a third of its answers had never been generated.
+
+Fixes. The two tainted logs are moved to `logs/discarded/`. llama reruns
+pinned to Parasail via Inspect's model arg
+(`-M provider={"order":["Parasail"],"allow_fallbacks":false}`): 0.18 in
+both formats, parse failures 3% and 0%. `analyze` now records the upstream
+host per call and the count of host-side errors for every run, so a
+mixed-host run is visible in the results file. The census found a second
+thing: the Qwen dev runs were served by **ten different hosts** (Novita,
+DeepInfra, GMICloud, Google, Nebius, Parasail, Alibaba, StreamLake,
+AtlasCloud, Venice), which may not all serve the same quantisation. For
+the pinned runs every model is pinned to one host and the host is in the
+results file. The host is part of the instrument.
+
+### O-003
+**Two Siri-sized models: one at chance, one below the majority baseline**
+llama-3.2-3b-instruct (Parasail), gemma-3-4b-it (DeepInfra) · dev set, 100 items, 1 epoch · 2026-08-29
+
+| model | table | rows | bucket (rows) | immune | quad | transposed / asym / misses (rows) |
+|---|---|---|---|---|---|---|
+| llama-3.2-3b-instruct | 0.18 | 0.18 | 0.27 | 0.07 | 0.00 | 20 / 48 / 82 |
+| gemma-3-4b-it | 0.26 | 0.34 | 0.44 | 0.50 | 0.27 | 19 / 44 / 66 |
+
+Chance is 0.167 and always-"1" is 0.42. llama is at chance in both formats
+and has not solved a single 4x or 1/4x cell; its reasoning names the right
+Pokemon and then narrates a chart that is not the one in the prompt. gemma
+is above chance, below the majority baseline, and moves with the format
+(+0.08 under rows), so it is reading something. Its worst stratum is
+immunities: a 0 in the chart is the easiest cell to read and the easiest
+prior to override ("Ground can't hit Flying" is memorised; "Ghost can't
+hit Normal" apparently is not). Neither model's transposed count is a
+grid effect, since both are about as high under rows as under table.
+
+What this says: the task is find, look up, multiply, with everything
+needed in context, and the 3B-4B class cannot do it at a rate that beats
+guessing the commonest answer. It does not say what these models know
+about Pokemon; they were never asked to recall anything. Dev set, one
+epoch, unscored.
