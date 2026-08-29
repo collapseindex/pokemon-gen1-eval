@@ -46,8 +46,12 @@ def display(identifier: str) -> str:
     return special.get(identifier, identifier.replace("-", " "))
 
 
-def stated_typing(text: str, pokemon: str) -> set[str] | None:
-    """Type words in a window after the first mention of the Pokemon's name."""
+def stated_typing(text: str, pokemon: str, attack_type: str | None = None, true_types: set[str] | None = None) -> set[str] | None:
+    """Type words in a window after the first mention of the Pokemon's name.
+    The attacking type is dropped from the window unless it is genuinely one of
+    the defender's types, since the reasoning names it beside the defender
+    ("Ice attacks against Electric-type") and it would otherwise read as a
+    stated typing (hand check, 2026-08-29)."""
     low = text.lower()
     name = display(pokemon).lower()
     i = low.find(name)
@@ -57,6 +61,11 @@ def stated_typing(text: str, pokemon: str) -> set[str] | None:
     found = []
     for m in TYPE_RE.finditer(window):
         t = m.group(1).lower()
+        if attack_type and t == attack_type.lower() and not (true_types and t in true_types):
+            continue
+        # "normal damage" / "normal effectiveness" is the multiplier's word, not a type
+        if t == "normal" and re.match(r"\s*(damage|effectiveness|multiplier)", window[m.end():]):
+            continue
         if t not in found:
             found.append(t)
         if len(found) == 2:
@@ -95,7 +104,7 @@ def main() -> None:
             m = mirror.get(meta["pokemon"], {}).get(meta["attack_type"])
             if classify(target, predicted, m) == "lookup":
                 n_lookup += 1
-                st = stated_typing(s.output.completion if s.output else "", meta["pokemon"])
+                st = stated_typing(s.output.completion if s.output else "", meta["pokemon"], meta["attack_type"], true_types[meta["pokemon"]])
                 if st is None:
                     lookup["unstated"] += 1
                 elif st == true_types[meta["pokemon"]]:
