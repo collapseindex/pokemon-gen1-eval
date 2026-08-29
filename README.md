@@ -429,6 +429,11 @@ family, the reference nobody has seen.
 
 ## Reproduce
 
+The run logs (161 Inspect `.eval` files, 344 MB) are not in git; download
+`20260829_run_logs_inspect_eval.zip` from the
+[v0.1.0 release](https://github.com/collapseindex/pokemon-gen1-eval/releases/tag/v0.1.0)
+and unzip it into `logs/`. Every number in the paper recomputes from them.
+
 ```bash
 python -m venv .venv && .venv/Scripts/activate      # the global env's openai SDK is too old for Inspect's OpenRouter provider
 pip install -r requirements.txt
