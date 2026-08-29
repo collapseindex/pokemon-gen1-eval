@@ -1,0 +1,2501 @@
+[
+  {
+    "model": "google/gemma-3-12b-it",
+    "format": "rows",
+    "max_tokens": 1024,
+    "epochs": 1,
+    "n": 400,
+    "exact": 0.6425,
+    "misses": 143,
+    "categories": {
+      "unparsed": 0,
+      "mirrored": 63,
+      "immunity": 3,
+      "multiply": 9,
+      "lookup": 68
+    },
+    "categories_share_of_misses": {
+      "unparsed": 0.0,
+      "mirrored": 0.441,
+      "immunity": 0.021,
+      "multiply": 0.063,
+      "lookup": 0.476
+    },
+    "by_stratum": {
+      "differs": {
+        "unparsed": 0,
+        "mirrored": 12,
+        "immunity": 0,
+        "multiply": 1,
+        "lookup": 16
+      },
+      "dual": {
+        "unparsed": 0,
+        "mirrored": 31,
+        "immunity": 1,
+        "multiply": 4,
+        "lookup": 16
+      },
+      "immune": {
+        "unparsed": 0,
+        "mirrored": 1,
+        "immunity": 1,
+        "multiply": 0,
+        "lookup": 0
+      },
+      "quad": {
+        "unparsed": 0,
+        "mirrored": 6,
+        "immunity": 0,
+        "multiply": 1,
+        "lookup": 16
+      },
+      "single": {
+        "unparsed": 0,
+        "mirrored": 13,
+        "immunity": 1,
+        "multiply": 3,
+        "lookup": 20
+      }
+    },
+    "confusion_order": [
+      "0",
+      "1/4",
+      "1/2",
+      "1",
+      "2",
+      "4",
+      "unparsed"
+    ],
+    "confusion": [
+      [
+        61,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        20,
+        1,
+        8,
+        0,
+        2,
+        0
+      ],
+      [
+        1,
+        5,
+        30,
+        7,
+        2,
+        0,
+        0
+      ],
+      [
+        5,
+        6,
+        30,
+        100,
+        20,
+        2,
+        0
+      ],
+      [
+        1,
+        2,
+        13,
+        17,
+        33,
+        3,
+        0
+      ],
+      [
+        0,
+        3,
+        0,
+        13,
+        0,
+        13,
+        0
+      ]
+    ],
+    "log": "2026-08-29T10-05-59-00-00_pokemon-gen1_2GzES3NznjVYcpYTLhT2Tn.eval"
+  },
+  {
+    "model": "google/gemma-3-27b-it",
+    "format": "rows",
+    "max_tokens": 1024,
+    "epochs": 1,
+    "n": 400,
+    "exact": 0.6875,
+    "misses": 125,
+    "categories": {
+      "unparsed": 0,
+      "mirrored": 75,
+      "immunity": 3,
+      "multiply": 7,
+      "lookup": 40
+    },
+    "categories_share_of_misses": {
+      "unparsed": 0.0,
+      "mirrored": 0.6,
+      "immunity": 0.024,
+      "multiply": 0.056,
+      "lookup": 0.32
+    },
+    "by_stratum": {
+      "differs": {
+        "unparsed": 0,
+        "mirrored": 13,
+        "immunity": 1,
+        "multiply": 1,
+        "lookup": 6
+      },
+      "dual": {
+        "unparsed": 0,
+        "mirrored": 26,
+        "immunity": 0,
+        "multiply": 2,
+        "lookup": 15
+      },
+      "immune": {
+        "unparsed": 0,
+        "mirrored": 11,
+        "immunity": 2,
+        "multiply": 0,
+        "lookup": 0
+      },
+      "quad": {
+        "unparsed": 0,
+        "mirrored": 12,
+        "immunity": 0,
+        "multiply": 4,
+        "lookup": 17
+      },
+      "single": {
+        "unparsed": 0,
+        "mirrored": 13,
+        "immunity": 0,
+        "multiply": 0,
+        "lookup": 2
+      }
+    },
+    "confusion_order": [
+      "0",
+      "1/4",
+      "1/2",
+      "1",
+      "2",
+      "4",
+      "unparsed"
+    ],
+    "confusion": [
+      [
+        49,
+        0,
+        0,
+        1,
+        13,
+        0,
+        0
+      ],
+      [
+        0,
+        7,
+        3,
+        19,
+        0,
+        2,
+        0
+      ],
+      [
+        1,
+        1,
+        26,
+        3,
+        12,
+        2,
+        0
+      ],
+      [
+        2,
+        2,
+        15,
+        118,
+        24,
+        2,
+        0
+      ],
+      [
+        0,
+        1,
+        4,
+        6,
+        56,
+        2,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        7,
+        3,
+        19,
+        0
+      ]
+    ],
+    "log": "2026-08-29T10-06-29-00-00_pokemon-gen1_QidxDRGQDR6GcfkWtTouPo.eval"
+  },
+  {
+    "model": "google/gemma-3-4b-it",
+    "format": "rows",
+    "max_tokens": 1024,
+    "epochs": 1,
+    "n": 400,
+    "exact": 0.45,
+    "misses": 220,
+    "categories": {
+      "unparsed": 0,
+      "mirrored": 69,
+      "immunity": 29,
+      "multiply": 17,
+      "lookup": 105
+    },
+    "categories_share_of_misses": {
+      "unparsed": 0.0,
+      "mirrored": 0.314,
+      "immunity": 0.132,
+      "multiply": 0.077,
+      "lookup": 0.477
+    },
+    "by_stratum": {
+      "differs": {
+        "unparsed": 0,
+        "mirrored": 14,
+        "immunity": 1,
+        "multiply": 4,
+        "lookup": 21
+      },
+      "dual": {
+        "unparsed": 0,
+        "mirrored": 24,
+        "immunity": 7,
+        "multiply": 2,
+        "lookup": 41
+      },
+      "immune": {
+        "unparsed": 0,
+        "mirrored": 11,
+        "immunity": 14,
+        "multiply": 0,
+        "lookup": 0
+      },
+      "quad": {
+        "unparsed": 0,
+        "mirrored": 10,
+        "immunity": 1,
+        "multiply": 9,
+        "lookup": 18
+      },
+      "single": {
+        "unparsed": 0,
+        "mirrored": 10,
+        "immunity": 6,
+        "multiply": 2,
+        "lookup": 25
+      }
+    },
+    "confusion_order": [
+      "0",
+      "1/4",
+      "1/2",
+      "1",
+      "2",
+      "4",
+      "unparsed"
+    ],
+    "confusion": [
+      [
+        37,
+        0,
+        4,
+        12,
+        9,
+        1,
+        0
+      ],
+      [
+        1,
+        9,
+        5,
+        8,
+        8,
+        0,
+        0
+      ],
+      [
+        2,
+        4,
+        14,
+        16,
+        9,
+        0,
+        0
+      ],
+      [
+        10,
+        5,
+        30,
+        82,
+        35,
+        1,
+        0
+      ],
+      [
+        2,
+        2,
+        16,
+        15,
+        34,
+        0,
+        0
+      ],
+      [
+        0,
+        3,
+        8,
+        3,
+        11,
+        4,
+        0
+      ]
+    ],
+    "log": "2026-08-29T10-04-13-00-00_pokemon-gen1_jnvh5QTUsDdGu2hH6AdZaf.eval"
+  },
+  {
+    "model": "meta-llama/llama-3.1-8b-instruct",
+    "format": "rows",
+    "max_tokens": 1024,
+    "epochs": 1,
+    "n": 400,
+    "exact": 0.4325,
+    "misses": 227,
+    "categories": {
+      "unparsed": 12,
+      "mirrored": 68,
+      "immunity": 26,
+      "multiply": 21,
+      "lookup": 100
+    },
+    "categories_share_of_misses": {
+      "unparsed": 0.053,
+      "mirrored": 0.3,
+      "immunity": 0.115,
+      "multiply": 0.093,
+      "lookup": 0.441
+    },
+    "by_stratum": {
+      "differs": {
+        "unparsed": 4,
+        "mirrored": 14,
+        "immunity": 5,
+        "multiply": 3,
+        "lookup": 16
+      },
+      "dual": {
+        "unparsed": 3,
+        "mirrored": 24,
+        "immunity": 1,
+        "multiply": 2,
+        "lookup": 41
+      },
+      "immune": {
+        "unparsed": 1,
+        "mirrored": 3,
+        "immunity": 18,
+        "multiply": 0,
+        "lookup": 0
+      },
+      "quad": {
+        "unparsed": 1,
+        "mirrored": 13,
+        "immunity": 1,
+        "multiply": 16,
+        "lookup": 11
+      },
+      "single": {
+        "unparsed": 3,
+        "mirrored": 14,
+        "immunity": 1,
+        "multiply": 0,
+        "lookup": 32
+      }
+    },
+    "confusion_order": [
+      "0",
+      "1/4",
+      "1/2",
+      "1",
+      "2",
+      "4",
+      "unparsed"
+    ],
+    "confusion": [
+      [
+        33,
+        2,
+        4,
+        15,
+        8,
+        0,
+        1
+      ],
+      [
+        0,
+        6,
+        17,
+        4,
+        4,
+        0,
+        0
+      ],
+      [
+        1,
+        2,
+        26,
+        7,
+        8,
+        0,
+        1
+      ],
+      [
+        1,
+        4,
+        40,
+        68,
+        44,
+        1,
+        5
+      ],
+      [
+        2,
+        1,
+        17,
+        10,
+        39,
+        0,
+        0
+      ],
+      [
+        1,
+        1,
+        5,
+        9,
+        7,
+        1,
+        5
+      ]
+    ],
+    "log": "2026-08-29T10-04-48-00-00_pokemon-gen1_WjfT5Dqm5zLc7g5izu5efk.eval"
+  },
+  {
+    "model": "meta-llama/llama-3.2-1b-instruct",
+    "format": "rows",
+    "max_tokens": 1024,
+    "epochs": 1,
+    "n": 400,
+    "exact": 0.295,
+    "misses": 282,
+    "categories": {
+      "unparsed": 69,
+      "mirrored": 36,
+      "immunity": 56,
+      "multiply": 8,
+      "lookup": 113
+    },
+    "categories_share_of_misses": {
+      "unparsed": 0.245,
+      "mirrored": 0.128,
+      "immunity": 0.199,
+      "multiply": 0.028,
+      "lookup": 0.401
+    },
+    "by_stratum": {
+      "differs": {
+        "unparsed": 14,
+        "mirrored": 8,
+        "immunity": 7,
+        "multiply": 1,
+        "lookup": 19
+      },
+      "dual": {
+        "unparsed": 27,
+        "mirrored": 13,
+        "immunity": 13,
+        "multiply": 0,
+        "lookup": 40
+      },
+      "immune": {
+        "unparsed": 9,
+        "mirrored": 4,
+        "immunity": 24,
+        "multiply": 0,
+        "lookup": 0
+      },
+      "quad": {
+        "unparsed": 9,
+        "mirrored": 4,
+        "immunity": 2,
+        "multiply": 6,
+        "lookup": 25
+      },
+      "single": {
+        "unparsed": 10,
+        "mirrored": 7,
+        "immunity": 10,
+        "multiply": 1,
+        "lookup": 29
+      }
+    },
+    "confusion_order": [
+      "0",
+      "1/4",
+      "1/2",
+      "1",
+      "2",
+      "4",
+      "unparsed"
+    ],
+    "confusion": [
+      [
+        18,
+        0,
+        9,
+        16,
+        6,
+        3,
+        11
+      ],
+      [
+        1,
+        2,
+        4,
+        11,
+        5,
+        0,
+        8
+      ],
+      [
+        3,
+        1,
+        12,
+        16,
+        4,
+        2,
+        7
+      ],
+      [
+        19,
+        6,
+        19,
+        72,
+        19,
+        4,
+        24
+      ],
+      [
+        6,
+        3,
+        12,
+        21,
+        13,
+        0,
+        14
+      ],
+      [
+        2,
+        4,
+        5,
+        9,
+        3,
+        1,
+        5
+      ]
+    ],
+    "log": "2026-08-29T10-02-00-00-00_pokemon-gen1_FZfDNy6um4JcBfbbmCfiX7.eval"
+  },
+  {
+    "model": "meta-llama/llama-3.2-3b-instruct",
+    "format": "rows",
+    "max_tokens": 1024,
+    "epochs": 1,
+    "n": 400,
+    "exact": 0.24,
+    "misses": 304,
+    "categories": {
+      "unparsed": 5,
+      "mirrored": 68,
+      "immunity": 58,
+      "multiply": 21,
+      "lookup": 152
+    },
+    "categories_share_of_misses": {
+      "unparsed": 0.016,
+      "mirrored": 0.224,
+      "immunity": 0.191,
+      "multiply": 0.069,
+      "lookup": 0.5
+    },
+    "by_stratum": {
+      "differs": {
+        "unparsed": 0,
+        "mirrored": 13,
+        "immunity": 12,
+        "multiply": 8,
+        "lookup": 14
+      },
+      "dual": {
+        "unparsed": 2,
+        "mirrored": 23,
+        "immunity": 3,
+        "multiply": 0,
+        "lookup": 67
+      },
+      "immune": {
+        "unparsed": 0,
+        "mirrored": 10,
+        "immunity": 32,
+        "multiply": 0,
+        "lookup": 0
+      },
+      "quad": {
+        "unparsed": 1,
+        "mirrored": 10,
+        "immunity": 4,
+        "multiply": 13,
+        "lookup": 18
+      },
+      "single": {
+        "unparsed": 2,
+        "mirrored": 12,
+        "immunity": 7,
+        "multiply": 0,
+        "lookup": 53
+      }
+    },
+    "confusion_order": [
+      "0",
+      "1/4",
+      "1/2",
+      "1",
+      "2",
+      "4",
+      "unparsed"
+    ],
+    "confusion": [
+      [
+        9,
+        0,
+        7,
+        5,
+        41,
+        1,
+        0
+      ],
+      [
+        1,
+        2,
+        8,
+        3,
+        16,
+        1,
+        0
+      ],
+      [
+        1,
+        0,
+        3,
+        2,
+        37,
+        0,
+        2
+      ],
+      [
+        7,
+        1,
+        27,
+        30,
+        92,
+        4,
+        2
+      ],
+      [
+        4,
+        2,
+        12,
+        2,
+        49,
+        0,
+        0
+      ],
+      [
+        3,
+        0,
+        4,
+        3,
+        15,
+        3,
+        1
+      ]
+    ],
+    "log": "2026-08-29T10-02-41-00-00_pokemon-gen1_3iDZYzQaHqTDGM6VyASYsW.eval"
+  },
+  {
+    "model": "openai/gpt-5-nano",
+    "format": "rows",
+    "max_tokens": 4096,
+    "epochs": 1,
+    "n": 400,
+    "exact": 0.9875,
+    "misses": 5,
+    "categories": {
+      "unparsed": 2,
+      "mirrored": 1,
+      "immunity": 0,
+      "multiply": 1,
+      "lookup": 1
+    },
+    "categories_share_of_misses": {
+      "unparsed": 0.4,
+      "mirrored": 0.2,
+      "immunity": 0.0,
+      "multiply": 0.2,
+      "lookup": 0.2
+    },
+    "by_stratum": {
+      "dual": {
+        "unparsed": 1,
+        "mirrored": 1,
+        "immunity": 0,
+        "multiply": 1,
+        "lookup": 0
+      },
+      "quad": {
+        "unparsed": 0,
+        "mirrored": 0,
+        "immunity": 0,
+        "multiply": 0,
+        "lookup": 1
+      },
+      "single": {
+        "unparsed": 1,
+        "mirrored": 0,
+        "immunity": 0,
+        "multiply": 0,
+        "lookup": 0
+      }
+    },
+    "confusion_order": [
+      "0",
+      "1/4",
+      "1/2",
+      "1",
+      "2",
+      "4",
+      "unparsed"
+    ],
+    "confusion": [
+      [
+        63,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        30,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        44,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        161,
+        0,
+        0,
+        2
+      ],
+      [
+        0,
+        0,
+        0,
+        1,
+        68,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        29,
+        0
+      ]
+    ],
+    "log": "2026-08-29T10-05-56-00-00_pokemon-gen1_gcU8pwWeEbQvdqfFNJCAXf.eval"
+  },
+  {
+    "model": "qwen/qwen3-235b-a22b-2507",
+    "format": "rows",
+    "max_tokens": 1024,
+    "epochs": 1,
+    "n": 400,
+    "exact": 0.8425,
+    "misses": 63,
+    "categories": {
+      "unparsed": 0,
+      "mirrored": 31,
+      "immunity": 1,
+      "multiply": 9,
+      "lookup": 22
+    },
+    "categories_share_of_misses": {
+      "unparsed": 0.0,
+      "mirrored": 0.492,
+      "immunity": 0.016,
+      "multiply": 0.143,
+      "lookup": 0.349
+    },
+    "by_stratum": {
+      "differs": {
+        "unparsed": 0,
+        "mirrored": 9,
+        "immunity": 0,
+        "multiply": 0,
+        "lookup": 5
+      },
+      "dual": {
+        "unparsed": 0,
+        "mirrored": 20,
+        "immunity": 0,
+        "multiply": 9,
+        "lookup": 11
+      },
+      "immune": {
+        "unparsed": 0,
+        "mirrored": 0,
+        "immunity": 1,
+        "multiply": 0,
+        "lookup": 0
+      },
+      "quad": {
+        "unparsed": 0,
+        "mirrored": 0,
+        "immunity": 0,
+        "multiply": 0,
+        "lookup": 5
+      },
+      "single": {
+        "unparsed": 0,
+        "mirrored": 2,
+        "immunity": 0,
+        "multiply": 0,
+        "lookup": 1
+      }
+    },
+    "confusion_order": [
+      "0",
+      "1/4",
+      "1/2",
+      "1",
+      "2",
+      "4",
+      "unparsed"
+    ],
+    "confusion": [
+      [
+        62,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        29,
+        0,
+        2,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        8,
+        33,
+        2,
+        0,
+        1,
+        0
+      ],
+      [
+        1,
+        4,
+        14,
+        140,
+        3,
+        1,
+        0
+      ],
+      [
+        1,
+        0,
+        5,
+        9,
+        53,
+        1,
+        0
+      ],
+      [
+        0,
+        2,
+        0,
+        7,
+        0,
+        20,
+        0
+      ]
+    ],
+    "log": "2026-08-29T10-11-57-00-00_pokemon-gen1_BE3YdX6rNguyKhodMRNTzY.eval"
+  },
+  {
+    "model": "qwen/qwen3-30b-a3b-instruct-2507",
+    "format": "rows",
+    "max_tokens": 1024,
+    "epochs": 1,
+    "n": 400,
+    "exact": 0.82,
+    "misses": 72,
+    "categories": {
+      "unparsed": 0,
+      "mirrored": 35,
+      "immunity": 2,
+      "multiply": 8,
+      "lookup": 27
+    },
+    "categories_share_of_misses": {
+      "unparsed": 0.0,
+      "mirrored": 0.486,
+      "immunity": 0.028,
+      "multiply": 0.111,
+      "lookup": 0.375
+    },
+    "by_stratum": {
+      "differs": {
+        "unparsed": 0,
+        "mirrored": 9,
+        "immunity": 2,
+        "multiply": 2,
+        "lookup": 9
+      },
+      "dual": {
+        "unparsed": 0,
+        "mirrored": 16,
+        "immunity": 0,
+        "multiply": 0,
+        "lookup": 10
+      },
+      "quad": {
+        "unparsed": 0,
+        "mirrored": 6,
+        "immunity": 0,
+        "multiply": 6,
+        "lookup": 7
+      },
+      "single": {
+        "unparsed": 0,
+        "mirrored": 4,
+        "immunity": 0,
+        "multiply": 0,
+        "lookup": 1
+      }
+    },
+    "confusion_order": [
+      "0",
+      "1/4",
+      "1/2",
+      "1",
+      "2",
+      "4",
+      "unparsed"
+    ],
+    "confusion": [
+      [
+        55,
+        0,
+        2,
+        6,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        23,
+        3,
+        5,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        37,
+        3,
+        4,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        19,
+        139,
+        3,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        6,
+        3,
+        58,
+        2,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        9,
+        3,
+        16,
+        0
+      ]
+    ],
+    "log": "2026-08-29T10-07-17-00-00_pokemon-gen1_dpxT6EYhFhG4m9wLy3DwUf.eval"
+  },
+  {
+    "model": "qwen/qwen3-32b",
+    "format": "rows",
+    "max_tokens": 1024,
+    "epochs": 1,
+    "n": 400,
+    "exact": 0.93,
+    "misses": 28,
+    "categories": {
+      "unparsed": 8,
+      "mirrored": 6,
+      "immunity": 0,
+      "multiply": 2,
+      "lookup": 12
+    },
+    "categories_share_of_misses": {
+      "unparsed": 0.286,
+      "mirrored": 0.214,
+      "immunity": 0.0,
+      "multiply": 0.071,
+      "lookup": 0.429
+    },
+    "by_stratum": {
+      "differs": {
+        "unparsed": 3,
+        "mirrored": 1,
+        "immunity": 0,
+        "multiply": 1,
+        "lookup": 7
+      },
+      "dual": {
+        "unparsed": 2,
+        "mirrored": 1,
+        "immunity": 0,
+        "multiply": 1,
+        "lookup": 3
+      },
+      "immune": {
+        "unparsed": 2,
+        "mirrored": 1,
+        "immunity": 0,
+        "multiply": 0,
+        "lookup": 0
+      },
+      "quad": {
+        "unparsed": 1,
+        "mirrored": 0,
+        "immunity": 0,
+        "multiply": 0,
+        "lookup": 2
+      },
+      "single": {
+        "unparsed": 0,
+        "mirrored": 3,
+        "immunity": 0,
+        "multiply": 0,
+        "lookup": 0
+      }
+    },
+    "confusion_order": [
+      "0",
+      "1/4",
+      "1/2",
+      "1",
+      "2",
+      "4",
+      "unparsed"
+    ],
+    "confusion": [
+      [
+        59,
+        0,
+        0,
+        0,
+        1,
+        0,
+        3
+      ],
+      [
+        0,
+        30,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      [
+        0,
+        1,
+        44,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        2,
+        6,
+        151,
+        1,
+        0,
+        3
+      ],
+      [
+        0,
+        0,
+        3,
+        2,
+        62,
+        1,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        3,
+        0,
+        26,
+        0
+      ]
+    ],
+    "log": "2026-08-29T10-07-56-00-00_pokemon-gen1_4wgXtDm9ZWf4t4SQHdmKgP.eval"
+  },
+  {
+    "model": "google/gemma-3-12b-it",
+    "format": "table",
+    "max_tokens": 1024,
+    "epochs": 3,
+    "n": 1200,
+    "exact": 0.5075,
+    "misses": 591,
+    "categories": {
+      "unparsed": 0,
+      "mirrored": 189,
+      "immunity": 53,
+      "multiply": 38,
+      "lookup": 311
+    },
+    "categories_share_of_misses": {
+      "unparsed": 0.0,
+      "mirrored": 0.32,
+      "immunity": 0.09,
+      "multiply": 0.064,
+      "lookup": 0.526
+    },
+    "by_stratum": {
+      "differs": {
+        "unparsed": 0,
+        "mirrored": 70,
+        "immunity": 5,
+        "multiply": 3,
+        "lookup": 44
+      },
+      "dual": {
+        "unparsed": 0,
+        "mirrored": 54,
+        "immunity": 10,
+        "multiply": 22,
+        "lookup": 105
+      },
+      "immune": {
+        "unparsed": 0,
+        "mirrored": 13,
+        "immunity": 25,
+        "multiply": 0,
+        "lookup": 0
+      },
+      "quad": {
+        "unparsed": 0,
+        "mirrored": 18,
+        "immunity": 3,
+        "multiply": 9,
+        "lookup": 68
+      },
+      "single": {
+        "unparsed": 0,
+        "mirrored": 34,
+        "immunity": 10,
+        "multiply": 4,
+        "lookup": 94
+      }
+    },
+    "confusion_order": [
+      "0",
+      "1/4",
+      "1/2",
+      "1",
+      "2",
+      "4",
+      "unparsed"
+    ],
+    "confusion": [
+      [
+        138,
+        0,
+        8,
+        21,
+        20,
+        2,
+        0
+      ],
+      [
+        2,
+        39,
+        10,
+        39,
+        1,
+        2,
+        0
+      ],
+      [
+        4,
+        20,
+        68,
+        26,
+        14,
+        3,
+        0
+      ],
+      [
+        27,
+        11,
+        90,
+        257,
+        92,
+        12,
+        0
+      ],
+      [
+        4,
+        5,
+        34,
+        67,
+        89,
+        8,
+        0
+      ],
+      [
+        1,
+        6,
+        0,
+        56,
+        6,
+        18,
+        0
+      ]
+    ],
+    "log": "2026-08-29T09-47-58-00-00_pokemon-gen1_UQwR3AFkTLUv36VFnXoWbA.eval"
+  },
+  {
+    "model": "google/gemma-3-27b-it",
+    "format": "table",
+    "max_tokens": 1024,
+    "epochs": 3,
+    "n": 1200,
+    "exact": 0.6167,
+    "misses": 460,
+    "categories": {
+      "unparsed": 0,
+      "mirrored": 276,
+      "immunity": 7,
+      "multiply": 31,
+      "lookup": 146
+    },
+    "categories_share_of_misses": {
+      "unparsed": 0.0,
+      "mirrored": 0.6,
+      "immunity": 0.015,
+      "multiply": 0.067,
+      "lookup": 0.317
+    },
+    "by_stratum": {
+      "differs": {
+        "unparsed": 0,
+        "mirrored": 81,
+        "immunity": 0,
+        "multiply": 6,
+        "lookup": 29
+      },
+      "dual": {
+        "unparsed": 0,
+        "mirrored": 93,
+        "immunity": 0,
+        "multiply": 5,
+        "lookup": 40
+      },
+      "immune": {
+        "unparsed": 0,
+        "mirrored": 24,
+        "immunity": 5,
+        "multiply": 0,
+        "lookup": 0
+      },
+      "quad": {
+        "unparsed": 0,
+        "mirrored": 31,
+        "immunity": 0,
+        "multiply": 19,
+        "lookup": 66
+      },
+      "single": {
+        "unparsed": 0,
+        "mirrored": 47,
+        "immunity": 2,
+        "multiply": 1,
+        "lookup": 11
+      }
+    },
+    "confusion_order": [
+      "0",
+      "1/4",
+      "1/2",
+      "1",
+      "2",
+      "4",
+      "unparsed"
+    ],
+    "confusion": [
+      [
+        127,
+        0,
+        0,
+        35,
+        27,
+        0,
+        0
+      ],
+      [
+        0,
+        17,
+        14,
+        57,
+        0,
+        5,
+        0
+      ],
+      [
+        1,
+        3,
+        76,
+        21,
+        32,
+        2,
+        0
+      ],
+      [
+        10,
+        7,
+        57,
+        344,
+        68,
+        3,
+        0
+      ],
+      [
+        1,
+        4,
+        26,
+        23,
+        149,
+        4,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        44,
+        15,
+        27,
+        0
+      ]
+    ],
+    "log": "2026-08-29T09-49-05-00-00_pokemon-gen1_UYjWkDT2Jpp8ozYXV7M9RE.eval"
+  },
+  {
+    "model": "google/gemma-3-4b-it",
+    "format": "table",
+    "max_tokens": 1024,
+    "epochs": 3,
+    "n": 1200,
+    "exact": 0.275,
+    "misses": 870,
+    "categories": {
+      "unparsed": 0,
+      "mirrored": 201,
+      "immunity": 93,
+      "multiply": 84,
+      "lookup": 492
+    },
+    "categories_share_of_misses": {
+      "unparsed": 0.0,
+      "mirrored": 0.231,
+      "immunity": 0.107,
+      "multiply": 0.097,
+      "lookup": 0.566
+    },
+    "by_stratum": {
+      "differs": {
+        "unparsed": 0,
+        "mirrored": 44,
+        "immunity": 17,
+        "multiply": 21,
+        "lookup": 48
+      },
+      "dual": {
+        "unparsed": 0,
+        "mirrored": 65,
+        "immunity": 5,
+        "multiply": 4,
+        "lookup": 197
+      },
+      "immune": {
+        "unparsed": 0,
+        "mirrored": 36,
+        "immunity": 60,
+        "multiply": 0,
+        "lookup": 0
+      },
+      "quad": {
+        "unparsed": 0,
+        "mirrored": 20,
+        "immunity": 0,
+        "multiply": 59,
+        "lookup": 66
+      },
+      "single": {
+        "unparsed": 0,
+        "mirrored": 36,
+        "immunity": 11,
+        "multiply": 0,
+        "lookup": 181
+      }
+    },
+    "confusion_order": [
+      "0",
+      "1/4",
+      "1/2",
+      "1",
+      "2",
+      "4",
+      "unparsed"
+    ],
+    "confusion": [
+      [
+        71,
+        0,
+        2,
+        15,
+        99,
+        2,
+        0
+      ],
+      [
+        0,
+        1,
+        21,
+        5,
+        66,
+        0,
+        0
+      ],
+      [
+        0,
+        2,
+        28,
+        6,
+        95,
+        4,
+        0
+      ],
+      [
+        19,
+        2,
+        58,
+        68,
+        330,
+        12,
+        0
+      ],
+      [
+        1,
+        1,
+        27,
+        15,
+        161,
+        2,
+        0
+      ],
+      [
+        0,
+        4,
+        11,
+        7,
+        64,
+        1,
+        0
+      ]
+    ],
+    "log": "2026-08-29T09-44-27-00-00_pokemon-gen1_cMf4WuhhNmgnV8m4cASAMm.eval"
+  },
+  {
+    "model": "meta-llama/llama-3.1-8b-instruct",
+    "format": "table",
+    "max_tokens": 1024,
+    "epochs": 3,
+    "n": 1200,
+    "exact": 0.2792,
+    "misses": 865,
+    "categories": {
+      "unparsed": 24,
+      "mirrored": 189,
+      "immunity": 127,
+      "multiply": 59,
+      "lookup": 466
+    },
+    "categories_share_of_misses": {
+      "unparsed": 0.028,
+      "mirrored": 0.218,
+      "immunity": 0.147,
+      "multiply": 0.068,
+      "lookup": 0.539
+    },
+    "by_stratum": {
+      "differs": {
+        "unparsed": 3,
+        "mirrored": 45,
+        "immunity": 31,
+        "multiply": 9,
+        "lookup": 58
+      },
+      "dual": {
+        "unparsed": 13,
+        "mirrored": 56,
+        "immunity": 7,
+        "multiply": 8,
+        "lookup": 188
+      },
+      "immune": {
+        "unparsed": 3,
+        "mirrored": 18,
+        "immunity": 83,
+        "multiply": 0,
+        "lookup": 0
+      },
+      "quad": {
+        "unparsed": 2,
+        "mirrored": 32,
+        "immunity": 2,
+        "multiply": 42,
+        "lookup": 57
+      },
+      "single": {
+        "unparsed": 3,
+        "mirrored": 38,
+        "immunity": 4,
+        "multiply": 0,
+        "lookup": 163
+      }
+    },
+    "confusion_order": [
+      "0",
+      "1/4",
+      "1/2",
+      "1",
+      "2",
+      "4",
+      "unparsed"
+    ],
+    "confusion": [
+      [
+        50,
+        9,
+        43,
+        27,
+        53,
+        2,
+        5
+      ],
+      [
+        1,
+        11,
+        32,
+        23,
+        25,
+        0,
+        1
+      ],
+      [
+        1,
+        8,
+        50,
+        20,
+        49,
+        2,
+        5
+      ],
+      [
+        13,
+        19,
+        150,
+        123,
+        170,
+        5,
+        9
+      ],
+      [
+        4,
+        6,
+        61,
+        36,
+        98,
+        0,
+        2
+      ],
+      [
+        1,
+        3,
+        27,
+        27,
+        24,
+        3,
+        2
+      ]
+    ],
+    "log": "2026-08-29T09-45-43-00-00_pokemon-gen1_cmwEdVLftYe24scexhiLPV.eval"
+  },
+  {
+    "model": "meta-llama/llama-3.2-1b-instruct",
+    "format": "table",
+    "max_tokens": 1024,
+    "epochs": 3,
+    "n": 1200,
+    "exact": 0.2225,
+    "misses": 933,
+    "categories": {
+      "unparsed": 238,
+      "mirrored": 147,
+      "immunity": 187,
+      "multiply": 32,
+      "lookup": 329
+    },
+    "categories_share_of_misses": {
+      "unparsed": 0.255,
+      "mirrored": 0.158,
+      "immunity": 0.2,
+      "multiply": 0.034,
+      "lookup": 0.353
+    },
+    "by_stratum": {
+      "differs": {
+        "unparsed": 43,
+        "mirrored": 34,
+        "immunity": 22,
+        "multiply": 2,
+        "lookup": 65
+      },
+      "dual": {
+        "unparsed": 78,
+        "mirrored": 45,
+        "immunity": 38,
+        "multiply": 5,
+        "lookup": 131
+      },
+      "immune": {
+        "unparsed": 28,
+        "mirrored": 18,
+        "immunity": 87,
+        "multiply": 0,
+        "lookup": 0
+      },
+      "quad": {
+        "unparsed": 29,
+        "mirrored": 26,
+        "immunity": 12,
+        "multiply": 23,
+        "lookup": 53
+      },
+      "single": {
+        "unparsed": 60,
+        "mirrored": 24,
+        "immunity": 28,
+        "multiply": 2,
+        "lookup": 80
+      }
+    },
+    "confusion_order": [
+      "0",
+      "1/4",
+      "1/2",
+      "1",
+      "2",
+      "4",
+      "unparsed"
+    ],
+    "confusion": [
+      [
+        20,
+        11,
+        19,
+        81,
+        17,
+        5,
+        36
+      ],
+      [
+        7,
+        3,
+        24,
+        34,
+        7,
+        0,
+        18
+      ],
+      [
+        14,
+        4,
+        22,
+        48,
+        12,
+        3,
+        32
+      ],
+      [
+        45,
+        19,
+        91,
+        187,
+        48,
+        9,
+        90
+      ],
+      [
+        14,
+        8,
+        36,
+        70,
+        33,
+        3,
+        43
+      ],
+      [
+        7,
+        8,
+        20,
+        25,
+        6,
+        2,
+        19
+      ]
+    ],
+    "log": "2026-08-29T09-38-19-00-00_pokemon-gen1_UEgA8aDkCzmq59mVHi3ubA.eval"
+  },
+  {
+    "model": "meta-llama/llama-3.2-3b-instruct",
+    "format": "table",
+    "max_tokens": 1024,
+    "epochs": 3,
+    "n": 1200,
+    "exact": 0.25,
+    "misses": 900,
+    "categories": {
+      "unparsed": 17,
+      "mirrored": 176,
+      "immunity": 151,
+      "multiply": 88,
+      "lookup": 468
+    },
+    "categories_share_of_misses": {
+      "unparsed": 0.019,
+      "mirrored": 0.196,
+      "immunity": 0.168,
+      "multiply": 0.098,
+      "lookup": 0.52
+    },
+    "by_stratum": {
+      "differs": {
+        "unparsed": 3,
+        "mirrored": 30,
+        "immunity": 38,
+        "multiply": 21,
+        "lookup": 50
+      },
+      "dual": {
+        "unparsed": 5,
+        "mirrored": 61,
+        "immunity": 12,
+        "multiply": 6,
+        "lookup": 190
+      },
+      "immune": {
+        "unparsed": 1,
+        "mirrored": 31,
+        "immunity": 85,
+        "multiply": 0,
+        "lookup": 0
+      },
+      "quad": {
+        "unparsed": 1,
+        "mirrored": 22,
+        "immunity": 5,
+        "multiply": 60,
+        "lookup": 54
+      },
+      "single": {
+        "unparsed": 7,
+        "mirrored": 32,
+        "immunity": 11,
+        "multiply": 1,
+        "lookup": 174
+      }
+    },
+    "confusion_order": [
+      "0",
+      "1/4",
+      "1/2",
+      "1",
+      "2",
+      "4",
+      "unparsed"
+    ],
+    "confusion": [
+      [
+        35,
+        0,
+        43,
+        15,
+        93,
+        2,
+        1
+      ],
+      [
+        3,
+        4,
+        25,
+        9,
+        47,
+        5,
+        0
+      ],
+      [
+        2,
+        1,
+        31,
+        9,
+        88,
+        3,
+        1
+      ],
+      [
+        22,
+        4,
+        120,
+        81,
+        243,
+        8,
+        11
+      ],
+      [
+        5,
+        2,
+        35,
+        10,
+        147,
+        6,
+        2
+      ],
+      [
+        2,
+        2,
+        19,
+        4,
+        56,
+        2,
+        2
+      ]
+    ],
+    "log": "2026-08-29T09-39-38-00-00_pokemon-gen1_3udPGpCz22S8tB54PYjfqa.eval"
+  },
+  {
+    "model": "openai/gpt-5-nano",
+    "format": "table",
+    "max_tokens": 4096,
+    "epochs": 3,
+    "n": 1200,
+    "exact": 0.9542,
+    "misses": 55,
+    "categories": {
+      "unparsed": 4,
+      "mirrored": 20,
+      "immunity": 0,
+      "multiply": 7,
+      "lookup": 24
+    },
+    "categories_share_of_misses": {
+      "unparsed": 0.073,
+      "mirrored": 0.364,
+      "immunity": 0.0,
+      "multiply": 0.127,
+      "lookup": 0.436
+    },
+    "by_stratum": {
+      "differs": {
+        "unparsed": 0,
+        "mirrored": 12,
+        "immunity": 0,
+        "multiply": 0,
+        "lookup": 15
+      },
+      "dual": {
+        "unparsed": 2,
+        "mirrored": 5,
+        "immunity": 0,
+        "multiply": 2,
+        "lookup": 6
+      },
+      "immune": {
+        "unparsed": 1,
+        "mirrored": 0,
+        "immunity": 0,
+        "multiply": 0,
+        "lookup": 0
+      },
+      "quad": {
+        "unparsed": 0,
+        "mirrored": 1,
+        "immunity": 0,
+        "multiply": 3,
+        "lookup": 2
+      },
+      "single": {
+        "unparsed": 1,
+        "mirrored": 2,
+        "immunity": 0,
+        "multiply": 2,
+        "lookup": 1
+      }
+    },
+    "confusion_order": [
+      "0",
+      "1/4",
+      "1/2",
+      "1",
+      "2",
+      "4",
+      "unparsed"
+    ],
+    "confusion": [
+      [
+        177,
+        0,
+        0,
+        11,
+        0,
+        0,
+        1
+      ],
+      [
+        0,
+        88,
+        4,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        4,
+        128,
+        0,
+        1,
+        0,
+        1
+      ],
+      [
+        1,
+        1,
+        14,
+        467,
+        5,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        2,
+        4,
+        199,
+        0,
+        2
+      ],
+      [
+        0,
+        0,
+        0,
+        1,
+        0,
+        86,
+        0
+      ]
+    ],
+    "log": "2026-08-29T10-02-32-00-00_pokemon-gen1_MbHRJKBdKpZqoFoZujCwL8.eval"
+  },
+  {
+    "model": "qwen/qwen3-235b-a22b-2507",
+    "format": "table",
+    "max_tokens": 1024,
+    "epochs": 3,
+    "n": 1200,
+    "exact": 0.7642,
+    "misses": 283,
+    "categories": {
+      "unparsed": 0,
+      "mirrored": 149,
+      "immunity": 7,
+      "multiply": 27,
+      "lookup": 100
+    },
+    "categories_share_of_misses": {
+      "unparsed": 0.0,
+      "mirrored": 0.527,
+      "immunity": 0.025,
+      "multiply": 0.095,
+      "lookup": 0.353
+    },
+    "by_stratum": {
+      "differs": {
+        "unparsed": 0,
+        "mirrored": 50,
+        "immunity": 4,
+        "multiply": 3,
+        "lookup": 28
+      },
+      "dual": {
+        "unparsed": 0,
+        "mirrored": 65,
+        "immunity": 0,
+        "multiply": 22,
+        "lookup": 36
+      },
+      "immune": {
+        "unparsed": 0,
+        "mirrored": 1,
+        "immunity": 3,
+        "multiply": 0,
+        "lookup": 0
+      },
+      "quad": {
+        "unparsed": 0,
+        "mirrored": 5,
+        "immunity": 0,
+        "multiply": 2,
+        "lookup": 20
+      },
+      "single": {
+        "unparsed": 0,
+        "mirrored": 28,
+        "immunity": 0,
+        "multiply": 0,
+        "lookup": 16
+      }
+    },
+    "confusion_order": [
+      "0",
+      "1/4",
+      "1/2",
+      "1",
+      "2",
+      "4",
+      "unparsed"
+    ],
+    "confusion": [
+      [
+        181,
+        3,
+        3,
+        0,
+        2,
+        0,
+        0
+      ],
+      [
+        0,
+        78,
+        0,
+        14,
+        0,
+        1,
+        0
+      ],
+      [
+        2,
+        16,
+        105,
+        7,
+        4,
+        1,
+        0
+      ],
+      [
+        2,
+        8,
+        79,
+        348,
+        42,
+        10,
+        0
+      ],
+      [
+        3,
+        1,
+        11,
+        36,
+        147,
+        9,
+        0
+      ],
+      [
+        0,
+        2,
+        0,
+        25,
+        2,
+        58,
+        0
+      ]
+    ],
+    "log": "2026-08-29T09-59-27-00-00_pokemon-gen1_QNzKSYBXbJdsgKpfaMtxjx.eval"
+  },
+  {
+    "model": "qwen/qwen3-30b-a3b-instruct-2507",
+    "format": "table",
+    "max_tokens": 1024,
+    "epochs": 3,
+    "n": 1200,
+    "exact": 0.6425,
+    "misses": 429,
+    "categories": {
+      "unparsed": 0,
+      "mirrored": 205,
+      "immunity": 37,
+      "multiply": 17,
+      "lookup": 170
+    },
+    "categories_share_of_misses": {
+      "unparsed": 0.0,
+      "mirrored": 0.478,
+      "immunity": 0.086,
+      "multiply": 0.04,
+      "lookup": 0.396
+    },
+    "by_stratum": {
+      "differs": {
+        "unparsed": 0,
+        "mirrored": 67,
+        "immunity": 6,
+        "multiply": 0,
+        "lookup": 47
+      },
+      "dual": {
+        "unparsed": 0,
+        "mirrored": 63,
+        "immunity": 0,
+        "multiply": 0,
+        "lookup": 50
+      },
+      "immune": {
+        "unparsed": 0,
+        "mirrored": 1,
+        "immunity": 31,
+        "multiply": 0,
+        "lookup": 0
+      },
+      "quad": {
+        "unparsed": 0,
+        "mirrored": 32,
+        "immunity": 0,
+        "multiply": 17,
+        "lookup": 67
+      },
+      "single": {
+        "unparsed": 0,
+        "mirrored": 42,
+        "immunity": 0,
+        "multiply": 0,
+        "lookup": 6
+      }
+    },
+    "confusion_order": [
+      "0",
+      "1/4",
+      "1/2",
+      "1",
+      "2",
+      "4",
+      "unparsed"
+    ],
+    "confusion": [
+      [
+        121,
+        2,
+        7,
+        58,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        30,
+        9,
+        53,
+        1,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        97,
+        22,
+        15,
+        0,
+        0
+      ],
+      [
+        4,
+        3,
+        69,
+        391,
+        20,
+        2,
+        0
+      ],
+      [
+        0,
+        3,
+        44,
+        39,
+        121,
+        0,
+        0
+      ],
+      [
+        0,
+        4,
+        4,
+        55,
+        13,
+        11,
+        0
+      ]
+    ],
+    "log": "2026-08-29T09-54-37-00-00_pokemon-gen1_dXi5ocVZgUwmZ6n49Hy9bU.eval"
+  },
+  {
+    "model": "qwen/qwen3-32b",
+    "format": "table",
+    "max_tokens": 4096,
+    "epochs": 3,
+    "n": 1200,
+    "exact": 0.8283,
+    "misses": 206,
+    "categories": {
+      "unparsed": 1,
+      "mirrored": 79,
+      "immunity": 11,
+      "multiply": 22,
+      "lookup": 93
+    },
+    "categories_share_of_misses": {
+      "unparsed": 0.005,
+      "mirrored": 0.383,
+      "immunity": 0.053,
+      "multiply": 0.107,
+      "lookup": 0.451
+    },
+    "by_stratum": {
+      "differs": {
+        "unparsed": 0,
+        "mirrored": 30,
+        "immunity": 6,
+        "multiply": 2,
+        "lookup": 27
+      },
+      "dual": {
+        "unparsed": 0,
+        "mirrored": 20,
+        "immunity": 0,
+        "multiply": 12,
+        "lookup": 34
+      },
+      "immune": {
+        "unparsed": 0,
+        "mirrored": 0,
+        "immunity": 5,
+        "multiply": 0,
+        "lookup": 0
+      },
+      "quad": {
+        "unparsed": 1,
+        "mirrored": 15,
+        "immunity": 0,
+        "multiply": 8,
+        "lookup": 28
+      },
+      "single": {
+        "unparsed": 0,
+        "mirrored": 14,
+        "immunity": 0,
+        "multiply": 0,
+        "lookup": 4
+      }
+    },
+    "confusion_order": [
+      "0",
+      "1/4",
+      "1/2",
+      "1",
+      "2",
+      "4",
+      "unparsed"
+    ],
+    "confusion": [
+      [
+        165,
+        0,
+        1,
+        13,
+        9,
+        1,
+        0
+      ],
+      [
+        0,
+        61,
+        13,
+        18,
+        0,
+        0,
+        1
+      ],
+      [
+        0,
+        12,
+        108,
+        11,
+        4,
+        0,
+        0
+      ],
+      [
+        1,
+        2,
+        40,
+        434,
+        11,
+        1,
+        0
+      ],
+      [
+        1,
+        1,
+        9,
+        23,
+        171,
+        2,
+        0
+      ],
+      [
+        0,
+        1,
+        2,
+        27,
+        2,
+        55,
+        0
+      ]
+    ],
+    "log": "2026-08-29T10-44-35-00-00_pokemon-gen1_5xhPdCXd5XaZRmunkrCEFR.eval"
+  }
+]
