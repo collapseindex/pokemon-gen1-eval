@@ -721,3 +721,103 @@ middle dip. This is not the lost-in-the-middle shape; a 151-line list may be
 too short to show it, and the small models fail across the whole list.
 
 Not registered; reported as an observation. Cost: none (existing logs).
+
+### O-009
+**The recall condition: what the scores are without the reference**
+all ten models, no chart, no typing list, pinned 400 x 3 epochs · `logs/recall/` · 2026-08-29
+
+Registered in REVIEW2.md (run 1) before running. The prompt keeps the rules
+and the question and drops the chart and the 151-line list; the model has
+only what it remembers. Same hosts, same budgets (qwen3-32b at 1,024 tokens,
+so 11% of its recall calls truncated; its recall number is a floor).
+
+| model | recall | 95% CI | range | table | table minus recall | sum of ranges | W1 |
+|---|---|---|---|---|---|---|---|
+| llama-3.2-1b | 0.142 | 0.11 to 0.18 | 0.045 | 0.223 | 0.081 | 0.080 | held |
+| llama-3.2-3b | 0.204 | 0.17 to 0.25 | 0.028 | 0.250 | 0.046 | 0.048 | failed by 0.002 |
+| gemma-3-4b | 0.172 | 0.14 to 0.21 | 0.003 | 0.275 | 0.103 | 0.053 | held |
+| llama-3.1-8b | 0.190 | 0.15 to 0.23 | 0.015 | 0.279 | 0.089 | 0.025 | held |
+| gemma-3-12b | 0.266 | 0.22 to 0.31 | 0.030 | 0.507 | 0.241 | 0.050 | held |
+| gemma-3-27b | 0.279 | 0.24 to 0.33 | 0.028 | 0.617 | 0.338 | 0.050 | held |
+| qwen3-30b-a3b | 0.248 | 0.21 to 0.29 | 0.013 | 0.642 | 0.394 | 0.062 | held |
+| qwen3-32b | 0.507 | 0.46 to 0.56 | 0.052 | 0.828 | 0.321 | 0.077 | held |
+| qwen3-235b-a22b | 0.510 | 0.46 to 0.56 | 0.020 | 0.764 | 0.254 | 0.038 | held |
+| gpt-5-nano | 0.665 | 0.62 to 0.71 | 0.028 | 0.954 | 0.289 | 0.050 | reported |
+
+**W1 (the reference helps every open model)**: held for 8 of 9; llama-3.2-3b
+misses the bar by 0.002 and is at chance with or without the chart.
+**W3 (recall below the majority baseline at 8B and under)**: held, 4 of 4;
+in fact recall is below 0.41 through 27B and the 30B MoE. Nobody under 32B
+remembers the Generation I chart well enough to beat "always 1".
+
+**W2 ("would have gotten it anyway")**, `src/recall_join.py`, from
+`data/results/20260829_083017_recalljoin.json`: on the 329 items where the
+Gen I and modern charts agree, the share of a model's table hits (majority
+over epochs) that its recall run also hits:
+
+| model | table hits (of 329) | also hit by recall | share |
+|---|---|---|---|
+| llama-3.2-1b | 56 | 4 | 0.07 |
+| llama-3.2-3b | 67 | 33 | 0.49 |
+| gemma-3-4b | 84 | 38 | 0.45 |
+| llama-3.1-8b | 72 | 17 | 0.24 |
+| gemma-3-12b | 174 | 65 | 0.37 |
+| gemma-3-27b | 220 | 61 | 0.28 |
+| qwen3-30b-a3b | 224 | 55 | 0.25 |
+| qwen3-32b | 289 | 181 | 0.63 |
+| qwen3-235b-a22b | 264 | 172 | 0.65 |
+| gpt-5-nano | 326 | 271 | 0.83 |
+
+Held below 0.5 at 8B and under (4 of 4), held above 0.5 at 32B and 235B,
+failed at 27B (0.28) and the 30B MoE (0.25). So the prediction that memory
+grows with size was half right: it grows within Qwen and at the ceiling, but
+gemma-3-27b and qwen3-30b-a3b read the chart well while remembering almost
+none of it. Their table scores are reading. At 32B and above, roughly
+two-thirds of the hits would have come without the reference, so those
+scores are a ceiling on reference-following and the differs stratum
+remains the only clean measurement there. Cost about $0.92.
+
+### O-010
+**Shuffled options on the two leaning models; temperature 0 on the 12B rung**
+`logs/shuffle/`, `logs/temp0/` · 2026-08-29
+
+Registered in REVIEW2.md (runs 2 and 3). Shuffle, one epoch, pinned 400,
+table format:
+
+| model | fixed order: value "2" | shuffled: value "2" | fixed exact | shuffled exact | shuffled parse fail |
+|---|---|---|---|---|---|
+| gemma-3-4b | 0.68 | 0.63 | 0.275 | 0.263 | 0.00 |
+| llama-3.2-3b | 0.56 | 0.44 | 0.250 | 0.205 | 0.09 |
+
+**W4, value clause**: held, both within 10 points (4 and 12 points; llama
+is at 12 by the raw model output and 8 by the scorer's mapped value, which
+counts unparsed answers differently; the registered wording says "share of
+answers", so the scorer's 0.48 is the number and it holds). The lean is to
+the value "super effective", not to the letter E. **W4, letter clause**
+("the most common answer letter under shuffle falls below 0.40"): not
+measurable from the log, see D-014.
+
+Temperature 0, gemma-3-12b, three epochs: 0.502, interval 0.453 to 0.550,
+range 0.015, against 0.507 and range 0.020 at the host default. **W5 held**:
+inside the default interval, range no larger. The host default was not
+doing much on this rung. Cost about $0.40 for both.
+
+### D-014
+**Inspect's `multiple_choice(shuffle=True)` rewrites the log to look unshuffled and discards the reasoning**
+harness (upstream) · 2026-08-29 · recorded, worked around
+
+After a parsed answer, `pretend_we_didnt_shuffle` in
+`inspect_ai/solver/_multiple_choice.py` replaces the user prompt with the
+unshuffled rendering, replaces the completion with a bare `ANSWER: <letter
+in original order>`, and the model event shares those objects, so the
+written log carries no trace of the order the model saw or of its reasoning
+(the 34 llama and 3 gemma samples with no parsed answer keep the shuffled
+prompt, which is how the shuffle was confirmed to have happened at all).
+The letter is mapped to the option's original position, so the *value* the
+model chose survives and the exact score is right. What is lost: the shown
+letter, so W4's letter clause cannot be scored, and the chain of thought, so
+the error taxonomy cannot be run on these two logs. Anyone using the
+`shuffle` parameter for a position-bias study should shuffle at dataset
+load (`shuffle_choices`) instead, which the parameter's own deprecation
+notice recommends and which leaves the log honest. The `run_ladder`
+`--shuffle` flag stays as is for provenance; a note points here.

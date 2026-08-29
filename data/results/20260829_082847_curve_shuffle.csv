@@ -1,0 +1,3 @@
+model,family,params_total_b,params_active_b,quant,host_pinned,hosts_seen,host_errors,format,max_tokens,items,epochs,exact,exact_stderr,exact_ci95_low,exact_ci95_high,exact_epoch_range,bucket,steps_off,parse_failures,lenient_accuracy,transposed_misses,misses,quad,immune,differs,log
+meta-llama/llama-3.2-3b-instruct,llama-3,3.21,3.21,bf16,Parasail,?:32;Parasail:400,0,table,1024,400,1,0.205,0.0202,0.1683,0.2473,0.0,0.2875,1.52,0.0125,0.205,62,318,0.0612,0.1633,0.2817,2026-08-29T15-25-16-00-00_pokemon-gen1_Ukau2wYDbtgJns5cpxBrZC.eval
+google/gemma-3-4b-it,gemma-3,4.3,4.3,bf16,DeepInfra,?:3;DeepInfra:400,0,table,1024,400,1,0.2625,0.022,0.2218,0.3077,0.0,0.3575,1.275,0.0,0.2625,67,295,0.0408,0.2857,0.2817,2026-08-29T15-26-44-00-00_pokemon-gen1_dXwHUpfehhLpVMyuqvP9kx.eval

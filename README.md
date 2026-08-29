@@ -17,8 +17,11 @@ Run, replication and review round complete, 2026-08-29. Nine open models
 from 1B to 235B plus a ceiling model on the pinned 400, two chart formats;
 the four knee rungs replicated on a second disjoint 400; the one truncated
 rung rerun; after an external review, rows at three epochs on the four knee
-rungs and the 235B MoE on a second host (REVIEW.md, O-006, O-007). $7.22
-total. Thirteen D entries and seven O entries. Paper draft in
+rungs and the 235B MoE on a second host (REVIEW.md, O-006, O-007); after a
+second review, a recall pass on all ten models, shuffled options on the two
+leaning models, and temperature 0 on the 12B rung (REVIEW2.md, O-009,
+O-010, D-014). $9.10 total ($1.88 for the second round against $1.32
+estimated; $3.90 of credit left). Fourteen D entries and ten O entries. Paper draft in
 `writeup/paper/` (untracked until the preprint goes up).
 
 ## Result
@@ -50,6 +53,12 @@ nine of ten. Replicated on a second, disjoint 400-item set for the four
 rungs around the knee (O-005): order and MoE placement hold, every model
 lands within 0.05 of its first number, and "beats always-1" turned out to
 depend on the item mix while "reads the chart" did not.
+
+Without the reference (no chart, no typing list) recall scores 0.14 to
+0.28 through 27B and the 30B MoE, about 0.51 at 32B and 235B, 0.665 for
+the ceiling (O-009). Below 32B the ladder is measuring reading, not memory;
+at 32B and above about two thirds of the hits would have come without the
+reference, so those scores are a ceiling on reference-following.
 
 ## Why this task
 
@@ -315,12 +324,44 @@ qwen3-32b rerun at 4,096 tokens: 0.697 became 0.828, one truncated call
 in 1,200. A 0.13 swing from the token budget alone. The old log is in
 `logs/superseded/`; the curve carries the new point.
 
-### 17. Next
+### 17. Two reviews, five registered runs (O-006, O-007, O-009, O-010, D-014)
 
-The write-up, from the ledger: reference-following as a function of
-model size, with the on-device class as the audience. Publish: GitHub,
-site, the related-work leads in `writeup/RELATED.md` verified first. $1.28
-of credit left; Haiku on rows on the pinned set waits for more.
+Both external reviews of the draft asked the same first question: where is
+the recall condition? Everything so far had the reference in the prompt,
+and nothing but the 71 contradicted cells separated reading from
+remembering. REVIEW.md registered rows at three epochs (V1, V2 held) and a
+second host for the 235B MoE (V3 held, at the edge: hosts differ by 0.04).
+REVIEW2.md registered the recall pass, a shuffle, and a temperature-0 run,
+with five predictions, before spending.
+
+The recall pass is the one that changes how the paper reads. Nobody under
+32B remembers the Generation I chart well enough to beat "always 1"; the
+score at those rungs is reading. At 32B and 235B roughly two thirds of the
+table hits also come from memory, and the ceiling model gets 0.83 of them
+without the reference. The prediction that memory would grow with size was
+half right: gemma-3-27b and qwen3-30b-a3b read the chart well and remember
+almost none of it (W2 failed there).
+
+The shuffle run said the small-model lean is to the value "super
+effective", not to the letter E (W4, value clause). Its letter clause could
+not be scored: Inspect's `shuffle=True` rewrites the logged prompt and
+completion to look unshuffled and keeps only the mapped value, so the
+shown order and the reasoning are gone from the log (D-014). Shuffle at
+dataset load next time. Temperature 0 on gemma-3-12b: 0.502 against 0.507
+at the host default, range 0.015 (W5 held).
+
+```
+python -m src.run_ladder --formats table --chart none --show-types false --log-dir logs/recall
+python -m src.run_ladder --only gemma-3-4b,llama-3.2-3b --formats table --epochs 1 --shuffle --log-dir logs/shuffle
+python -m src.run_ladder --only gemma-3-12b --formats table --temperature 0 --log-dir logs/temp0
+python -m src.recall_join      # W2: table hits also hit by recall, on the 329 agreeing items
+```
+
+### 18. Next
+
+Submit: LIGHT (long, 9 pages, non-archival) first, preprint alongside.
+Publish the repository. Not run: gemma-3-1b (not served), a second MoE
+family, the reference nobody has seen.
 
 ## Reproduce
 

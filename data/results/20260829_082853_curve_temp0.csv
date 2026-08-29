@@ -1,0 +1,2 @@
+model,family,params_total_b,params_active_b,quant,host_pinned,hosts_seen,host_errors,format,max_tokens,items,epochs,exact,exact_stderr,exact_ci95_low,exact_ci95_high,exact_epoch_range,bucket,steps_off,parse_failures,lenient_accuracy,transposed_misses,misses,quad,immune,differs,log
+google/gemma-3-12b-it,gemma-3,12.2,12.2,bf16,DeepInfra,DeepInfra:1200,0,table,1024,400,3,0.5017,0.025,0.4529,0.5504,0.015,0.545,0.8158,0.0,0.5017,182,598,0.2789,0.7687,0.3709,2026-08-29T15-27-20-00-00_pokemon-gen1_KPkkMkbC7QJE6mUPLv5AgZ.eval

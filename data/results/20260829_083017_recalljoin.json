@@ -1,0 +1,102 @@
+[
+  {
+    "model": "google/gemma-3-12b-it",
+    "n_agree": 329,
+    "table_hits_agree": 174,
+    "also_recall": 65,
+    "share_also_recall": 0.374,
+    "recall_acc_agree": 0.277,
+    "recall_acc_all": 0.25,
+    "table_acc_all": 0.51
+  },
+  {
+    "model": "google/gemma-3-27b-it",
+    "n_agree": 329,
+    "table_hits_agree": 220,
+    "also_recall": 61,
+    "share_also_recall": 0.277,
+    "recall_acc_agree": 0.246,
+    "recall_acc_all": 0.25,
+    "table_acc_all": 0.625
+  },
+  {
+    "model": "google/gemma-3-4b-it",
+    "n_agree": 329,
+    "table_hits_agree": 84,
+    "also_recall": 38,
+    "share_also_recall": 0.452,
+    "recall_acc_agree": 0.128,
+    "recall_acc_all": 0.17,
+    "table_acc_all": 0.278
+  },
+  {
+    "model": "meta-llama/llama-3.1-8b-instruct",
+    "n_agree": 329,
+    "table_hits_agree": 72,
+    "also_recall": 17,
+    "share_also_recall": 0.236,
+    "recall_acc_agree": 0.137,
+    "recall_acc_all": 0.14,
+    "table_acc_all": 0.235
+  },
+  {
+    "model": "meta-llama/llama-3.2-1b-instruct",
+    "n_agree": 329,
+    "table_hits_agree": 56,
+    "also_recall": 4,
+    "share_also_recall": 0.071,
+    "recall_acc_agree": 0.061,
+    "recall_acc_all": 0.062,
+    "table_acc_all": 0.16
+  },
+  {
+    "model": "meta-llama/llama-3.2-3b-instruct",
+    "n_agree": 329,
+    "table_hits_agree": 67,
+    "also_recall": 33,
+    "share_also_recall": 0.493,
+    "recall_acc_agree": 0.155,
+    "recall_acc_all": 0.177,
+    "table_acc_all": 0.23
+  },
+  {
+    "model": "openai/gpt-5-nano",
+    "n_agree": 329,
+    "table_hits_agree": 326,
+    "also_recall": 271,
+    "share_also_recall": 0.831,
+    "recall_acc_agree": 0.833,
+    "recall_acc_all": 0.693,
+    "table_acc_all": 0.973
+  },
+  {
+    "model": "qwen/qwen3-235b-a22b-2507",
+    "n_agree": 329,
+    "table_hits_agree": 264,
+    "also_recall": 172,
+    "share_also_recall": 0.652,
+    "recall_acc_agree": 0.556,
+    "recall_acc_all": 0.51,
+    "table_acc_all": 0.77
+  },
+  {
+    "model": "qwen/qwen3-30b-a3b-instruct-2507",
+    "n_agree": 329,
+    "table_hits_agree": 224,
+    "also_recall": 55,
+    "share_also_recall": 0.246,
+    "recall_acc_agree": 0.261,
+    "recall_acc_all": 0.228,
+    "table_acc_all": 0.632
+  },
+  {
+    "model": "qwen/qwen3-32b",
+    "n_agree": 329,
+    "table_hits_agree": 289,
+    "also_recall": 181,
+    "share_also_recall": 0.626,
+    "recall_acc_agree": 0.596,
+    "recall_acc_all": 0.505,
+    "table_acc_all": 0.848
+  }
+]
