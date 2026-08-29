@@ -21,8 +21,8 @@ rungs and the 235B MoE on a second host (REVIEW.md, O-006, O-007); after a
 second review, a recall pass on all ten models, shuffled options on the two
 leaning models, and temperature 0 on the 12B rung (REVIEW2.md, O-009,
 O-010, D-014); after a third, a relabelled-chart pass on all ten and a
-discarded no-thinking run (REVIEW3.md, O-011, O-012, D-015, D-016). $10.45
-total; $2.55 of credit left. Seventeen D entries and thirteen O entries. Paper draft in
+discarded no-thinking run (REVIEW3.md, O-011, O-012, D-015, D-016). $10.57
+total; $2.44 of credit left. Seventeen D entries and thirteen O entries. Paper draft in
 `writeup/paper/` (untracked until the preprint goes up).
 
 ## Result
@@ -392,7 +392,9 @@ contradicted-cell gap was re-done within answer class (it survives from 27B
 up). Filing immunity before mirrored flattens the "immunity is a small-model
 signature" line into "immunity misses become mirror reads with size", which
 is what the paper now says. The review also caught that the 1B truncates
-19.8% and was never rerun under our own 5% rule (D-017).
+19.8% and was never rerun under our own 5% rule (D-017). Rerun at
+4,096: 0.211, still 19.3% unparsed, no call at the cap. Not truncation;
+the 1B just stops without an answer line. The registered run stands.
 
 ```
 python -m src.paired     # paired bootstrap + McNemar over items, differs-within-class

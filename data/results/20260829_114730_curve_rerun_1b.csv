@@ -1,0 +1,2 @@
+model,family,params_total_b,params_active_b,quant,host_pinned,hosts_seen,host_errors,format,max_tokens,items,epochs,exact,exact_stderr,exact_ci95_low,exact_ci95_high,exact_epoch_range,bucket,steps_off,parse_failures,lenient_accuracy,transposed_misses,misses,quad,immune,differs,log
+meta-llama/llama-3.2-1b-instruct,llama-3,1.24,1.24,unknown,Cloudflare,Cloudflare:1200,0,table,4096,400,3,0.2108,0.0204,0.1737,0.2535,0.0575,0.2392,1.9375,0.1925,0.2358,167,947,0.0068,0.1293,0.1455,2026-08-29T18-34-09-00-00_pokemon-gen1_eWGnp3i4V7PcoSKUpFaeh2.eval

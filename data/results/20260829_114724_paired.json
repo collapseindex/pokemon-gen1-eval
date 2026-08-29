@@ -1,0 +1,536 @@
+{
+  "pairs": [
+    {
+      "comparison": "Llama 1B -> 3B, table",
+      "a": "llama-3.2-1b-instruct",
+      "b": "llama-3.2-3b-instruct",
+      "d": 0.0275,
+      "boot95": [
+        -0.0133,
+        0.0683
+      ],
+      "discordant": [
+        48,
+        76
+      ],
+      "mcnemar_p": 0.01498
+    },
+    {
+      "comparison": "Llama 3B -> 8B, table",
+      "a": "llama-3.2-3b-instruct",
+      "b": "llama-3.1-8b-instruct",
+      "d": 0.0292,
+      "boot95": [
+        -0.005,
+        0.0633
+      ],
+      "discordant": [
+        53,
+        55
+      ],
+      "mcnemar_p": 0.9234
+    },
+    {
+      "comparison": "Llama 1B -> 8B, table",
+      "a": "llama-3.2-1b-instruct",
+      "b": "llama-3.1-8b-instruct",
+      "d": 0.0567,
+      "boot95": [
+        0.0192,
+        0.0925
+      ],
+      "discordant": [
+        43,
+        73
+      ],
+      "mcnemar_p": 0.00683
+    },
+    {
+      "comparison": "Gemma 4B -> 12B, table",
+      "a": "gemma-3-4b-it",
+      "b": "gemma-3-12b-it",
+      "d": 0.2325,
+      "boot95": [
+        0.185,
+        0.2792
+      ],
+      "discordant": [
+        41,
+        134
+      ],
+      "mcnemar_p": 0.0
+    },
+    {
+      "comparison": "Gemma 4B vs Llama 8B, table",
+      "a": "gemma-3-4b-it",
+      "b": "llama-3.1-8b-instruct",
+      "d": 0.0042,
+      "boot95": [
+        -0.0342,
+        0.0425
+      ],
+      "discordant": [
+        65,
+        48
+      ],
+      "mcnemar_p": 0.13192
+    },
+    {
+      "comparison": "Gemma 27B vs Qwen 30B-A3B, table",
+      "a": "gemma-3-27b-it",
+      "b": "qwen3-30b-a3b-instruct-2507",
+      "d": 0.0258,
+      "boot95": [
+        -0.0142,
+        0.0675
+      ],
+      "discordant": [
+        50,
+        53
+      ],
+      "mcnemar_p": 0.8439
+    },
+    {
+      "comparison": "Qwen 30B-A3B vs 32B, table",
+      "a": "qwen3-30b-a3b-instruct-2507",
+      "b": "qwen3-32b",
+      "d": 0.1858,
+      "boot95": [
+        0.1458,
+        0.2242
+      ],
+      "discordant": [
+        16,
+        102
+      ],
+      "mcnemar_p": 0.0
+    },
+    {
+      "comparison": "Qwen 235B-A22B vs 32B, table",
+      "a": "qwen3-235b-a22b-2507",
+      "b": "qwen3-32b",
+      "d": 0.0642,
+      "boot95": [
+        0.0258,
+        0.1025
+      ],
+      "discordant": [
+        31,
+        62
+      ],
+      "mcnemar_p": 0.00171
+    },
+    {
+      "comparison": "qwen3-32b: table -> rows",
+      "a": "qwen3-32b",
+      "b": "qwen3-32b",
+      "d": 0.1017,
+      "boot95": [
+        0.0683,
+        0.135
+      ],
+      "discordant": [
+        20,
+        53
+      ],
+      "mcnemar_p": 0.00014
+    },
+    {
+      "comparison": "gpt-5-nano: table -> rows",
+      "a": "gpt-5-nano",
+      "b": "gpt-5-nano",
+      "d": 0.0333,
+      "boot95": [
+        0.0158,
+        0.0508
+      ],
+      "discordant": [
+        5,
+        11
+      ],
+      "mcnemar_p": 0.21011
+    },
+    {
+      "comparison": "qwen3-235b-a22b-2507: table -> rows",
+      "a": "qwen3-235b-a22b-2507",
+      "b": "qwen3-235b-a22b-2507",
+      "d": 0.0783,
+      "boot95": [
+        0.0417,
+        0.1142
+      ],
+      "discordant": [
+        18,
+        47
+      ],
+      "mcnemar_p": 0.00042
+    },
+    {
+      "comparison": "qwen3-30b-a3b: table -> rows",
+      "a": "qwen3-30b-a3b-instruct-2507",
+      "b": "qwen3-30b-a3b-instruct-2507",
+      "d": 0.1775,
+      "boot95": [
+        0.135,
+        0.22
+      ],
+      "discordant": [
+        13,
+        88
+      ],
+      "mcnemar_p": 0.0
+    },
+    {
+      "comparison": "gemma-3-27b-it: table -> rows",
+      "a": "gemma-3-27b-it",
+      "b": "gemma-3-27b-it",
+      "d": 0.0708,
+      "boot95": [
+        0.0292,
+        0.1125
+      ],
+      "discordant": [
+        35,
+        60
+      ],
+      "mcnemar_p": 0.01338
+    },
+    {
+      "comparison": "gemma-3-12b-it: table -> rows",
+      "a": "gemma-3-12b-it",
+      "b": "gemma-3-12b-it",
+      "d": 0.135,
+      "boot95": [
+        0.0875,
+        0.1833
+      ],
+      "discordant": [
+        36,
+        89
+      ],
+      "mcnemar_p": 0.0
+    },
+    {
+      "comparison": "llama-3.1-8b: table -> rows",
+      "a": "llama-3.1-8b-instruct",
+      "b": "llama-3.1-8b-instruct",
+      "d": 0.1533,
+      "boot95": [
+        0.1042,
+        0.2033
+      ],
+      "discordant": [
+        38,
+        117
+      ],
+      "mcnemar_p": 0.0
+    },
+    {
+      "comparison": "gemma-3-4b-it: table -> rows",
+      "a": "gemma-3-4b-it",
+      "b": "gemma-3-4b-it",
+      "d": 0.175,
+      "boot95": [
+        0.1225,
+        0.2292
+      ],
+      "discordant": [
+        44,
+        113
+      ],
+      "mcnemar_p": 0.0
+    },
+    {
+      "comparison": "llama-3.2-3b: table -> rows",
+      "a": "llama-3.2-3b-instruct",
+      "b": "llama-3.2-3b-instruct",
+      "d": -0.01,
+      "boot95": [
+        -0.0475,
+        0.0283
+      ],
+      "discordant": [
+        37,
+        41
+      ],
+      "mcnemar_p": 0.73434
+    },
+    {
+      "comparison": "llama-3.2-1b: table -> rows",
+      "a": "llama-3.2-1b-instruct",
+      "b": "llama-3.2-1b-instruct",
+      "d": 0.0725,
+      "boot95": [
+        0.025,
+        0.1208
+      ],
+      "discordant": [
+        39,
+        93
+      ],
+      "mcnemar_p": 0.0
+    }
+  ],
+  "differs_within_class": {
+    "gemma-3-12b-it": {
+      "0": {
+        "differs": 0.69,
+        "n_differs": 14,
+        "rest": 0.741,
+        "n_rest": 49
+      },
+      "1": {
+        "differs": 0.383,
+        "n_differs": 20,
+        "rest": 0.545,
+        "n_rest": 143
+      },
+      "2": {
+        "differs": 0.397,
+        "n_differs": 26,
+        "rest": 0.45,
+        "n_rest": 43
+      },
+      "4": {
+        "differs": 0.242,
+        "n_differs": 11,
+        "rest": 0.185,
+        "n_rest": 18
+      }
+    },
+    "gemma-3-27b-it": {
+      "0": {
+        "differs": 0.214,
+        "n_differs": 14,
+        "rest": 0.803,
+        "n_rest": 49
+      },
+      "1": {
+        "differs": 0.25,
+        "n_differs": 20,
+        "rest": 0.767,
+        "n_rest": 143
+      },
+      "2": {
+        "differs": 0.769,
+        "n_differs": 26,
+        "rest": 0.69,
+        "n_rest": 43
+      },
+      "4": {
+        "differs": 0.394,
+        "n_differs": 11,
+        "rest": 0.259,
+        "n_rest": 18
+      }
+    },
+    "gemma-3-4b-it": {
+      "0": {
+        "differs": 0.476,
+        "n_differs": 14,
+        "rest": 0.347,
+        "n_rest": 49
+      },
+      "1": {
+        "differs": 0.05,
+        "n_differs": 20,
+        "rest": 0.152,
+        "n_rest": 143
+      },
+      "2": {
+        "differs": 0.769,
+        "n_differs": 26,
+        "rest": 0.783,
+        "n_rest": 43
+      },
+      "4": {
+        "differs": 0.0,
+        "n_differs": 11,
+        "rest": 0.019,
+        "n_rest": 18
+      }
+    },
+    "gpt-5-nano": {
+      "0": {
+        "differs": 0.738,
+        "n_differs": 14,
+        "rest": 0.993,
+        "n_rest": 49
+      },
+      "1": {
+        "differs": 0.8,
+        "n_differs": 20,
+        "rest": 0.977,
+        "n_rest": 143
+      },
+      "2": {
+        "differs": 0.949,
+        "n_differs": 26,
+        "rest": 0.969,
+        "n_rest": 43
+      },
+      "4": {
+        "differs": 1.0,
+        "n_differs": 11,
+        "rest": 0.981,
+        "n_rest": 18
+      }
+    },
+    "llama-3.1-8b-instruct": {
+      "0": {
+        "differs": 0.167,
+        "n_differs": 14,
+        "rest": 0.293,
+        "n_rest": 49
+      },
+      "1": {
+        "differs": 0.15,
+        "n_differs": 20,
+        "rest": 0.266,
+        "n_rest": 143
+      },
+      "2": {
+        "differs": 0.628,
+        "n_differs": 26,
+        "rest": 0.38,
+        "n_rest": 43
+      },
+      "4": {
+        "differs": 0.061,
+        "n_differs": 11,
+        "rest": 0.019,
+        "n_rest": 18
+      }
+    },
+    "llama-3.2-1b-instruct": {
+      "0": {
+        "differs": 0.143,
+        "n_differs": 14,
+        "rest": 0.095,
+        "n_rest": 49
+      },
+      "1": {
+        "differs": 0.417,
+        "n_differs": 20,
+        "rest": 0.378,
+        "n_rest": 143
+      },
+      "2": {
+        "differs": 0.192,
+        "n_differs": 26,
+        "rest": 0.14,
+        "n_rest": 43
+      },
+      "4": {
+        "differs": 0.03,
+        "n_differs": 11,
+        "rest": 0.019,
+        "n_rest": 18
+      }
+    },
+    "llama-3.2-3b-instruct": {
+      "0": {
+        "differs": 0.119,
+        "n_differs": 14,
+        "rest": 0.204,
+        "n_rest": 49
+      },
+      "1": {
+        "differs": 0.05,
+        "n_differs": 20,
+        "rest": 0.182,
+        "n_rest": 143
+      },
+      "2": {
+        "differs": 0.795,
+        "n_differs": 26,
+        "rest": 0.659,
+        "n_rest": 43
+      },
+      "4": {
+        "differs": 0.03,
+        "n_differs": 11,
+        "rest": 0.019,
+        "n_rest": 18
+      }
+    },
+    "qwen3-235b-a22b-2507": {
+      "0": {
+        "differs": 0.905,
+        "n_differs": 14,
+        "rest": 0.973,
+        "n_rest": 49
+      },
+      "1": {
+        "differs": 0.4,
+        "n_differs": 20,
+        "rest": 0.755,
+        "n_rest": 143
+      },
+      "2": {
+        "differs": 0.641,
+        "n_differs": 26,
+        "rest": 0.752,
+        "n_rest": 43
+      },
+      "4": {
+        "differs": 0.485,
+        "n_differs": 11,
+        "rest": 0.778,
+        "n_rest": 18
+      }
+    },
+    "qwen3-30b-a3b-instruct-2507": {
+      "0": {
+        "differs": 0.143,
+        "n_differs": 14,
+        "rest": 0.782,
+        "n_rest": 49
+      },
+      "1": {
+        "differs": 0.367,
+        "n_differs": 20,
+        "rest": 0.86,
+        "n_rest": 143
+      },
+      "2": {
+        "differs": 0.705,
+        "n_differs": 26,
+        "rest": 0.512,
+        "n_rest": 43
+      },
+      "4": {
+        "differs": 0.303,
+        "n_differs": 11,
+        "rest": 0.019,
+        "n_rest": 18
+      }
+    },
+    "qwen3-32b": {
+      "0": {
+        "differs": 0.548,
+        "n_differs": 14,
+        "rest": 0.966,
+        "n_rest": 49
+      },
+      "1": {
+        "differs": 0.783,
+        "n_differs": 20,
+        "rest": 0.902,
+        "n_rest": 143
+      },
+      "2": {
+        "differs": 0.731,
+        "n_differs": 26,
+        "rest": 0.884,
+        "n_rest": 43
+      },
+      "4": {
+        "differs": 0.636,
+        "n_differs": 11,
+        "rest": 0.63,
+        "n_rest": 18
+      }
+    }
+  }
+}

@@ -1,0 +1,382 @@
+[
+  {
+    "model": "google/gemma-3-12b-it",
+    "epochs": 3,
+    "position_accuracy": {
+      "1-30": {
+        "n": 261,
+        "accuracy": 0.49
+      },
+      "31-60": {
+        "n": 219,
+        "accuracy": 0.548
+      },
+      "61-90": {
+        "n": 270,
+        "accuracy": 0.544
+      },
+      "91-120": {
+        "n": 210,
+        "accuracy": 0.433
+      },
+      "121-151": {
+        "n": 240,
+        "accuracy": 0.512
+      }
+    },
+    "lookup_misses": 311,
+    "lookup_split": {
+      "wrong-line": 24,
+      "right-line": 287,
+      "unstated": 0
+    },
+    "lookup_split_share": {
+      "wrong-line": 0.077,
+      "right-line": 0.923,
+      "unstated": 0.0
+    },
+    "log": "2026-08-29T09-47-58-00-00_pokemon-gen1_UQwR3AFkTLUv36VFnXoWbA.eval"
+  },
+  {
+    "model": "google/gemma-3-27b-it",
+    "epochs": 3,
+    "position_accuracy": {
+      "1-30": {
+        "n": 261,
+        "accuracy": 0.72
+      },
+      "31-60": {
+        "n": 219,
+        "accuracy": 0.562
+      },
+      "61-90": {
+        "n": 270,
+        "accuracy": 0.604
+      },
+      "91-120": {
+        "n": 210,
+        "accuracy": 0.59
+      },
+      "121-151": {
+        "n": 240,
+        "accuracy": 0.592
+      }
+    },
+    "lookup_misses": 146,
+    "lookup_split": {
+      "wrong-line": 1,
+      "right-line": 145,
+      "unstated": 0
+    },
+    "lookup_split_share": {
+      "wrong-line": 0.007,
+      "right-line": 0.993,
+      "unstated": 0.0
+    },
+    "log": "2026-08-29T09-49-05-00-00_pokemon-gen1_UYjWkDT2Jpp8ozYXV7M9RE.eval"
+  },
+  {
+    "model": "google/gemma-3-4b-it",
+    "epochs": 3,
+    "position_accuracy": {
+      "1-30": {
+        "n": 261,
+        "accuracy": 0.295
+      },
+      "31-60": {
+        "n": 219,
+        "accuracy": 0.233
+      },
+      "61-90": {
+        "n": 270,
+        "accuracy": 0.267
+      },
+      "91-120": {
+        "n": 210,
+        "accuracy": 0.29
+      },
+      "121-151": {
+        "n": 240,
+        "accuracy": 0.287
+      }
+    },
+    "lookup_misses": 492,
+    "lookup_split": {
+      "wrong-line": 76,
+      "right-line": 401,
+      "unstated": 15
+    },
+    "lookup_split_share": {
+      "wrong-line": 0.154,
+      "right-line": 0.815,
+      "unstated": 0.03
+    },
+    "log": "2026-08-29T09-44-27-00-00_pokemon-gen1_cMf4WuhhNmgnV8m4cASAMm.eval"
+  },
+  {
+    "model": "meta-llama/llama-3.1-8b-instruct",
+    "epochs": 3,
+    "position_accuracy": {
+      "1-30": {
+        "n": 261,
+        "accuracy": 0.33
+      },
+      "31-60": {
+        "n": 219,
+        "accuracy": 0.288
+      },
+      "61-90": {
+        "n": 270,
+        "accuracy": 0.256
+      },
+      "91-120": {
+        "n": 210,
+        "accuracy": 0.252
+      },
+      "121-151": {
+        "n": 240,
+        "accuracy": 0.267
+      }
+    },
+    "lookup_misses": 466,
+    "lookup_split": {
+      "wrong-line": 21,
+      "right-line": 411,
+      "unstated": 34
+    },
+    "lookup_split_share": {
+      "wrong-line": 0.045,
+      "right-line": 0.882,
+      "unstated": 0.073
+    },
+    "log": "2026-08-29T09-45-43-00-00_pokemon-gen1_cmwEdVLftYe24scexhiLPV.eval"
+  },
+  {
+    "model": "meta-llama/llama-3.2-1b-instruct",
+    "epochs": 3,
+    "position_accuracy": {
+      "1-30": {
+        "n": 261,
+        "accuracy": 0.28
+      },
+      "31-60": {
+        "n": 219,
+        "accuracy": 0.219
+      },
+      "61-90": {
+        "n": 270,
+        "accuracy": 0.204
+      },
+      "91-120": {
+        "n": 210,
+        "accuracy": 0.195
+      },
+      "121-151": {
+        "n": 240,
+        "accuracy": 0.208
+      }
+    },
+    "lookup_misses": 329,
+    "lookup_split": {
+      "wrong-line": 148,
+      "right-line": 82,
+      "unstated": 99
+    },
+    "lookup_split_share": {
+      "wrong-line": 0.45,
+      "right-line": 0.249,
+      "unstated": 0.301
+    },
+    "log": "2026-08-29T09-38-19-00-00_pokemon-gen1_UEgA8aDkCzmq59mVHi3ubA.eval"
+  },
+  {
+    "model": "meta-llama/llama-3.2-3b-instruct",
+    "epochs": 3,
+    "position_accuracy": {
+      "1-30": {
+        "n": 261,
+        "accuracy": 0.33
+      },
+      "31-60": {
+        "n": 219,
+        "accuracy": 0.265
+      },
+      "61-90": {
+        "n": 270,
+        "accuracy": 0.181
+      },
+      "91-120": {
+        "n": 210,
+        "accuracy": 0.248
+      },
+      "121-151": {
+        "n": 240,
+        "accuracy": 0.229
+      }
+    },
+    "lookup_misses": 468,
+    "lookup_split": {
+      "wrong-line": 73,
+      "right-line": 254,
+      "unstated": 141
+    },
+    "lookup_split_share": {
+      "wrong-line": 0.156,
+      "right-line": 0.543,
+      "unstated": 0.301
+    },
+    "log": "2026-08-29T09-39-38-00-00_pokemon-gen1_3udPGpCz22S8tB54PYjfqa.eval"
+  },
+  {
+    "model": "openai/gpt-5-nano",
+    "epochs": 3,
+    "position_accuracy": {
+      "1-30": {
+        "n": 261,
+        "accuracy": 0.969
+      },
+      "31-60": {
+        "n": 219,
+        "accuracy": 0.954
+      },
+      "61-90": {
+        "n": 270,
+        "accuracy": 0.967
+      },
+      "91-120": {
+        "n": 210,
+        "accuracy": 0.933
+      },
+      "121-151": {
+        "n": 240,
+        "accuracy": 0.942
+      }
+    },
+    "lookup_misses": 24,
+    "lookup_split": {
+      "wrong-line": 0,
+      "right-line": 11,
+      "unstated": 13
+    },
+    "lookup_split_share": {
+      "wrong-line": 0.0,
+      "right-line": 0.458,
+      "unstated": 0.542
+    },
+    "log": "2026-08-29T10-02-32-00-00_pokemon-gen1_MbHRJKBdKpZqoFoZujCwL8.eval"
+  },
+  {
+    "model": "qwen/qwen3-235b-a22b-2507",
+    "epochs": 3,
+    "position_accuracy": {
+      "1-30": {
+        "n": 261,
+        "accuracy": 0.793
+      },
+      "31-60": {
+        "n": 219,
+        "accuracy": 0.735
+      },
+      "61-90": {
+        "n": 270,
+        "accuracy": 0.748
+      },
+      "91-120": {
+        "n": 210,
+        "accuracy": 0.805
+      },
+      "121-151": {
+        "n": 240,
+        "accuracy": 0.742
+      }
+    },
+    "lookup_misses": 100,
+    "lookup_split": {
+      "wrong-line": 0,
+      "right-line": 100,
+      "unstated": 0
+    },
+    "lookup_split_share": {
+      "wrong-line": 0.0,
+      "right-line": 1.0,
+      "unstated": 0.0
+    },
+    "log": "2026-08-29T09-59-27-00-00_pokemon-gen1_QNzKSYBXbJdsgKpfaMtxjx.eval"
+  },
+  {
+    "model": "qwen/qwen3-30b-a3b-instruct-2507",
+    "epochs": 3,
+    "position_accuracy": {
+      "1-30": {
+        "n": 261,
+        "accuracy": 0.739
+      },
+      "31-60": {
+        "n": 219,
+        "accuracy": 0.63
+      },
+      "61-90": {
+        "n": 270,
+        "accuracy": 0.644
+      },
+      "91-120": {
+        "n": 210,
+        "accuracy": 0.59
+      },
+      "121-151": {
+        "n": 240,
+        "accuracy": 0.592
+      }
+    },
+    "lookup_misses": 170,
+    "lookup_split": {
+      "wrong-line": 0,
+      "right-line": 169,
+      "unstated": 1
+    },
+    "lookup_split_share": {
+      "wrong-line": 0.0,
+      "right-line": 0.994,
+      "unstated": 0.006
+    },
+    "log": "2026-08-29T09-54-37-00-00_pokemon-gen1_dXi5ocVZgUwmZ6n49Hy9bU.eval"
+  },
+  {
+    "model": "qwen/qwen3-32b",
+    "epochs": 3,
+    "position_accuracy": {
+      "1-30": {
+        "n": 261,
+        "accuracy": 0.866
+      },
+      "31-60": {
+        "n": 219,
+        "accuracy": 0.804
+      },
+      "61-90": {
+        "n": 270,
+        "accuracy": 0.815
+      },
+      "91-120": {
+        "n": 210,
+        "accuracy": 0.843
+      },
+      "121-151": {
+        "n": 240,
+        "accuracy": 0.812
+      }
+    },
+    "lookup_misses": 93,
+    "lookup_split": {
+      "wrong-line": 1,
+      "right-line": 57,
+      "unstated": 35
+    },
+    "lookup_split_share": {
+      "wrong-line": 0.011,
+      "right-line": 0.613,
+      "unstated": 0.376
+    },
+    "log": "2026-08-29T10-44-35-00-00_pokemon-gen1_5xhPdCXd5XaZRmunkrCEFR.eval"
+  }
+]

@@ -43,7 +43,7 @@ Ids are permanent. PLAN.md is never edited; a mistake in it is a D entry here.
 | [O-012](#o-012) | relabelled chart, all ten models (REVIEW3.md run 1) | with the 15 type names permuted (memory of the real chart useless), every model lands within 0.06 of its real-chart score (X1 5 of 7; X2 failed: the 235B and the ceiling moved under 0.02, the 32B's drop is its 1,024-token budget); the contradicted cells rise from 0.43-0.60 to 0.52-0.82 from 12B up: the prior is a tax on the cells it contradicts, not a subsidy on the rest | scored |
 | [D-016](#d-016) | reasoning flag, upstream | REVIEW3.md run 2 asked OpenRouter for `reasoning: {enabled: false}` on qwen3-32b; DeepInfra served reasoning on 1,200 of 1,200 calls (557 output tokens, 12.6% truncated at 1,024); run discarded as registered, X4/X5 unscored; its 0.686 replicates the D-012 floor (0.697) | recorded, $0.50 spent |
 | [O-013](#o-013) | paired tests, within-class differs gap, taxonomy ordering (review 4) | paired over items: Gemma 4B->12B +0.233 [+0.185, +0.279]; Llama 1B->8B +0.057 [+0.019, +0.092] (p=0.007, so not inside the noise as the draft said); 27B vs 30B-A3B +0.026 [-0.014, +0.068] (level); rows gain excludes zero for 9 of 10; within answer class the contradicted-cell gap is clear from 27B up and inconsistent below; with immunity filed before mirrored the immunity share is flat 0.13 to 0.24 at every rung but 235B | scored |
-| [D-017](#d-017) | token budget rule | llama-3.2-1b truncates 19.8% of table calls at 1,024 and was never rerun under the 5% rule that reran nano (D-007) and the 32B (D-012); its rung is a floor until it is | recorded |
+| [D-017](#d-017) | token budget rule | llama-3.2-1b leaves 19.8% of table answers unparsed at 1,024 and was never rerun under the 5% rule; rerun at 4,096: 0.211, 19.3% unparsed, no call at the cap, so the unparsed answers are missing answer lines, not truncation; the registered run stands | resolved |
 
 ## Defects in this harness
 
@@ -978,5 +978,13 @@ truncates 19.8% of its table calls and 17.2% under rows at 1,024, and was
 never rerun. A fourth review caught it. The rerun would cost about $0.10;
 it is not in the submission because the deadline was hours away and the
 paper's claims about the 1B rung are that it is at chance with or without
-the reference, which a rerun can only raise. Its rung is reported as a
-floor. If rerun, replace the 1B row of Table 1 and this entry.
+the reference, which a rerun can only raise.
+
+**Resolved the same day.** Rerun at 4,096 tokens, table x3, same host
+(`logs/rerun_1b/`): 0.211 [0.174, 0.254], range 0.058, against 0.223 at
+1,024; 231 of 1,200 answers unparsed (19.3%, against 19.8%); every one of
+the 1,200 calls ended with `stop`, the longest completion was 1,955 tokens
+and the mean 129. So the 1B's unparsed answers are not truncation: the
+model ends its reply without an `ANSWER:` line. The 5% rule is a truncation
+rule and did not in fact apply; the registered 1,024 run stands as the
+pinned number and the paper says why. About $0.10.
