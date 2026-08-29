@@ -2,7 +2,7 @@
 
 **A narrow capability eval, built the way a safety eval is built.**
 
-v0.1.0 · Apache-2.0 · pre-registered in [PLAN.md](PLAN.md) (commit `82c6bde`, blob `378f365` via `git hash-object PLAN.md`; not edited after this line) · addendum [ADDENDUM.md](ADDENDUM.md) (commit `8717c65`, blob `b3eee1d`; supersedes the plan's conditions, models, ceiling and P2/P4/P5/P6; not edited after this line) · replication [REPLICATION.md](REPLICATION.md) (commit `3e389fc`, blob `d6a1573`; not edited after this line) · review runs [REVIEW.md](REVIEW.md) (commit `94313fe`, blob `4faeb2b`; not edited after this line) · second review round [REVIEW2.md](REVIEW2.md) (commit `9f8f94f`, blob `4236e69`; not edited after this line) · ledger in [FINDINGS.md](FINDINGS.md)
+v0.1.0 · Apache-2.0 · pre-registered in [PLAN.md](PLAN.md) (commit `82c6bde`, blob `378f365` via `git hash-object PLAN.md`; not edited after this line) · addendum [ADDENDUM.md](ADDENDUM.md) (commit `8717c65`, blob `b3eee1d`; supersedes the plan's conditions, models, ceiling and P2/P4/P5/P6; not edited after this line) · replication [REPLICATION.md](REPLICATION.md) (commit `3e389fc`, blob `d6a1573`; not edited after this line) · review runs [REVIEW.md](REVIEW.md) (commit `94313fe`, blob `4faeb2b`; not edited after this line) · second review round [REVIEW2.md](REVIEW2.md) (commit `9f8f94f`, blob `4236e69`; not edited after this line) · third review round [REVIEW3.md](REVIEW3.md) (commit `a69a11b`, blob `8f0b7d2`; not edited after this line) · ledger in [FINDINGS.md](FINDINGS.md)
 
 Six-way multiple choice on the damage multiplier when a move of one of the 15
 Generation I types hits one of the original 151 Pokémon as typed in Red/Blue.

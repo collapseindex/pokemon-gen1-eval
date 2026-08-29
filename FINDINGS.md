@@ -38,6 +38,7 @@ Ids are permanent. PLAN.md is never edited; a mistake in it is a D entry here.
 | [O-009](#o-009) | recall pass, all ten models (REVIEW2.md run 1) | with no chart and no typing list, recall is 0.14 to 0.28 through 27B and the 30B MoE, about 0.51 at 32B and 235B, 0.665 for the ceiling; the reference lifts 8 of 9 open models beyond the sum of both ranges (W1); below 32B under a third of table hits also come from memory, at 32B and above about two thirds (W2 half held); recall is below the majority baseline through 27B (W3 held) | scored |
 | [O-010](#o-010) | shuffled options and temperature 0 (REVIEW2.md runs 2, 3) | under per-item shuffle gemma-3-4b and llama-3.2-3b still answer "2" on 0.63 and 0.48 of items: a value lean, not a letter lean (W4 value clause held; letter clause not measurable, D-014); gemma-3-12b at temperature 0 scores 0.502, range 0.015, inside the default interval (W5 held) | scored |
 | [D-014](#d-014) | Inspect shuffle | `multiple_choice(shuffle=True)` rewrites the logged prompt and completion to look unshuffled and drops the reasoning; only the mapped value survives, so the shown letter cannot be studied from the log; shuffle at dataset load instead | recorded, upstream |
+| [O-011](#o-011) | the Qwen rungs, thinking mode (review 3) | the two Qwen MoEs are the -2507 instruct variants: zero reasoning blocks, zero truncation, ~167 output tokens per call; qwen3-32b reasoned on every call (~618 tokens); the D-012 artefact does not touch the MoEs, but the 30B-A3B vs 32B gap is sparse-vs-dense and thinking-vs-not together; REVIEW3.md run 2 separates them | scored |
 
 ## Defects in this harness
 
@@ -824,3 +825,25 @@ the error taxonomy cannot be run on these two logs. Anyone using the
 load (`shuffle_choices`) instead, which the parameter's own deprecation
 notice recommends and which leaves the log honest. The `run_ladder`
 `--shuffle` flag stays as is for provenance; a note points here.
+
+### O-011
+**The two Qwen mixtures did not think; the 32B did on every call**
+logs/pinned, Qwen rungs · 2026-08-29
+
+Asked by the third review: were the MoEs run with thinking, and what were
+their truncation rates? From the pinned table logs (`stop_reason` and
+reasoning content blocks per sample):
+
+| model | reasoning blocks / 1,200 | stops | mean output tokens |
+|---|---|---|---|
+| qwen3-30b-a3b-instruct-2507 | 0 | 1,200 stop | 167 |
+| qwen3-235b-a22b-2507 | 0 | 1,200 stop | 167 |
+| qwen3-32b (4,096) | 1,200 | 1,199 stop, 1 max_tokens | 618 |
+
+The `-2507` instruct variants have no thinking mode; the 32B is the hybrid
+model and OpenRouter/DeepInfra served it with reasoning on. So the token
+budget artefact (D-012) does not touch the MoEs, and the 0.19 gap between
+the 30B-A3B and the 32B is two differences at once, sparse-versus-dense and
+thinking-versus-not, plus different post-training. The paper now says so,
+and REVIEW3.md run 2 (the 32B with reasoning disabled) is registered to
+separate them. Cost: none (existing logs).
