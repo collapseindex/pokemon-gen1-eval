@@ -26,6 +26,7 @@ Ids are permanent. PLAN.md is never edited; a mistake in it is a D entry here.
 | [O-002](#o-002) | four models, dev set, two chart formats | rows beats table for every model (+0.07 to +0.19 exact); for Haiku and Qwen the transposed misses fall with the format, for Gemini Flash-Lite they do not: its mirror-cell answers come from its prior, not the grid | observed on dev, not scored against a prediction |
 | [D-009](#d-009) | upstream routing | OpenRouter split one llama run across two hosts and one of them returned HTTP 500 mid-generation on 31 of 100 items, scored as parse failures; provider pinned, host recorded per run; Qwen was served by ten different hosts in one run | fixed, census added |
 | [O-003](#o-003) | two on-device-class models, dev set | llama-3.2-3b at chance (0.18) in both formats; gemma-3-4b below the majority baseline (0.26 table, 0.34 rows) with immunities the worst stratum | observed on dev, not scored against a prediction |
+| [D-011](#d-011) | parse_failures metric | wrong whenever epochs > 1: Inspect's epoch reduction drops the `answer` field, so the in-log metric reads 0.94 on a run whose true rate is 0.198; analyze, which reads per-epoch samples, is the record | open until the ladder finishes, then fixed |
 | [D-010](#d-010) | model list | the question changed from "four labs" to "how small a model can do this": a nine-model size ladder replaces the addendum's list; Haiku and Flash-Lite drop from the pinned run (dev numbers kept); host, quantisation and parameter counts pinned in a registry; A7 registered | deviation declared |
 
 ## Defects in this harness
@@ -415,3 +416,32 @@ larger than the two epoch ranges. The 30B-A3B MoE lands nearer the 3B-4B
 points than the 32B dense point on exact accuracy: active parameters, not
 total, predict this task. The smallest model to reach 0.90 exact under
 table is at or above 12B.
+
+### D-011
+**The parse-failure metric lies as soon as there is more than one epoch**
+`src/task.py` parse_failures · llama-3.2-1b, pinned set, 3 epochs · 2026-08-29 · open, fix after the ladder
+
+First rung of the ladder: the in-log `parse_failures` read **0.943**. The
+per-epoch samples say 238 of 1,200, **0.198**. The metric counts a score
+as unparsed when `score.answer` is empty; with `epochs > 1` Inspect reduces
+the three scores per item to one before metrics run, and the reduced score
+carries a numeric value (0.667 for two hits in three) and `answer=None`.
+Every reduced score therefore looks unparsed. On every one-epoch dev run
+the number was right, which is why it was trusted; the first three-epoch
+run is the first time the reducer touched it.
+
+Consequences, in order. The rate in `analyze` is computed from the raw
+per-epoch samples and is correct (`parse_failures 0.1983` for this log);
+the curve CSV takes it from there. The in-log metric is wrong for every
+pinned run and must not be read from `inspect view`. The fix is a third
+scorer whose *value* is 1 or 0 for parsed, which reduces correctly by mean;
+it is not applied while the ladder is running, because `run_ladder`
+loads `task.py` fresh for each rung and a scorer added mid-ladder would
+give the later rungs a different scorer set from the earlier ones.
+Applied and negative-tested at epochs=2 once the ladder exits.
+
+What the 1B failures are, since the number is now real: all 1,200 calls
+finished `stop` on one host with zero host errors. The 238 unparsed
+completions either give the answer without the required last line ("The
+correct answer is C) 1/2") or start reproducing the type chart. That is
+the model, and it is counted against it as the format demands.
