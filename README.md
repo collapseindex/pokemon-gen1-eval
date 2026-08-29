@@ -6,16 +6,19 @@ v0.1.0 · Apache-2.0 · pre-registered in [PLAN.md](PLAN.md) (commit `82c6bde`, 
 
 Six-way multiple choice on the damage multiplier when a move of one of the 15
 Generation I types hits one of the original 151 Pokémon as typed in Red/Blue.
-The answer key is generated from PokeAPI's tables, never typed. Four conditions
-separate recall of the typings, recall of the chart, applying a chart that is
-given, and following a given chart that contradicts the memorised one.
+The answer key is generated from PokeAPI's tables, never typed. The chart and
+the full typing list are in the prompt, so the task is find, look up, multiply:
+nothing is recalled. Exact match is the score; how close a miss was is
+reported beside it, never blended in.
 
 ## Status
 
 Harness complete, no model called yet. Key built and verified on 26 known
-cells; 400-item set pinned; 100-item dev set drawn disjoint from it; scorer,
-metrics and the analysis script all negative-tested with a mock model. Four
-ledger entries, all against the harness, all found before the first API call.
+cells; 400-item set pinned; 100-item dev set drawn disjoint from it; both
+scorers, the metrics and the analysis script negative-tested with a mock
+model. Five ledger entries, all against the harness or the plan, all found
+before the first API call. Registered condition: chart and full typing list
+in context, four models across four labs, three epochs, under $4.
 
 ## Why this task
 
@@ -138,12 +141,41 @@ Analyze is negative-tested too: an always-"1" mock must come back with
 accuracy equal to the majority share, only letter D predicted, and 0.0 on
 immune and quad.
 
-### 9. Next
+### 9. The budget did the multiplication the plan skipped (D-005)
 
-Haiku on the dev set, condition B, one epoch. Read in this order: parse
+Pricing the registered grid honestly: ~19,200 calls, ~$157 at list price,
+against $7 of OpenRouter credit and a plan that said $30. Same failure as
+data-deltas D-003 (a batch size nobody multiplied out). Rather than shrink
+the item set, the question got narrower and better:
+
+- **One condition.** The chart and the full 151-line typing list go in the
+  system prompt; the question names only the attacker's type and the
+  defender. Find it in the list, read two cells, multiply. That is the
+  skill; nothing else is being measured. The recall conditions stay in the
+  code as parameters and are not run, and P2/P4/P5/P6 retire unmeasured.
+- **Four models, four labs**, chosen by price from OpenRouter's public list:
+  Haiku 4.5 (batch route), GPT-5 nano, Gemini 2.5 Flash-Lite, Qwen3 235B.
+  Three epochs each on the pinned 400, projected under $4 total. Cross-lab
+  under one prompt is worth more here than Sonnet and Opus would have been.
+- **Closeness, beside exact match and never blended with it.** Bucket match
+  is the game's own word (doesn't affect / not very / normal / super
+  effective); steps off is distance on the log2 scale, with immunity three
+  steps from everything because it is a rule, not a magnitude. The reason
+  to keep the two apart: a 2 answered as 4 is "close" by word and is exactly
+  the multiply failure the quad stratum exists to catch. Three addendum
+  predictions (A1 to A3) are registered in the ledger before any run.
+
+Caught while wiring it: a task-level `metrics=` list applies to every
+scorer, so `closeness` was silently reporting `accuracy`. Metrics now live
+on each scorer. A dict-valued score surfaces as separate entries (`bucket`,
+`steps`) in the log; the analyze script reads them from there.
+
+### 10. Next
+
+Haiku on the dev set, one epoch, about $0.30. Read in this order: parse
 failures (want 0.00), then ten samples in the viewer to see whether the
-reasoning reads the table or recites the modern chart, then the confusion
-matrix. Only then the pinned set.
+reasoning finds the right line in the list before it reads the chart, then
+the confusion matrix and the exact-vs-bucket gap. Only then the pinned set.
 
 ## Reproduce
 
@@ -152,7 +184,7 @@ pip install -r requirements.txt
 python -m src.key                                   # build the key, print the 26 known cells
 python -m src.sample --n 400 --seed 0               # pin the item set (reproduces the committed file)
 python -m src.sample --n 100 --seed 1 --exclude items_s0_n400.csv --no-differs --tag dev --balance
-pytest                                              # 13 tests, no API calls, about 30 s
+pytest                                              # 15 tests, no API calls, about 40 s
 
 # dev run, one condition, one model (needs ANTHROPIC_API_KEY)
 inspect eval src/task.py -T chart=gen1 -T show_types=true -T items=dev_s1_n100.csv \
@@ -161,9 +193,9 @@ inspect view --log-dir logs/dev
 python -m src.analyze --log-dir logs/dev
 ```
 
-Task parameters: `-T chart={none,gen1,modern}`, `-T show_types={true,false}`,
+Defaults are the registered condition (`chart=gen1`, `show_types=list`).
+Other parameters: `-T chart={none,gen1,modern}`, `-T show_types={list,inline,false}`,
 `-T items=<csv in data/processed>`, `-T cot={true,false}`, `-T max_tokens=N`.
-The four registered conditions are in PLAN.md.
 
 ## How to read a run
 
@@ -186,7 +218,7 @@ PLAN.md              the pre-registration; not edited after its hash is recorded
 FINDINGS.md          the ledger: D defects, O observations, N negative results
 src/key.py           Gen 1 chart + typings -> 2,265-cell key; the 26 known-answer cells
 src/sample.py        stratified, seeded draw; --exclude, --no-differs, --balance for dev sets
-src/task.py          the Inspect task: system prompt, six fixed options, CoT template, metrics
+src/task.py          the Inspect task: rules + chart + typing list, six fixed options, CoT, two scorers
 src/analyze.py       logs -> one timestamped summary in data/results/
 tests/               key, sampler, prompt, scorer and analyze, each negative-tested
 data/raw/            PokeAPI CSVs frozen at commit 7af36d9, sha256 beside them

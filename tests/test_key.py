@@ -15,7 +15,7 @@ import pytest
 
 from src import key as K
 from src.sample import STRATA, draw, stratum
-from src.task import LETTERS, build_samples, load_items
+from src.task import LETTERS, build_samples, closeness_of, load_items, system_prompt, typing_list
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -141,13 +141,43 @@ def test_targets_are_letters_of_the_right_multiplier(tmp_path, cells):
         {"item_id": "i0", "stratum": "differs", "attack_type": "ghost", "pokemon_id": "65", "pokemon": "alakazam",
          "def_type1": "psychic", "def_type2": "", "gen1_multiplier": "0", "modern_multiplier": "2"},
     ]
-    s_gen1 = build_samples(rows, "gen1", True)[0]
-    s_modern = build_samples(rows, "modern", True)[0]
+    s_gen1 = build_samples(rows, "gen1", "inline")[0]
+    s_modern = build_samples(rows, "modern", "inline")[0]
     assert s_gen1.target == LETTERS[K.MULTIPLIERS.index("0")]
     assert s_modern.target == LETTERS[K.MULTIPLIERS.index("2")]
-    assert "Generation I" in s_gen1.input and "current" in s_modern.input
     assert "(Psychic)" in s_gen1.input
-    assert "(Psychic)" not in build_samples(rows, "none", False)[0].input
+    assert "(Psychic)" not in build_samples(rows, "gen1", "list")[0].input
+    assert "Generation I" in system_prompt("gen1", "list") and "current" in system_prompt("modern", "list")
+
+
+def test_typing_list_is_complete_and_gen1():
+    text = typing_list()
+    lines = text.splitlines()
+    assert len(lines) == 151
+    assert lines[0].startswith("  1. Bulbasaur: Grass/Poison")
+    assert " 81. Magnemite: Electric" in text and "Steel" not in text
+    assert " 35. Clefairy: Normal" in text and "Fairy" not in text
+    assert "122. Mr. Mime: Psychic" in text
+    sp = system_prompt("gen1", "list")
+    assert text in sp and "| attack \\ defend |" in sp
+
+
+def test_closeness_values():
+    # exact
+    assert closeness_of("2", "2") == {"bucket": 1.0, "steps": 0.0}
+    # same word, one step: the multiply miss
+    assert closeness_of("2", "4") == {"bucket": 1.0, "steps": 1.0}
+    assert closeness_of("1/2", "1/4") == {"bucket": 1.0, "steps": 1.0}
+    # different word, adjacent
+    assert closeness_of("1", "2") == {"bucket": 0.0, "steps": 1.0}
+    # opposite ends
+    assert closeness_of("1/4", "4") == {"bucket": 0.0, "steps": 4.0}
+    # immunity is never close
+    assert closeness_of("1/2", "0") == {"bucket": 0.0, "steps": 3.0}
+    assert closeness_of("0", "1/4") == {"bucket": 0.0, "steps": 3.0}
+    assert closeness_of("0", "0") == {"bucket": 1.0, "steps": 0.0}
+    # unparsed is the farthest miss
+    assert closeness_of(None, "1") == {"bucket": 0.0, "steps": 4.0}
 
 
 def _run_mock(completions: list[str], rows):
@@ -158,10 +188,14 @@ def _run_mock(completions: list[str], rows):
     from src.task import pokemon_gen1
 
     model = get_model("mockllm/model", custom_outputs=[ModelOutput.from_content("mockllm/model", c) for c in completions])
-    t = pokemon_gen1(chart="gen1", show_types=True, items="dev_s1_n100.csv")
+    t = pokemon_gen1(items="dev_s1_n100.csv")
     t.dataset = t.dataset[: len(rows)]
     log = inspect_eval(t, model=model, log_dir=str(ROOT / "logs" / "tests"), display="none")[0]
-    return {k: v.value for k, v in log.results.scores[0].metrics.items()}
+    out = {}
+    for sc in log.results.scores:
+        for k, v in sc.metrics.items():
+            out[k if sc.name == "choice" else f"{sc.name}.{k}"] = v.value  # bucket.mean, steps.mean
+    return out
 
 
 @pytest.mark.slow
@@ -172,11 +206,14 @@ def test_scorer_awards_key_rejects_wrong_and_counts_unparsed():
     # reasoning before the answer line, as the CoT template asks for
     m = _run_mock([f"Bug is 1/2, Grass is 1/2, so 1/4.\nANSWER: {a}" for a in right], rows)
     assert m["accuracy"] == 1.0 and m["parse_failures"] == 0.0
+    assert m["bucket.mean"] == 1.0 and m["steps.mean"] == 0.0
     m = _run_mock([f"ANSWER: {a}" for a in wrong], rows)
     assert m["accuracy"] == 0.0 and m["parse_failures"] == 0.0
+    assert m["steps.mean"] > 0.0
     # truncated mid-reasoning: no answer line at all
     m = _run_mock(["Let me think. Bug is 1/2 against Grass, and"] * 6, rows)
     assert m["accuracy"] == 0.0 and m["parse_failures"] == 1.0
+    assert m["bucket.mean"] == 0.0 and m["steps.mean"] == 4.0
 
 
 @pytest.mark.slow
@@ -189,7 +226,7 @@ def test_analyze_recomputes_what_the_log_says(tmp_path):
     from src.analyze import summarize
     from src.task import pokemon_gen1
 
-    t = pokemon_gen1(chart="gen1", show_types=True, items="dev_s1_n100.csv")
+    t = pokemon_gen1(items="dev_s1_n100.csv")
     model = get_model("mockllm/model", custom_outputs=[ModelOutput.from_content("mockllm/model", "reasoning...\nANSWER: D")] * 100)
     log = inspect_eval(t, model=model, log_dir=str(tmp_path), display="none")[0]
     r = summarize(log)

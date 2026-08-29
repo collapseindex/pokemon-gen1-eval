@@ -50,12 +50,20 @@ def summarize(log: EvalLog) -> dict:
     letters: Counter = Counter()
     targets: Counter = Counter()
     prior = Counter()  # chart=modern, differs cells only
+    bucket_hits: list[float] = []
+    steps: list[float] = []
+    bucket_by_stratum: dict[str, list[float]] = defaultdict(list)
 
     for s in samples:
         sc = s.scores.get("choice") if s.scores else None
         if sc is None:
             continue
         hit = 1 if sc.value == "C" else 0
+        cl = s.scores.get("closeness")
+        if cl is not None and isinstance(cl.value, dict):
+            bucket_hits.append(float(cl.value["bucket"]))
+            steps.append(float(cl.value["steps"]))
+            bucket_by_stratum[(s.metadata or {}).get("stratum", "?")].append(float(cl.value["bucket"]))
         predicted = _letter_to_mult(sc.answer)
         target = _letter_to_mult(s.target if isinstance(s.target, str) else s.target[0])
         meta = s.metadata or {}
@@ -94,6 +102,9 @@ def summarize(log: EvalLog) -> dict:
         "accuracy_epoch_range": round(max(accs) - min(accs), 4) if accs else None,
         "accuracy_per_epoch": epoch_acc,
         "parse_failures": _rate(parse_fail, n_total),
+        "bucket_accuracy": round(sum(bucket_hits) / len(bucket_hits), 4) if bucket_hits else None,
+        "mean_steps_off": round(sum(steps) / len(steps), 4) if steps else None,
+        "bucket_by_stratum": {k: round(sum(v) / len(v), 4) for k, v in sorted(bucket_by_stratum.items())},
         "baseline_chance": round(CHANCE, 4),
         "baseline_majority": round(majority, 4) if majority else None,
         "by_stratum": grouped(by["stratum"]),
@@ -106,15 +117,16 @@ def summarize(log: EvalLog) -> dict:
 
 
 def table(rows: list[dict]) -> str:
-    head = "| model | chart | types | cot | n | epochs | acc | range | parse fail | majority | immune | quad | dual | single | differs |"
-    sep = "|" + "---|" * 15
+    head = "| model | chart | types | cot | n | epochs | acc | bucket | steps | range | parse fail | majority | immune | quad | dual | single | differs |"
+    sep = "|" + "---|" * 17
     out = [head, sep]
     for r in rows:
         st = r["by_stratum"]
         cell = lambda k: (f"{st[k]['accuracy']:.2f}" if k in st and st[k]["accuracy"] is not None else "-")
         out.append(
             f"| {r['model']} | {r['condition']['chart']} | {r['condition']['show_types']} | {r['condition']['cot']} | {r['n_samples']} | {r['epochs']} "
-            f"| {r['accuracy_mean']:.3f} | {r['accuracy_epoch_range']:.3f} | {r['parse_failures']:.2f} | {r['baseline_majority']:.2f} "
+            f"| {r['accuracy_mean']:.3f} | {(r['bucket_accuracy'] if r['bucket_accuracy'] is not None else float('nan')):.3f} | {(r['mean_steps_off'] if r['mean_steps_off'] is not None else float('nan')):.2f} "
+            f"| {r['accuracy_epoch_range']:.3f} | {r['parse_failures']:.2f} | {r['baseline_majority']:.2f} "
             f"| {cell('immune')} | {cell('quad')} | {cell('dual')} | {cell('single')} | {cell('differs')} |"
         )
     return "\n".join(out)

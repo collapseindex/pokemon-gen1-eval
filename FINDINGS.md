@@ -18,6 +18,7 @@ Ids are permanent. PLAN.md is never edited; a mistake in it is a D entry here.
 | [D-002](#d-002) | item sets | PLAN.md named no development set; a 100-item dev set disjoint from the pinned 400 is added for harness work | deviation declared |
 | [D-003](#d-003) | prompt and format | PLAN.md did not say whether the model may reason before answering; reasoning is allowed, max_tokens pinned at 1024, parse failures reported as their own metric | decided before any run |
 | [D-004](#d-004) | item draw | the pinned set is stratified by answer class, not by attack type: 13 to 45 cells per type, and the four `differs` attack types dominate; the first dev draw had no Bug or Poison attacks at all | pinned set kept, dev redrawn balanced |
+| [D-005](#d-005) | scope and budget | PLAN.md's four conditions, three Anthropic models and $30 ceiling were written without the multiplication; the budget is $7 on OpenRouter; one condition (chart + full typing list in context), four models across four labs, a closeness scorer beside exact match; predictions P2, P4, P5, P6 retired and three addendum predictions registered here before any run | deviation declared |
 
 ## Defects in this harness
 
@@ -110,3 +111,55 @@ even by type. Immunities and quads cannot be: 14 immune and 34 quad cells
 remained after the pinned draw, and quad is nearly half Grass, because that
 is where the game's 4x cells are (Grass on Rock/Ground, Rock/Water,
 Ground/Water).
+
+### D-005
+**The plan's grid did not survive its own arithmetic, and the question got sharper for it**
+scope, models, budget · 2026-08-29 · deviation declared, addendum registered before any run
+
+PLAN.md registers four conditions, three Anthropic models, four runs each, and
+a $30 ceiling. Multiplied out with the chart in context (~1k input tokens and
+~200 output tokens per call, 19,200 calls) that is about $157 at list price,
+and the available budget is $7 of OpenRouter credit. The ceiling was written
+the way data-deltas D-003 wrote its batch size: without anyone doing the
+multiplication. The plan is not edited; this entry is the record.
+
+**What changes.**
+
+- **One condition.** The full Gen 1 chart and the typing of all 151 Pokemon
+  are in the system prompt; the question names only the attacking type and
+  the defender. The model finds the defender in the list, reads two cells,
+  multiplies. Nothing is recalled. This is the plan's condition B with the
+  typing moved from the question into a reference list, which adds the
+  find-it step and removes the last trace of trivia. The recall conditions
+  (A, D) and the prior-override condition (C) stay in the code as parameters
+  and are not run; P2, P4, P5 and P6 are retired unmeasured.
+- **Models.** Four, one per lab, chosen by price from OpenRouter's public
+  list on 2026-08-29: `anthropic/claude-haiku-4.5` (via the `:batch` route at
+  $0.50/$2.50 per M), `openai/gpt-5-nano` ($0.05/$0.40),
+  `google/gemini-2.5-flash-lite` ($0.10/$0.40),
+  `qwen/qwen3-235b-a22b-2507` ($0.087/$0.35). Every model runs the pinned
+  400 at three epochs. Projected total under $4. Sonnet and Opus wait for
+  money.
+- **A second scorer, never blended with the first.** `closeness` reports
+  whether the game would have printed the same word (doesn't affect / not
+  very effective / normal / super effective) and the distance on the log2
+  scale, with immunity three steps from everything because it is a rule and
+  not a magnitude, and an unparsed answer the farthest miss. Exact match
+  stays primary. The reason to keep them apart: a 2 answered as 4 is
+  "close" by word and is exactly the multiply failure the quad stratum
+  exists to catch.
+
+**Addendum predictions, registered here before any model call.** P1 and P3
+from PLAN.md still apply (P3 read as "the best model is at least 95%").
+
+- **A1, the word is easier than the number.** For every model, bucket
+  accuracy exceeds exact accuracy by at least 3 points, and at least half of
+  the exact misses are one step off (2 for 4, 1/2 for 1/4, 1 for 2).
+- **A2, the multiply is the failure.** For every model, exact accuracy on
+  `quad` is below `single` by more than the epoch range, while bucket
+  accuracy on `quad` is within the range of `single`. Reading the cells is
+  fine; combining them is not.
+- **A3, the list is found.** Misses that are explained by reading the wrong
+  Pokemon's typing (the predicted multiplier equals the key for a different
+  Pokemon named in the reasoning) are under 5% of items for every model.
+  Scored by hand on the misses, in the viewer, and reported with the count.
