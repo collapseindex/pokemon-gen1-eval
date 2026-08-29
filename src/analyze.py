@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from collections import Counter, defaultdict
 from datetime import datetime
 from pathlib import Path
@@ -39,6 +40,21 @@ def _letter_to_mult(letter: str | None) -> str | None:
 
 def _rate(hits: int, n: int) -> float | None:
     return round(hits / n, 4) if n else None
+
+
+_LENIENT_LETTER = re.compile(r"(?:answer is|answer:|correct answer is|option)\s*\(?([A-F])\)?", re.I)
+_LENIENT_MULT = re.compile(r"(?:multiplier is|answer is|answer:)\s*\**\s*(0|1/4|1/2|1|2|4)\b")
+
+
+def lenient_parse(text: str) -> str | None:
+    """A second, forgiving read of a completion with no ANSWER line: the last
+    'answer is X' or 'answer is <multiplier>' in the text. Reported beside the
+    strict score, never in place of it (review point 6, REVIEW.md)."""
+    m = list(_LENIENT_LETTER.finditer(text or ""))
+    if m:
+        return MULTIPLIERS[LETTERS.index(m[-1].group(1).upper())]
+    m = list(_LENIENT_MULT.finditer(text or ""))
+    return m[-1].group(1) if m else None
 
 
 def _transposed_key(chart: str) -> dict[str, dict[str, str]]:
@@ -75,6 +91,8 @@ def summarize(log: EvalLog) -> dict:
     bucket_hits: list[float] = []
     steps: list[float] = []
     bucket_by_stratum: dict[str, list[float]] = defaultdict(list)
+    lenient_hits = 0
+    recovered = 0
 
     providers: Counter = Counter()
     provider_errors: Counter = Counter()
@@ -102,6 +120,13 @@ def summarize(log: EvalLog) -> dict:
         per_epoch[s.epoch].append(hit)
         if predicted is None:
             parse_fail += 1
+            lp = lenient_parse(s.output.completion if s.output else "")
+            if lp is not None:
+                recovered += 1
+                if lp == target:
+                    lenient_hits += 1
+        elif hit:
+            lenient_hits += 1
         letters[sc.answer or "(none)"] += 1
         targets[target] += 1
         confusion[(target, predicted or "(none)")] += 1
@@ -151,6 +176,8 @@ def summarize(log: EvalLog) -> dict:
         "accuracy_epoch_range": round(max(accs) - min(accs), 4) if accs else None,
         "accuracy_per_epoch": epoch_acc,
         "parse_failures": _rate(parse_fail, n_total),
+        "lenient_accuracy": _rate(lenient_hits, n_total),
+        "lenient_recovered": recovered,
         "misses": n_total - sum(sum(v) for v in per_epoch.values()),
         "misses_on_asymmetric_cells": detectable_misses,
         "transposed_misses": transposed_misses,
@@ -206,6 +233,7 @@ def curve_rows(rows: list[dict]) -> list[dict]:
             "bucket": r["bucket_accuracy"],
             "steps_off": r["mean_steps_off"],
             "parse_failures": r["parse_failures"],
+            "lenient_accuracy": r["lenient_accuracy"],
             "transposed_misses": r["transposed_misses"],
             "misses": r["misses"],
             "quad": r["by_stratum"].get("quad", {}).get("accuracy", ""),

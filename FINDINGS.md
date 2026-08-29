@@ -29,6 +29,7 @@ Ids are permanent. PLAN.md is never edited; a mistake in it is a D entry here.
 | [D-011](#d-011) | parse_failures metric | wrong whenever epochs > 1: Inspect's epoch reduction drops the `answer` field, so the in-log metric reads 0.94 on a run whose true rate is 0.198; analyze, which reads per-epoch samples, is the record | fixed: a `parsed` scorer with a numeric value, negative-tested at epochs=2 |
 | [D-012](#d-012) | qwen3-32b, table | a thinking model at 1,024 tokens: 14% of table calls truncated before the answer line; rerun at 4,096: 0.828 [0.788, 0.862], 0.08% truncated; the 0.697 floor is superseded | rerun, fixed |
 | [O-005](#o-005) | replication, four knee models, a second 400-item set | order and MoE placement replicate (R2, R3); every model lands inside its pinned interval or within the baseline shift (R4); the "12B beats always-1" half of R1 fails on a set whose majority is 0.478: 12B is where reading starts, not where it beats the dumbest strategy | scored |
+| [O-006](#o-006) | rows x3, four knee rungs (REVIEW.md run 1) | the format gain has a band: rows minus table exceeds the sum of both epoch ranges by 2 to 3x for all four (V1 held); every one-epoch rows number within 0.02 of its three-epoch mean (V2 held) | scored |
 | [O-004](#o-004) | the ladder, pinned set | the knee is between 8B and 12B total params; nothing under 12B beats always-"1"; the MoE sits with its total size; rows beats table for 9 of 10 models, by up to +0.23; predictions scored: P1, P3, A6 (accuracy clause) held; A1, A2 (bucket clause), A4, A5, A6 (transposition clause), A7 (MoE clause) failed | scored |
 | [D-010](#d-010) | model list | the question changed from "four labs" to "how small a model can do this": a nine-model size ladder replaces the addendum's list; Haiku and Flash-Lite drop from the pinned run (dev numbers kept); host, quantisation and parameter counts pinned in a registry; A7 registered | deviation declared |
 
@@ -592,3 +593,26 @@ Cost of the replication and the D-012 rerun together: $1.51 ($2.79 to
 $1.28). Project total $5.72, which is $0.72 over the addendum's $5
 ceiling; the overrun is the two runs REPLICATION.md registered after the
 ceiling was set, and is recorded here rather than absorbed.
+
+### O-006
+**The format gain, with a band**
+llama-3.1-8b, gemma-3-12b, gemma-3-27b, qwen3-30b-a3b · rows format, pinned 400, three epochs · 2026-08-29
+
+Registered in REVIEW.md (run 1) after an external review pointed out that the
+paper's format result rested on one-epoch rows runs with no model-side band.
+Source: `logs/rows3/`, analyzed to `data/results/`.
+
+| model | table x3 | rows x3 | 95% CI | rows range | gain | sum of ranges | rows x1 (earlier) |
+|---|---|---|---|---|---|---|---|
+| llama-3.1-8b | 0.279 | 0.412 | 0.364 to 0.461 | 0.045 | +0.133 | 0.055 | 0.432 |
+| gemma-3-12b | 0.507 | 0.646 | 0.598 to 0.691 | 0.028 | +0.139 | 0.048 | 0.642 |
+| gemma-3-27b | 0.617 | 0.680 | 0.633 to 0.724 | 0.020 | +0.063 | 0.042 | 0.688 |
+| qwen3-30b-a3b | 0.642 | 0.828 | 0.787 to 0.861 | 0.015 | +0.186 | 0.065 | 0.820 |
+
+- **V1 held, 4 of 4.** Every gain exceeds the sum of the two epoch ranges,
+  by 1.5x (27B) to 3x (30B-A3B).
+- **V2 held, 4 of 4.** The earlier one-epoch rows numbers sit 0.004 to 0.020
+  from the three-epoch means. One epoch was a fair estimate here; the paper
+  now says so with the measurement rather than the assumption.
+
+Cost about $1.05 (REVIEW.md budget: $7.28 available after a top-up).
