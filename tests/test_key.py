@@ -162,6 +162,24 @@ def test_typing_list_is_complete_and_gen1():
     assert text in sp and "| attack \\ defend |" in sp
 
 
+def test_chart_rows_matches_table_cell_for_cell():
+    g = K.efficacy(past=True)
+    rows = K.chart_rows(past=True).splitlines()
+    assert len(rows) == 15
+    show = {0: "0", 50: "1/2", 100: "1", 200: "2"}
+    for line in rows:
+        attacker, rest = line.split(" attacking: ")
+        for entry in rest.split(", "):
+            defender, value = entry.rsplit(" ", 1)
+            assert value == show[g[(attacker.lower(), defender.lower())]], (attacker, defender)
+    # the asymmetric cells Haiku transposed on dev read unambiguously here
+    ground = next(l for l in rows if l.startswith("Ground attacking"))
+    electric = next(l for l in rows if l.startswith("Electric attacking"))
+    assert "Electric 2" in ground and "Ground 0" in electric
+    sp = system_prompt("gen1", "list", "rows")
+    assert "Each line is one attacking type" in sp and "| attack" not in sp
+
+
 def test_closeness_values():
     # exact
     assert closeness_of("2", "2") == {"bucket": 1.0, "steps": 0.0}

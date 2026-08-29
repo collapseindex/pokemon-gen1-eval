@@ -170,12 +170,32 @@ scorer, so `closeness` was silently reporting `accuracy`. Metrics now live
 on each scorer. A dict-valued score surfaces as separate entries (`bucket`,
 `steps`) in the log; the analyze script reads them from there.
 
-### 10. Next
+### 10. First model call: Haiku on the dev set (O-001, D-006)
 
-Haiku on the dev set, one epoch, about $0.30. Read in this order: parse
-failures (want 0.00), then ten samples in the viewer to see whether the
-reasoning finds the right line in the list before it reads the chart, then
-the confusion matrix and the exact-vs-bucket gap. Only then the pinned set.
+100 items, one epoch, $0.39. Exact 0.84, bucket 0.85, zero parse failures,
+no position lean. Then the 16 misses were read one at a time, and the
+finding was not the one predicted: **14 of 16 are the chart read
+transposed.** The model says "row: Ground, column: Electric" and reports
+Electric-attacking-Ground. Zero wrong-Pokemon lookups in 100, zero multiply
+errors. The list is found and the arithmetic is fine; the 15 x 15 markdown
+table is what breaks.
+
+Why a model does that: a pipe table makes it count across 16 columns, and
+its prior stores the relation defender-first ("Electric is weak to
+Ground"), so once it holds the pair it retrieves the memorised direction.
+Symmetric cells hide the swap; only the asymmetric ones show it.
+
+Two things follow. A second chart format, one line per attacking type, is
+registered as a variant with its own prediction (A6: the format is the
+finding), run beside the table and never instead of it. And the table
+costs 3,032 input tokens per call, double the addendum's estimate, so Haiku
+moves to the half-price batch route and the cheap models carry both
+formats.
+
+### 11. Next
+
+Five items through the `:batch` route to confirm Inspect accepts it; the
+three cheap models on the dev set in both formats; then the pinned set.
 
 ## Reproduce
 

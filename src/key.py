@@ -202,6 +202,21 @@ def chart_table(past: bool) -> str:
     return "\n".join(rows)
 
 
+
+def chart_rows(past: bool) -> str:
+    """The same chart as one line per attacking type: "Ground attacking:
+    Normal 1, Fighting 1, ...". No axis to transpose; every cell is named by
+    both types in the order they are read."""
+    types = list(gen_types().values())
+    chart = efficacy(past=past)
+    show = {0: "0", 50: "1/2", 100: "1", 200: "2"}
+    lines = []
+    for a in types:
+        cells = ", ".join(f"{t.title()} {show[chart[(a, t)]]}" for t in types)
+        lines.append(f"{a.title()} attacking: {cells}")
+    return "\n".join(lines)
+
+
 # Cells whose answer is known independently of the data, for hand verification.
 # (attack, pokemon, expected gen1, expected modern chart ON THE GEN 1 TYPING).
 # The fourth column is not "what happens in a modern game": Magnemite here is

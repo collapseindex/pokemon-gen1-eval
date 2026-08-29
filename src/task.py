@@ -42,9 +42,9 @@ from inspect_ai.scorer import (
 from inspect_ai.solver import TaskState, multiple_choice, system_message
 
 try:  # imported as a package (pytest, python -m src.*) ...
-    from .key import MULTIPLIERS, PROCESSED, chart_table, typings
+    from .key import MULTIPLIERS, PROCESSED, chart_rows, chart_table, typings
 except ImportError:  # ... or loaded as a standalone file by `inspect eval src/task.py`
-    from key import MULTIPLIERS, PROCESSED, chart_table, typings  # type: ignore[no-redef]
+    from key import MULTIPLIERS, PROCESSED, chart_rows, chart_table, typings  # type: ignore[no-redef]
 
 LETTERS = "ABCDEF"
 MAX_TOKENS = 1024  # reasoning is allowed; truncations are counted by parse_failures()
@@ -82,14 +82,20 @@ def typing_list() -> str:
     )
 
 
-def system_prompt(chart: str, show_types: str | bool) -> str:
+def system_prompt(chart: str, show_types: str | bool, chart_format: str = "table") -> str:
     parts = [SYSTEM_RULES]
     if chart != "none":
         label = "Generation I" if chart == "gen1" else "current"
+        past = chart == "gen1"
+        if chart_format == "table":
+            body = f"Rows are the attacking type, columns the defending type.\n\n{chart_table(past=past)}"
+        elif chart_format == "rows":
+            body = f"Each line is one attacking type, followed by its multiplier against every defending type.\n\n{chart_rows(past=past)}"
+        else:
+            raise ValueError("chart_format must be table or rows")
         parts.append(
             f"Use only the type chart below (the {label} chart), even where it disagrees with "
-            f"what you remember about the games. Rows are the attacking type, columns the defending type.\n\n"
-            f"{chart_table(past=(chart == 'gen1'))}"
+            f"what you remember about the games. {body}"
         )
     if show_types == "list":
         parts.append("The typing of every Pokemon, as in Red and Blue:\n\n" + typing_list())
@@ -214,15 +220,18 @@ def pokemon_gen1(
     items: str = "items_s0_n400.csv",
     cot: bool = True,
     max_tokens: int = MAX_TOKENS,
+    chart_format: str = "table",
 ) -> Task:
     if chart not in ("none", "gen1", "modern"):
         raise ValueError("chart must be none, gen1 or modern")
     if show_types not in ("list", "inline", True, False):
         raise ValueError("show_types must be list, inline, true or false")
+    if chart_format not in ("table", "rows"):
+        raise ValueError("chart_format must be table or rows")
     rows = load_items(PROCESSED / items)
     return Task(
-        dataset=MemoryDataset(build_samples(rows, chart, show_types), name=f"gen1_{chart}_{show_types}"),
-        solver=[system_message(system_prompt(chart, show_types)), multiple_choice(shuffle=False, cot=cot)],
+        dataset=MemoryDataset(build_samples(rows, chart, show_types), name=f"gen1_{chart}_{show_types}_{chart_format}"),
+        solver=[system_message(system_prompt(chart, show_types, chart_format)), multiple_choice(shuffle=False, cot=cot)],
         scorer=[exact(), closeness()],
         config=GenerateConfig(max_tokens=max_tokens),
     )

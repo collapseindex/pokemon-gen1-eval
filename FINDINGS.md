@@ -19,6 +19,8 @@ Ids are permanent. PLAN.md is never edited; a mistake in it is a D entry here.
 | [D-003](#d-003) | prompt and format | PLAN.md did not say whether the model may reason before answering; reasoning is allowed, max_tokens pinned at 1024, parse failures reported as their own metric | decided before any run |
 | [D-004](#d-004) | item draw | the pinned set is stratified by answer class, not by attack type: 13 to 45 cells per type, and the four `differs` attack types dominate; the first dev draw had no Bug or Poison attacks at all | pinned set kept, dev redrawn balanced |
 | [D-005](#d-005) | scope and budget | PLAN.md's four conditions, three Anthropic models and $30 ceiling were written without the multiplication; the budget is $7 on OpenRouter; one condition (chart + full typing list in context), four models across four labs, a closeness scorer beside exact match; predictions P2, P4, P5, P6 retired and three addendum predictions registered here before any run | deviation declared |
+| [D-006](#d-006) | chart format | the markdown table costs 3,032 input tokens per call, not the ~1,600 the addendum assumed, and the dev run shows the table itself is what Haiku misreads; a second chart format (one line per attacking type) is registered as a variant before any pinned run, with prediction A6 | deviation declared |
+| [O-001](#o-001) | Haiku 4.5, dev set | 84% exact, 0 parse failures; 14 of 16 misses are the chart read transposed (cell (a, b) answered with (b, a)); 0 wrong-Pokemon lookups, 0 multiply errors | observed on dev, not scored against a prediction |
 
 ## Defects in this harness
 
@@ -163,3 +165,68 @@ from PLAN.md still apply (P3 read as "the best model is at least 95%").
   Pokemon's typing (the predicted multiplier equals the key for a different
   Pokemon named in the reasoning) are under 5% of items for every model.
   Scored by hand on the misses, in the viewer, and reported with the count.
+
+### D-006
+**The table is what gets misread, and it costs twice what was budgeted**
+`src/task.py` chart_format · 2026-08-29 · deviation declared before any pinned run
+
+Two facts from the dev log ([O-001](#o-001)). The system prompt with the
+markdown table is 3,032 input tokens per call through OpenRouter, not the
+~1,600 the addendum assumed (a 16-column pipe table tokenises badly), and
+cache reads were 0, so the pinned grid at list price is about $4.70 for
+Haiku alone. And 14 of Haiku's 16 misses were the same act: it named the
+right row and column out loud and then reported the mirror cell.
+
+Registered here, before any model touches the pinned set:
+
+- **A second chart format**, `-T chart_format=rows`: the same 225 cells as
+  fifteen lines, "Ground attacking: Normal 1, Fighting 1, ..., Electric 2,
+  ...". Every cell is named by both types in reading order, so there is no
+  axis to transpose. The table stays the registered default; rows is a
+  variant, run on the same items, and reported beside it, never instead of
+  it. Test: `test_chart_rows_matches_table_cell_for_cell` holds the two
+  renderings equal cell for cell.
+- **A6, the format is the finding.** For every model run in both formats,
+  exact accuracy under `rows` exceeds exact accuracy under `table` by more
+  than the epoch range, and the class of misses where the predicted value
+  equals the transposed cell falls by at least half. If A6 fails for a model,
+  that model's errors are not orientation and the transposition reading of
+  O-001 does not generalise to it.
+- **Budget.** The `:batch` route was probed with five dev items (log in
+  `logs/probe/`): OpenRouter returns 404, "This model is only available
+  through the Batch API. Use the /api/beta/batches endpoint instead", which
+  Inspect's OpenRouter provider does not speak. So Haiku runs the pinned
+  set once, at list price, table format only (about $1.60), and is reported
+  with its stderr and without an epoch band; P1 is not scorable for Haiku
+  and says so. The three cheap models run both formats at three epochs
+  (about $2). The $5 ceiling in the addendum stands; the dev and probe
+  runs so far cost about $0.40.
+
+### O-001
+**Haiku reads the chart transposed**
+`openrouter/anthropic/claude-haiku-4.5` · dev set, 100 items, 1 epoch · 2026-08-29
+
+Log `logs/dev/2026-08-29T08-58-40-00-00_pokemon-gen1_NJHSyki4BXErRoEZxtrSUT.eval`,
+summary `data/results/20260829_020454_analyze_dev.json`. Exact 0.84, bucket
+0.85, mean 0.27 steps off, parse failures 0.00, predicted-letter shares
+within 1 of the target shares. By stratum: immune 1.00, dual 0.83, single
+0.83, quad 0.73. 3,032 input and 180 output tokens per sample; about $0.39.
+
+The 16 misses read one by one, which is the method A3 prescribes:
+
+- **14 are the chart read transposed.** The reasoning says "row: Ground,
+  column: Electric" and reports the value of Electric attacking Ground (0);
+  Fire vs Diglett comes back 2 (Ground attacking Fire); Rock vs Articuno
+  reads Flying attacking Rock (1/2) for Rock attacking Flying (2). In every
+  one of the 14 the predicted multiplier equals the key with attacker and
+  defender swapped. The chart is symmetric on most pairs, so the swap is
+  only visible on the asymmetric cells, which is where these all are.
+- **2 are a plain wrong cell** (Grass vs Ground read as 1/2; Ground vs
+  Ghost read as 0), not a transposition.
+- **0 wrong-Pokemon lookups**: all 100 typings were found correctly in the
+  151-line list. **0 multiply errors**: every time both cells were read
+  right, the product was right. The `quad` stratum's 0.73 is lookups, not
+  arithmetic, which is the opposite of what A2 predicts for this model.
+
+Not scored against a prediction (dev set, by D-002). It is the reason for
+D-006.
