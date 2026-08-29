@@ -39,6 +39,7 @@ Ids are permanent. PLAN.md is never edited; a mistake in it is a D entry here.
 | [O-010](#o-010) | shuffled options and temperature 0 (REVIEW2.md runs 2, 3) | under per-item shuffle gemma-3-4b and llama-3.2-3b still answer "2" on 0.63 and 0.48 of items: a value lean, not a letter lean (W4 value clause held; letter clause not measurable, D-014); gemma-3-12b at temperature 0 scores 0.502, range 0.015, inside the default interval (W5 held) | scored |
 | [D-014](#d-014) | Inspect shuffle | `multiple_choice(shuffle=True)` rewrites the logged prompt and completion to look unshuffled and drops the reasoning; only the mapped value survives, so the shown letter cannot be studied from the log; shuffle at dataset load instead | recorded, upstream |
 | [O-011](#o-011) | the Qwen rungs, thinking mode (review 3) | the two Qwen MoEs are the -2507 instruct variants: zero reasoning blocks, zero truncation, ~167 output tokens per call; qwen3-32b reasoned on every call (~618 tokens); the D-012 artefact does not touch the MoEs, but the 30B-A3B vs 32B gap is sparse-vs-dense and thinking-vs-not together; REVIEW3.md run 2 separates them | scored |
+| [D-015](#d-015) | task guard | `chart=permuted` was wired through the prompt, the samples and a test, but the task's argument guard still listed none/gen1/modern; the first REVIEW3 launch failed on every model before any call; guard widened, test added, relaunched | fixed, no cost |
 
 ## Defects in this harness
 
@@ -847,3 +848,15 @@ the 30B-A3B and the 32B is two differences at once, sparse-versus-dense and
 thinking-versus-not, plus different post-training. The paper now says so,
 and REVIEW3.md run 2 (the 32B with reasoning disabled) is registered to
 separate them. Cost: none (existing logs).
+
+### D-015
+**The permuted chart passed its own test and failed the task's guard**
+`src/task.py` · 2026-08-29 · fixed
+
+`chart="permuted"` was added to the prompt builder, the sample builder and a
+cell-for-cell test, and the test passed. The task function's argument guard
+(`chart in ("none", "gen1", "modern")`) was not updated, so the first
+REVIEW3.md launch raised on every model before any API call (three models
+attempted, zero calls, zero spend). The guard now lists `permuted` and a test
+constructs the task with it. The lesson is the usual one: a test of the
+pieces is not a test of the entry point.
