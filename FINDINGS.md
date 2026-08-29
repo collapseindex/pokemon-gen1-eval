@@ -491,7 +491,7 @@ epoch and carries only its binomial stderr (about 0.02 at n=400).
 | 12.2B | gemma-3-12b | 0.507 | 0.020 | 0.642 | +0.14 | 0.00 / 0.00 |
 | 27.4B | gemma-3-27b | 0.617 | 0.022 | 0.688 | +0.07 | 0.00 / 0.00 |
 | 30.5B (3.3B) | qwen3-30b-a3b | 0.642 | 0.050 | 0.820 | +0.18 | 0.00 / 0.00 |
-| 32.8B | qwen3-32b | 0.697 (floor, D-012) | 0.018 | 0.930 | +0.23 | 0.14 / 0.02 |
+| 32.8B | qwen3-32b | 0.697 at 1,024 tokens (floor); **0.828 [0.788, 0.862]** at 4,096 (D-012 rerun) | 0.025 | 0.930 | +0.10 | 0.00 / 0.02 |
 | 235B (22B) | qwen3-235b-a22b | 0.764 | 0.018 | 0.843 | +0.08 | 0.00 / 0.00 |
 | undisclosed | gpt-5-nano (4,096) | 0.954 | 0.022 | 0.988 | +0.03 | 0.00 / 0.01 |
 
@@ -511,7 +511,9 @@ In order of how much the data supports it:
    predicted the opposite and **failed**.
 3. **Rows beats table for 9 of 10 models**, by more than the table range
    everywhere except llama-3.2-3b (which is at chance either way). The gain
-   is +0.14 to +0.23 in the middle of the ladder and +0.03 at the ceiling.
+   is +0.07 to +0.18 for the eight models that moved (largest at 4B, 8B and the
+   30B MoE; 32B is +0.10 after the D-012 rerun, +0.23 before it) and +0.03 at
+   the ceiling.
    Under rows, qwen3-32b (0.930) passes qwen3-235b (0.843) and comes within
    0.06 of the ceiling model's table number. The grid is a reading tax that
    every model pays and the larger ones pay less of; A6's accuracy clause
@@ -525,8 +527,9 @@ In order of how much the data supports it:
    logs: fewer lookups land on the wrong row entirely).
 5. **The prior leaks at the top, not the bottom** (A4 **failed**, and in an
    informative way). `differs` cells, where the chart in context contradicts
-   the memorised chart, run 0.09 below `dual` for nano and 235B, 0.18 to
-   0.28 below for 27B to 32B, and show no gap at all for 1B to 8B. A model
+   the memorised chart, run 0.09 below `dual` for nano, 235B and 12B, 0.14 to
+   0.28 below for 27B to 32B (the 32B figure is the 4,096-token rerun; it
+   was 0.18 at 1,024), and show no gap at all for 1B to 8B. A model
    has to be able to read the chart before its memory can compete with it.
 6. **The word is not much easier than the number** (A1 **failed** for 13 of
    20 runs). Bucket accuracy exceeds exact by 0.00 to 0.07, and for the
