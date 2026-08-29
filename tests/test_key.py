@@ -136,24 +136,30 @@ def test_targets_are_letters_of_the_right_multiplier(tmp_path, cells):
     assert "(Psychic)" not in build_samples(rows, "none", False)[0].input
 
 
-def _run_mock(answers: list[str], rows):
-    from inspect_ai import Task, eval as inspect_eval
-    from inspect_ai.dataset import MemoryDataset
+def _run_mock(completions: list[str], rows):
+    """Run the real task (system prompt, CoT template, scorer, metrics) against a
+    mock model that returns the given completions in order."""
+    from inspect_ai import eval as inspect_eval
     from inspect_ai.model import ModelOutput, get_model
-    from inspect_ai.scorer import choice
-    from inspect_ai.solver import multiple_choice
+    from src.task import pokemon_gen1
 
-    samples = build_samples(rows, "gen1", True)
-    model = get_model("mockllm/model", custom_outputs=[ModelOutput.from_content("mockllm/model", f"ANSWER: {a}") for a in answers])
-    t = Task(dataset=MemoryDataset(samples), solver=[multiple_choice(shuffle=False)], scorer=choice())
+    model = get_model("mockllm/model", custom_outputs=[ModelOutput.from_content("mockllm/model", c) for c in completions])
+    t = pokemon_gen1(chart="gen1", show_types=True, items="dev_s1_n100.csv")
+    t.dataset = t.dataset[: len(rows)]
     log = inspect_eval(t, model=model, log_dir=str(ROOT / "logs" / "tests"), display="none")[0]
-    return log.results.scores[0].metrics["accuracy"].value
+    return {k: v.value for k, v in log.results.scores[0].metrics.items()}
 
 
 @pytest.mark.slow
-def test_scorer_awards_key_and_rejects_planted_wrong_answer():
-    rows = load_items(ROOT / "data" / "processed" / "items_s0_n400.csv")[:6]
+def test_scorer_awards_key_rejects_wrong_and_counts_unparsed():
+    rows = load_items(ROOT / "data" / "processed" / "dev_s1_n100.csv")[:6]
     right = [LETTERS[K.MULTIPLIERS.index(r["gen1_multiplier"])] for r in rows]
     wrong = [LETTERS[(K.MULTIPLIERS.index(r["gen1_multiplier"]) + 1) % 6] for r in rows]
-    assert _run_mock(right, rows) == 1.0
-    assert _run_mock(wrong, rows) == 0.0
+    # reasoning before the answer line, as the CoT template asks for
+    m = _run_mock([f"Bug is 1/2, Grass is 1/2, so 1/4.\nANSWER: {a}" for a in right], rows)
+    assert m["accuracy"] == 1.0 and m["parse_failures"] == 0.0
+    m = _run_mock([f"ANSWER: {a}" for a in wrong], rows)
+    assert m["accuracy"] == 0.0 and m["parse_failures"] == 0.0
+    # truncated mid-reasoning: no answer line at all
+    m = _run_mock(["Let me think. Bug is 1/2 against Grass, and"] * 6, rows)
+    assert m["accuracy"] == 0.0 and m["parse_failures"] == 1.0

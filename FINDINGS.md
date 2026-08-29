@@ -16,6 +16,7 @@ Ids are permanent. PLAN.md is never edited; a mistake in it is a D entry here.
 |---|---|---|---|
 | [D-001](#d-001) | known-answer list | six of 26 hand-written expectations were wrong; the derived key was right | fixed |
 | [D-002](#d-002) | item sets | PLAN.md named no development set; a 100-item dev set disjoint from the pinned 400 is added for harness work | deviation declared |
+| [D-003](#d-003) | prompt and format | PLAN.md did not say whether the model may reason before answering; reasoning is allowed, max_tokens pinned at 1024, parse failures reported as their own metric | decided before any run |
 
 ## Defects in this harness
 
@@ -57,3 +58,30 @@ Rule for the dev set: nothing measured on it is reported against a
 prediction. The pinned set is still the only set the plan's numbers come
 from, and it is not run until the dev run has been read in the log viewer
 end to end. The plan is not edited.
+
+### D-003
+**The plan did not say whether the model may reason before answering**
+`src/task.py` · 2026-08-29 · decided before any model call
+
+PLAN.md fixes the item, the options and the scorer but not the response
+format. The first draft of the task used Inspect's strict template (the whole
+response is `ANSWER: X`), which makes condition B a *silent* lookup-and-multiply
+and would penalise a non-thinking model for a reason unrelated to the chart.
+Decided, before any run: reasoning is allowed (Inspect's chain-of-thought
+multiple-choice template: think step by step, last line `ANSWER: X`),
+`max_tokens` pinned at 1024, and the share of responses with no parseable
+answer line is reported as `parse_failures` beside accuracy, since `choice()`
+scores those as wrong and the two are different findings. The dev run's job
+is to show that the truncation rate at 1024 is near zero; if it is not, the
+limit is raised and this entry says so.
+
+Same day, three wording changes to the instrument, also before any run: the
+system prompt now gives the game's words for each multiplier (0 doesn't
+affect, 1/2 not very effective, 2 super effective; two types multiply) and
+says what to ignore (STAB, stats, move power, move-specific exceptions); the
+chart conditions now say "use only the chart below, even where it disagrees
+with what you remember about the games", so a miss on a `differs` cell under
+C is an instruction-following failure and not a reasonable resolution of a
+conflict with the system prompt. Red/Blue never printed a multiplier; the
+numbers are the community's, and the mapping is given so the format is not
+the thing being tested.

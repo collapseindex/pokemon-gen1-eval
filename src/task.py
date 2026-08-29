@@ -21,16 +21,24 @@ from pathlib import Path
 
 from inspect_ai import Task, task
 from inspect_ai.dataset import MemoryDataset, Sample
-from inspect_ai.scorer import accuracy, choice, grouped, stderr
+from inspect_ai.model import GenerateConfig
+from inspect_ai.scorer import Metric, SampleScore, accuracy, choice, grouped, metric, stderr
 from inspect_ai.solver import multiple_choice, system_message
 
 from .key import MULTIPLIERS, PROCESSED, chart_table
 
 SYSTEM = (
     "You are answering questions about type matchups in Pokemon Red and Blue "
-    "(Generation I, the original 151). Damage multipliers are the product of the "
-    "attacking move's effectiveness against each of the defender's types."
+    "(Generation I, the original 151 Pokemon, as typed in those games).\n\n"
+    "Answer with the damage multiplier from type effectiveness alone: 0 (the move "
+    "doesn't affect the defender), 1/2 (not very effective), 1 (normal damage), or "
+    "2 (super effective). A defender with two types multiplies the two factors, so "
+    "1/4 and 4 are possible.\n\n"
+    "Ignore STAB, stats, move power, and any move-specific exceptions. Only the "
+    "attacking type against the defender's type or types counts."
 )
+
+MAX_TOKENS = 1024  # reasoning is allowed; truncations are counted by parse_failures()
 
 LETTERS = "ABCDEF"
 
@@ -46,7 +54,11 @@ def _prompt(row: dict[str, str], chart: str, show_types: bool) -> str:
     parts = []
     if chart != "none":
         label = "Generation I" if chart == "gen1" else "current"
-        parts.append(f"Use ONLY this type chart (the {label} chart). Rows are the attacking type, columns the defending type.\n\n{chart_table(past=(chart == 'gen1'))}\n")
+        parts.append(
+            f"Use only the type chart below (the {label} chart), even where it disagrees with "
+            f"what you remember about the games. Rows are the attacking type, columns the defending type.\n\n"
+            f"{chart_table(past=(chart == 'gen1'))}\n"
+        )
     defender = f"{mon} ({typing})" if show_types else mon
     parts.append(f"A {row['attack_type'].title()}-type move hits {defender}. What is the damage multiplier from type effectiveness alone?")
     return "\n".join(parts)
@@ -83,14 +95,35 @@ def build_samples(rows: list[dict[str, str]], chart: str, show_types: bool) -> l
     return samples
 
 
+@metric
+def parse_failures() -> Metric:
+    """Share of samples where no ANSWER letter could be parsed (truncation,
+    refusal, wrong format). choice() scores these as incorrect; this keeps
+    them visible as their own number."""
+
+    def m(scores: list[SampleScore]) -> float:
+        if not scores:
+            return 0.0
+        return sum(1 for s in scores if not s.score.answer) / len(scores)
+
+    return m
+
+
 @task
-def pokemon_gen1(chart: str = "none", show_types: bool = False, items: str = "items_s0_n400.csv") -> Task:
+def pokemon_gen1(
+    chart: str = "none",
+    show_types: bool = False,
+    items: str = "items_s0_n400.csv",
+    cot: bool = True,
+    max_tokens: int = MAX_TOKENS,
+) -> Task:
     if chart not in ("none", "gen1", "modern"):
         raise ValueError("chart must be none, gen1 or modern")
     rows = load_items(PROCESSED / items)
     return Task(
         dataset=MemoryDataset(build_samples(rows, chart, show_types), name=f"gen1_{chart}_{'types' if show_types else 'notypes'}"),
-        solver=[system_message(SYSTEM), multiple_choice(shuffle=False)],
+        solver=[system_message(SYSTEM), multiple_choice(shuffle=False, cot=cot)],
         scorer=choice(),
-        metrics=[accuracy(), stderr(), grouped(accuracy(), "stratum", all=False)],
+        metrics=[accuracy(), stderr(), parse_failures(), grouped(accuracy(), "stratum", all=False)],
+        config=GenerateConfig(max_tokens=max_tokens),
     )
