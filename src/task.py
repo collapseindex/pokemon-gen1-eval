@@ -276,8 +276,8 @@ def pokemon_gen1(
     chart_format: str = "table",
     shuffle: bool = False,
 ) -> Task:
-    if chart not in ("none", "gen1", "modern"):
-        raise ValueError("chart must be none, gen1 or modern")
+    if chart not in ("none", "gen1", "modern", "permuted"):
+        raise ValueError("chart must be none, gen1, modern or permuted")
     if show_types not in ("list", "inline", True, False):
         raise ValueError("show_types must be list, inline, true or false")
     if chart_format not in ("table", "rows"):

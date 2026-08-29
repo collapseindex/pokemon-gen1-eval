@@ -328,3 +328,10 @@ def test_permuted_chart_is_the_same_key_under_other_names():
     assert T._question(row, "list", perm).startswith(f"A {perm['water'].title()}-type move hits Golem.")
     assert f"Golem: {perm['rock'].title()}/{perm['ground'].title()}" in T.typing_list(perm)
     assert "relabelled chart" in T.system_prompt("permuted", "list")
+
+
+def test_task_accepts_permuted_chart():
+    """The guard that rejected chart=permuted on the first REVIEW3 launch (D-015)."""
+    from src import task as T
+    t = T.pokemon_gen1(chart="permuted", items="dev_s1_n100.csv")
+    assert "permuted" in t.dataset.name
