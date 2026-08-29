@@ -1,0 +1,2 @@
+model,family,params_total_b,params_active_b,quant,host_pinned,hosts_seen,host_errors,format,max_tokens,items,epochs,exact,exact_stderr,exact_ci95_low,exact_ci95_high,exact_epoch_range,bucket,steps_off,parse_failures,lenient_accuracy,transposed_misses,misses,quad,immune,differs,log
+qwen/qwen3-235b-a22b-2507,qwen-3,235.0,22.0,fp8,GMICloud,?:2;DeepInfra:1200,0,table,1024,400,3,0.725,0.0223,0.6793,0.7665,0.0125,0.7483,0.4483,0.0042,0.7275,172,330,0.619,0.9456,0.554,2026-08-29T14-10-48-00-00_pokemon-gen1_JGtLEFJXdhgNTok9Rjejiv.eval

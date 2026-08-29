@@ -31,6 +31,7 @@ Ids are permanent. PLAN.md is never edited; a mistake in it is a D entry here.
 | [O-005](#o-005) | replication, four knee models, a second 400-item set | order and MoE placement replicate (R2, R3); every model lands inside its pinned interval or within the baseline shift (R4); the "12B beats always-1" half of R1 fails on a set whose majority is 0.478: 12B is where reading starts, not where it beats the dumbest strategy | scored |
 | [O-006](#o-006) | rows x3, four knee rungs (REVIEW.md run 1) | the format gain has a band: rows minus table exceeds the sum of both epoch ranges by 2 to 3x for all four (V1 held); every one-epoch rows number within 0.02 of its three-epoch mean (V2 held) | scored |
 | [O-007](#o-007) | qwen3-235b-a22b on a second host (REVIEW.md run 2) | DeepInfra 0.725 [0.679, 0.766] against GMICloud 0.764 [0.720, 0.803]: inside the interval (V3 held, at the edge); the host moves the number by 0.04; on both hosts the 235B MoE is below the 32B dense model (0.828) | scored |
+| [D-013](#d-013) | git history | two internal files (the method checklist and a verbatim reviewer text) were purged from history before publication; every commit after the first of them was rewritten, so the commit ids recorded for the addendum, replication and review registrations changed; the blob hashes did not | recorded |
 | [O-004](#o-004) | the ladder, pinned set | the knee is between 8B and 12B total params; nothing under 12B beats always-"1"; the MoE sits with its total size; rows beats table for 9 of 10 models, by up to +0.23; predictions scored: P1, P3, A6 (accuracy clause) held; A1, A2 (bucket clause), A4, A5, A6 (transposition clause), A7 (MoE clause) failed | scored |
 | [D-010](#d-010) | model list | the question changed from "four labs" to "how small a model can do this": a nine-model size ladder replaces the addendum's list; Haiku and Flash-Lite drop from the pinned run (dev numbers kept); host, quantisation and parameter counts pinned in a registry; A7 registered | deviation declared |
 
@@ -163,7 +164,7 @@ multiplication. The plan is not edited; this entry is the record.
   "close" by word and is exactly the multiply failure the quad stratum
   exists to catch.
 
-**Addendum predictions.** Canonical text and the item-set balance pass are in [ADDENDUM.md](ADDENDUM.md) (commit `48dd575`), hashed like the plan; A4 and A5 were added there. As first written here: P1 and P3
+**Addendum predictions.** Canonical text and the item-set balance pass are in [ADDENDUM.md](ADDENDUM.md) (commit `8717c65`), hashed like the plan; A4 and A5 were added there. As first written here: P1 and P3
 from PLAN.md still apply (P3 read as "the best model is at least 95%").
 
 - **A1, the word is easier than the number.** For every model, bucket
@@ -554,7 +555,7 @@ $4.21, under the addendum's $5 ceiling with the 32B rerun (D-012) left out.
 **Replication: the shape holds, and one clause of the knee was set-dependent**
 llama-3.1-8b, gemma-3-12b, gemma-3-27b, qwen3-30b-a3b · `repl_s2_n400.csv` (dev 100 + 300 new, no overlap with the pinned set) · table x3 · 2026-08-29
 
-Registered in REPLICATION.md (commit `b5a081d`) before any call. Source
+Registered in REPLICATION.md (commit `3e389fc`) before any call. Source
 `data/results/20260829_035523_analyze_replication.json`. This set's
 majority baseline is **0.478** (the pinned set's is 0.408): the fresh pool
 had no immunities left and few quads, so it is an easier set for a model
@@ -646,3 +647,31 @@ seen served by ten hosts. Source: `logs/host2/`, analyzed to `data/results/`.
   clause is restored with "on two hosts" attached.
 
 Cost about $0.45. Review-round total (runs 1 and 2): about $1.50.
+
+### D-013
+**History rewritten to drop two internal files; three registration commit ids changed, no blob hash did**
+git · 2026-08-29 · recorded
+
+Before the repository goes public, `CHECKLIST.md` (the internal method
+checklist walked against this eval) and `writeup/raw/20260829_review_fable.md`
+(a reviewer's text, verbatim) were removed from every commit with
+`git filter-branch --index-filter`, and the reflog and original refs were
+dropped. Both files stay on disk, gitignored. `git log --all` on either path
+now returns nothing.
+
+A rewrite changes the id of every commit after the first touched one. The
+registration files are pinned two ways in the README: by the blob hash of the
+file (`git hash-object`, content-addressed, unchanged by the rewrite) and by
+the commit that introduced it. The blob hashes are the binding ones and did
+not move. The commit ids were remapped and the README and this ledger now
+carry the new ones:
+
+| file | blob (unchanged) | commit before | commit after |
+|---|---|---|---|
+| PLAN.md | 378f365 | 82c6bde | 82c6bde (predates the purged files) |
+| ADDENDUM.md | b3eee1d | 48dd575 | 8717c65 |
+| REPLICATION.md | (as recorded in README) | b5a081d | 3e389fc |
+| REVIEW.md | 4faeb2b | c4dccd8 | 94313fe |
+
+Anyone holding an old commit id can match it by commit message; the messages
+were not changed.

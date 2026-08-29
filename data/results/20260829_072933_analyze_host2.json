@@ -1,0 +1,337 @@
+[
+  {
+    "log": "2026-08-29T14-10-48-00-00_pokemon-gen1_JGtLEFJXdhgNTok9Rjejiv.eval",
+    "model": "openrouter/qwen/qwen3-235b-a22b-2507",
+    "condition": {
+      "chart": "gen1",
+      "show_types": "list",
+      "cot": true,
+      "items": "items_s0_n400.csv"
+    },
+    "n_samples": 1200,
+    "epochs": 3,
+    "accuracy_mean": 0.725,
+    "n_items": 400,
+    "accuracy_ci95": [
+      0.6793,
+      0.7665
+    ],
+    "accuracy_epoch_range": 0.0125,
+    "accuracy_per_epoch": {
+      "1": 0.72,
+      "2": 0.7225,
+      "3": 0.7325
+    },
+    "parse_failures": 0.0042,
+    "lenient_accuracy": 0.7275,
+    "lenient_recovered": 4,
+    "misses": 330,
+    "misses_on_asymmetric_cells": 275,
+    "transposed_misses": 172,
+    "chart_format": "table",
+    "upstream_providers": {
+      "DeepInfra": 1200,
+      "?": 2
+    },
+    "upstream_provider_errors": {},
+    "max_tokens": 1024,
+    "input_tokens_per_sample": 2766,
+    "output_tokens_per_sample": 142,
+    "bucket_accuracy": 0.7483,
+    "mean_steps_off": 0.4483,
+    "bucket_by_stratum": {
+      "differs": 0.5587,
+      "dual": 0.7247,
+      "immune": 0.9456,
+      "quad": 0.6463,
+      "single": 0.8687
+    },
+    "baseline_chance": 0.1667,
+    "baseline_majority": 0.4075,
+    "by_stratum": {
+      "differs": {
+        "n": 213,
+        "n_items": 71,
+        "accuracy": 0.554,
+        "ci95": [
+          0.4386,
+          0.6639
+        ]
+      },
+      "dual": {
+        "n": 396,
+        "n_items": 132,
+        "accuracy": 0.6667,
+        "ci95": [
+          0.5826,
+          0.7414
+        ]
+      },
+      "immune": {
+        "n": 147,
+        "n_items": 49,
+        "accuracy": 0.9456,
+        "ci95": [
+          0.844,
+          0.9824
+        ]
+      },
+      "quad": {
+        "n": 147,
+        "n_items": 49,
+        "accuracy": 0.619,
+        "ci95": [
+          0.4791,
+          0.7416
+        ]
+      },
+      "single": {
+        "n": 297,
+        "n_items": 99,
+        "accuracy": 0.8687,
+        "ci95": [
+          0.7882,
+          0.9216
+        ]
+      }
+    },
+    "by_answer_class": {
+      "0": {
+        "n": 189,
+        "n_items": 63,
+        "accuracy": 0.9048,
+        "ci95": [
+          0.8074,
+          0.9556
+        ]
+      },
+      "1": {
+        "n": 489,
+        "n_items": 163,
+        "accuracy": 0.7137,
+        "ci95": [
+          0.64,
+          0.7775
+        ]
+      },
+      "1/2": {
+        "n": 135,
+        "n_items": 45,
+        "accuracy": 0.7037,
+        "ci95": [
+          0.5586,
+          0.8167
+        ]
+      },
+      "1/4": {
+        "n": 93,
+        "n_items": 31,
+        "accuracy": 0.6559,
+        "ci95": [
+          0.48,
+          0.7974
+        ]
+      },
+      "2": {
+        "n": 207,
+        "n_items": 69,
+        "accuracy": 0.7536,
+        "ci95": [
+          0.6404,
+          0.8401
+        ]
+      },
+      "4": {
+        "n": 87,
+        "n_items": 29,
+        "accuracy": 0.4368,
+        "ci95": [
+          0.2744,
+          0.614
+        ]
+      }
+    },
+    "by_attack_type": {
+      "bug": {
+        "n": 135,
+        "n_items": 45,
+        "accuracy": 0.5704,
+        "ci95": [
+          0.4259,
+          0.7038
+        ]
+      },
+      "dragon": {
+        "n": 60,
+        "n_items": 20,
+        "accuracy": 0.7833,
+        "ci95": [
+          0.5661,
+          0.9092
+        ]
+      },
+      "electric": {
+        "n": 75,
+        "n_items": 25,
+        "accuracy": 0.8267,
+        "ci95": [
+          0.6384,
+          0.928
+        ]
+      },
+      "fighting": {
+        "n": 78,
+        "n_items": 26,
+        "accuracy": 0.7436,
+        "ci95": [
+          0.5525,
+          0.872
+        ]
+      },
+      "fire": {
+        "n": 54,
+        "n_items": 18,
+        "accuracy": 0.8148,
+        "ci95": [
+          0.5874,
+          0.9315
+        ]
+      },
+      "flying": {
+        "n": 54,
+        "n_items": 18,
+        "accuracy": 0.7778,
+        "ci95": [
+          0.5479,
+          0.91
+        ]
+      },
+      "ghost": {
+        "n": 132,
+        "n_items": 44,
+        "accuracy": 0.7727,
+        "ci95": [
+          0.63,
+          0.8716
+        ]
+      },
+      "grass": {
+        "n": 87,
+        "n_items": 29,
+        "accuracy": 0.3678,
+        "ci95": [
+          0.2176,
+          0.5489
+        ]
+      },
+      "ground": {
+        "n": 93,
+        "n_items": 31,
+        "accuracy": 0.8065,
+        "ci95": [
+          0.6373,
+          0.9082
+        ]
+      },
+      "ice": {
+        "n": 99,
+        "n_items": 33,
+        "accuracy": 0.5758,
+        "ci95": [
+          0.4081,
+          0.7277
+        ]
+      },
+      "normal": {
+        "n": 75,
+        "n_items": 25,
+        "accuracy": 1.0,
+        "ci95": [
+          0.8668,
+          1.0
+        ]
+      },
+      "poison": {
+        "n": 117,
+        "n_items": 39,
+        "accuracy": 0.7863,
+        "ci95": [
+          0.6352,
+          0.886
+        ]
+      },
+      "psychic": {
+        "n": 45,
+        "n_items": 15,
+        "accuracy": 0.8444,
+        "ci95": [
+          0.5961,
+          0.9523
+        ]
+      },
+      "rock": {
+        "n": 39,
+        "n_items": 13,
+        "accuracy": 0.4103,
+        "ci95": [
+          0.1949,
+          0.6666
+        ]
+      },
+      "water": {
+        "n": 57,
+        "n_items": 19,
+        "accuracy": 0.9298,
+        "ci95": [
+          0.7302,
+          0.9848
+        ]
+      }
+    },
+    "confusion": {
+      "0->0": 171,
+      "0->1": 4,
+      "0->1/2": 3,
+      "0->2": 10,
+      "0->4": 1,
+      "1->(none)": 3,
+      "1->0": 4,
+      "1->1": 349,
+      "1->1/2": 63,
+      "1->1/4": 12,
+      "1->2": 48,
+      "1->4": 10,
+      "1/2->(none)": 1,
+      "1/2->0": 2,
+      "1/2->1": 7,
+      "1/2->1/2": 95,
+      "1/2->1/4": 17,
+      "1/2->2": 10,
+      "1/2->4": 3,
+      "1/4->(none)": 1,
+      "1/4->1": 26,
+      "1/4->1/2": 1,
+      "1/4->1/4": 61,
+      "1/4->4": 4,
+      "2->1": 34,
+      "2->1/2": 7,
+      "2->1/4": 3,
+      "2->2": 156,
+      "2->4": 7,
+      "4->1": 41,
+      "4->1/4": 5,
+      "4->2": 3,
+      "4->4": 38
+    },
+    "predicted_letters": {
+      "(none)": 5,
+      "A": 177,
+      "B": 98,
+      "C": 169,
+      "D": 461,
+      "E": 227,
+      "F": 63
+    },
+    "differs_under_modern_chart": null
+  }
+]
