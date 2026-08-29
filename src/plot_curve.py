@@ -119,6 +119,9 @@ def render(rows: list[dict], majority: float, chance: float) -> str:
                 where = place[s.index(r)]
                 y_lo = Y(lo) if lo is not None else Y(a) + 6
                 y_hi = Y(hi) if hi is not None else Y(a) - 6
+                # a label that would sit on a baseline goes above the point instead
+                if where == "below" and any(abs((y_lo + 13) - Y(b)) < 9 for b in (majority, chance)):
+                    where = "above"
                 if where == "below":
                     out.append(f'<text x="{x:.1f}" y="{y_lo+13:.1f}" text-anchor="middle" fill="{INK2}" font-size="10">{label}</text>')
                 elif where == "right":

@@ -467,8 +467,8 @@ returns, this is the first rerun.
 **The ladder: a knee between 8B and 12B, and a grid that costs every model something**
 nine models plus a ceiling · pinned 400 · table x3 epochs, rows x1 · 2026-08-29
 
-Source: `data/results/20260829_031436_analyze_pinned.json`, curve
-`20260829_031436_curve_pinned.csv` and `.svg`. Exact accuracy; majority
+Source: `data/results/20260829_033058_analyze_pinned.json`, curve
+`20260829_033058_curve_pinned.csv` and `.svg`. Exact accuracy; majority
 baseline 0.408, chance 0.167. Table has a three-epoch range; rows is one
 epoch and carries only its binomial stderr (about 0.02 at n=400).
 
