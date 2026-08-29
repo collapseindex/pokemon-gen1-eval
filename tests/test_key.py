@@ -177,3 +177,28 @@ def test_scorer_awards_key_rejects_wrong_and_counts_unparsed():
     # truncated mid-reasoning: no answer line at all
     m = _run_mock(["Let me think. Bug is 1/2 against Grass, and"] * 6, rows)
     assert m["accuracy"] == 0.0 and m["parse_failures"] == 1.0
+
+
+@pytest.mark.slow
+def test_analyze_recomputes_what_the_log_says(tmp_path):
+    """A mock that always answers D ("1") on the dev set: analyze must report
+    accuracy equal to the majority share, a D-only letter distribution, zero
+    parse failures, and 0.0 on the immune and quad strata."""
+    from inspect_ai import eval as inspect_eval
+    from inspect_ai.model import ModelOutput, get_model
+    from src.analyze import summarize
+    from src.task import pokemon_gen1
+
+    t = pokemon_gen1(chart="gen1", show_types=True, items="dev_s1_n100.csv")
+    model = get_model("mockllm/model", custom_outputs=[ModelOutput.from_content("mockllm/model", "reasoning...\nANSWER: D")] * 100)
+    log = inspect_eval(t, model=model, log_dir=str(tmp_path), display="none")[0]
+    r = summarize(log)
+    assert r["n_samples"] == 100 and r["epochs"] == 1
+    assert r["accuracy_mean"] == r["baseline_majority"]
+    assert r["parse_failures"] == 0.0
+    assert set(r["predicted_letters"]) == {"D"}
+    assert r["by_stratum"]["immune"]["accuracy"] == 0.0
+    assert r["by_stratum"]["quad"]["accuracy"] == 0.0
+    assert r["by_answer_class"]["1"]["accuracy"] == 1.0
+    assert sum(r["confusion"].values()) == 100
+    assert r["differs_under_modern_chart"] is None

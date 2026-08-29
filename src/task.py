@@ -87,6 +87,7 @@ def build_samples(rows: list[dict[str, str]], chart: str, show_types: bool) -> l
                     "def_types": r["def_type1"] + ("/" + r["def_type2"] if r["def_type2"] else ""),
                     "gen1_multiplier": r["gen1_multiplier"],
                     "modern_multiplier": r["modern_multiplier"],
+                    "answer_class": r[answer_field],
                     "chart": chart,
                     "show_types": show_types,
                 },
@@ -124,6 +125,13 @@ def pokemon_gen1(
         dataset=MemoryDataset(build_samples(rows, chart, show_types), name=f"gen1_{chart}_{'types' if show_types else 'notypes'}"),
         solver=[system_message(SYSTEM), multiple_choice(shuffle=False, cot=cot)],
         scorer=choice(),
-        metrics=[accuracy(), stderr(), parse_failures(), grouped(accuracy(), "stratum", all=False)],
+        metrics=[
+            accuracy(),
+            stderr(),
+            parse_failures(),
+            grouped(accuracy(), "stratum", all=False),
+            grouped(accuracy(), "answer_class", all=False),
+            grouped(accuracy(), "attack_type", all=False),
+        ],
         config=GenerateConfig(max_tokens=max_tokens),
     )
