@@ -397,7 +397,7 @@ python -m src.key                                   # build the key, print the 2
 python -m src.sample --n 400 --seed 0               # pin the item set (reproduces the committed file)
 python -m src.sample --n 100 --seed 1 --exclude items_s0_n400.csv --no-differs --tag dev --balance
 python -m src.export_dino && dinostomp stomp data/processed/items_s0_n400_dino.jsonl   # at-rest audit, no spend
-pytest                                              # 19 tests, no API calls, about 25 s
+pytest                                              # 21 tests, no API calls, about 25 s
 
 # one model on the dev set (OPENROUTER_API_KEY in .env, which is gitignored)
 inspect eval src/task.py -T items=dev_s1_n100.csv --model openrouter/google/gemma-3-4b-it \
