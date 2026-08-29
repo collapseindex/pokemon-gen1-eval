@@ -116,10 +116,24 @@ def test_sample_takes_all_differing_and_is_deterministic(cells):
 def test_dev_draw_is_disjoint_from_pinned_set(cells):
     pinned = draw(cells, 400, 0)
     spent = {(c.attack_type, c.pokemon) for c in pinned}
-    dev = draw(cells, 100, 1, exclude=spent, with_differs=False)
+    dev = draw(cells, 100, 1, exclude=spent, with_differs=False, balance=True)
     assert len(dev) == 100
     assert not ({(c.attack_type, c.pokemon) for c in dev} & spent)
     assert not any(c.differs for c in dev)
+    from collections import Counter
+    by_type = Counter(c.attack_type for c in dev)
+    assert len(by_type) == 15, "every attack type present"
+    # evenness is only claimable where the pool allows it: dual and single
+    for s in ("dual", "single"):
+        by = Counter(c.attack_type for c in dev if stratum(c) == s)
+        assert max(by.values()) - min(by.values()) <= 1, (s, by)
+
+
+def test_pinned_set_unchanged_by_balance_option(cells):
+    path = ROOT / "data" / "processed" / "items_s0_n400.csv"
+    with path.open(newline="", encoding="utf-8") as fh:
+        on_disk = [(r["attack_type"], r["pokemon"]) for r in csv.DictReader(fh)]
+    assert [(c.attack_type, c.pokemon) for c in draw(cells, 400, 0)] == on_disk
 
 
 def test_targets_are_letters_of_the_right_multiplier(tmp_path, cells):

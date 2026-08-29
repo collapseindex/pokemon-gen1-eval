@@ -36,10 +36,38 @@ def stratum(c: Cell) -> str:
     return "dual" if c.dual else "single"
 
 
-def draw(cells: list[Cell], n: int, seed: int, exclude: set[tuple[str, str]] | None = None, with_differs: bool = True) -> list[Cell]:
+def _round_robin(pool: list[Cell], k: int, rng: random.Random) -> list[Cell]:
+    """Take k cells from the pool spreading across attack types: shuffle each
+    type's bucket, then cycle through the types taking one at a time."""
+    buckets: dict[str, list[Cell]] = {}
+    for c in pool:
+        buckets.setdefault(c.attack_type, []).append(c)
+    order = sorted(buckets)
+    rng.shuffle(order)
+    for b in buckets.values():
+        rng.shuffle(b)
+    out: list[Cell] = []
+    while len(out) < k and any(buckets.values()):
+        for t in order:
+            if buckets[t] and len(out) < k:
+                out.append(buckets[t].pop())
+    return out
+
+
+def draw(
+    cells: list[Cell],
+    n: int,
+    seed: int,
+    exclude: set[tuple[str, str]] | None = None,
+    with_differs: bool = True,
+    balance: bool = False,
+) -> list[Cell]:
     """``exclude`` is a set of (attack_type, pokemon) already spent (a pinned
     set); ``with_differs=False`` skips the differs stratum entirely, for a
-    development draw when the pinned set already holds all of them."""
+    development draw when the pinned set already holds all of them;
+    ``balance=True`` spreads each stratum's draw across attack types
+    (round-robin) instead of uniform random. The pinned set (seed 0, n 400)
+    was drawn with balance=False and must reproduce byte for byte."""
     rng = random.Random(seed)
     pools: dict[str, list[Cell]] = {s: [] for s in STRATA}
     for c in cells:
@@ -53,7 +81,7 @@ def draw(cells: list[Cell], n: int, seed: int, exclude: set[tuple[str, str]] | N
     taken: set[tuple[str, str]] = set()
     for s, share in SHARES.items():
         k = min(round(budget * share), len(pools[s]))
-        picked = rng.sample(pools[s], k)
+        picked = _round_robin(pools[s], k, rng) if balance else rng.sample(pools[s], k)
         chosen.extend(picked)
         taken.update((c.attack_type, c.pokemon) for c in picked)
     # rounding across strata can leave the draw a cell short; top up from dual
@@ -79,18 +107,20 @@ def main() -> None:
     ap.add_argument("--exclude", default=None, help="an items csv whose cells must not be drawn again")
     ap.add_argument("--no-differs", action="store_true", help="skip the differs stratum")
     ap.add_argument("--tag", default="items", help="filename prefix (items, dev)")
+    ap.add_argument("--balance", action="store_true", help="round-robin across attack types within each stratum")
     a = ap.parse_args()
     cells = read_key(PROCESSED / "gen1_key.csv")
     exclude = None
     if a.exclude:
         with (PROCESSED / a.exclude).open(newline="", encoding="utf-8") as fh:
             exclude = {(r["attack_type"], r["pokemon"]) for r in csv.DictReader(fh)}
-    items = draw(cells, a.n, a.seed, exclude=exclude, with_differs=not a.no_differs)
+    items = draw(cells, a.n, a.seed, exclude=exclude, with_differs=not a.no_differs, balance=a.balance)
     out = PROCESSED / f"{a.tag}_s{a.seed}_n{a.n}.csv"
     write_items(items, out)
     print(f"wrote {len(items)} items to {out}")
     print("strata:", dict(Counter(stratum(c) for c in items)))
     print("gen1 multipliers:", dict(Counter(c.gen1_multiplier for c in items)))
+    print("attack types:", dict(Counter(c.attack_type for c in items).most_common()))
 
 
 if __name__ == "__main__":

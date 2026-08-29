@@ -17,6 +17,7 @@ Ids are permanent. PLAN.md is never edited; a mistake in it is a D entry here.
 | [D-001](#d-001) | known-answer list | six of 26 hand-written expectations were wrong; the derived key was right | fixed |
 | [D-002](#d-002) | item sets | PLAN.md named no development set; a 100-item dev set disjoint from the pinned 400 is added for harness work | deviation declared |
 | [D-003](#d-003) | prompt and format | PLAN.md did not say whether the model may reason before answering; reasoning is allowed, max_tokens pinned at 1024, parse failures reported as their own metric | decided before any run |
+| [D-004](#d-004) | item draw | the pinned set is stratified by answer class, not by attack type: 13 to 45 cells per type, and the four `differs` attack types dominate; the first dev draw had no Bug or Poison attacks at all | pinned set kept, dev redrawn balanced |
 
 ## Defects in this harness
 
@@ -85,3 +86,27 @@ C is an instruction-following failure and not a reasonable resolution of a
 conflict with the system prompt. Red/Blue never printed a multiplier; the
 numbers are the community's, and the mapping is given so the format is not
 the thing being tested.
+
+### D-004
+**The draw balanced answer classes and let attack types fall where they may**
+`src/sample.py` · 2026-08-29 · pinned set kept, dev set redrawn
+
+Counting the pinned 400 by attack type: Rock 13, Psychic 15, up to Poison 39,
+Ghost 44, Bug 45. The `differs` stratum is taken whole and all 71 of its
+cells are Bug, Poison, Ghost or Ice attacks, so those four types are
+over-represented and any per-attack-type breakdown is confounded with the
+stratum. The first dev draw (seed 1, uniform within stratum) had 13 of 15
+attack types: no Bug and no Poison at all, by chance (106 and 112 cells were
+available). Defender types are skewed too, but that is the universe: 33 of
+the 151 are Poison-typed.
+
+The pinned set is registered and is not changed; `test_pinned_set_unchanged_by_balance_option`
+holds the draw to the file on disk. What changes: per-attack-type accuracy
+on the pinned set is reported with its n and read against the stratum mix,
+and P6 (Ghost→Psychic the worst row) is read knowing Ghost has 44 cells, 30
+of them `differs`. The dev set is redrawn with `--balance`: within each
+stratum the draw cycles across attack types, so dual and single are near
+even by type. Immunities and quads cannot be: 14 immune and 34 quad cells
+remained after the pinned draw, and quad is nearly half Grass, because that
+is where the game's 4x cells are (Grass on Rock/Ground, Rock/Water,
+Ground/Water).
