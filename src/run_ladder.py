@@ -37,8 +37,10 @@ def run_one(model, fmt: str, log_dir: Path) -> int:
     for line in tail:
         if line.startswith(("accuracy", "parse_failures", "Log:", "logs/")) or "Error" in line or "error" in line:
             print("   ", line.strip(), flush=True)
-    print(f"    exit {proc.returncode}", flush=True)
-    return proc.returncode
+    errored = any(("Error code:" in l or "Traceback" in l) for l in tail)
+    code = proc.returncode or (1 if errored else 0)
+    print(f"    exit {code}{' (error trace in output)' if errored and not proc.returncode else ''}", flush=True)
+    return code
 
 
 def main() -> None:
