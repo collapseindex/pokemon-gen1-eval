@@ -13,19 +13,20 @@ reported beside it, never blended in.
 
 ## Status
 
-Run complete, 2026-08-29. Nine open models from 1B to 235B plus a ceiling
-model on the pinned 400, two chart formats, $4.21. The curve is in
-`data/results/`; the reading is O-004 in the ledger; twelve D entries and
-four O entries, every one dated. Write-up next.
+Run and replication complete, 2026-08-29. Nine open models from 1B to
+235B plus a ceiling model on the pinned 400, two chart formats; the four
+knee rungs replicated on a second disjoint 400; the one truncated rung
+rerun. $5.72 total, $0.72 over the registered ceiling and logged as such.
+Twelve D entries and five O entries. Write-up next.
 
 ## Result
 
-![scaling curve](data/results/20260829_033058_curve_pinned.svg)
+![scaling curve](data/results/20260829_035620_curve_pinned.svg)
 
 Exact accuracy on the pinned 400 (majority baseline 0.41, chance 0.17);
 table format at three epochs with its 95% Wilson interval over items, rows
 at one epoch. Full table with strata, parse rates and hosts in
-`data/results/20260829_033058_curve_pinned.csv`; the reading is O-004.
+`data/results/20260829_035620_curve_pinned.csv`; the reading is O-004.
 
 | params (active) | model | table | 95% CI | rows |
 |---|---|---|---|---|
@@ -36,14 +37,17 @@ at one epoch. Full table with strata, parse rates and hosts in
 | 12.2B | gemma-3-12b | 0.51 | 0.46 to 0.56 | 0.64 |
 | 27.4B | gemma-3-27b | 0.62 | 0.57 to 0.66 | 0.69 |
 | 30.5B (3.3B) | qwen3-30b-a3b | 0.64 | 0.59 to 0.69 | 0.82 |
-| 32.8B | qwen3-32b | 0.70 (floor, D-012) | 0.65 to 0.74 | 0.93 |
+| 32.8B | qwen3-32b (4,096 tokens) | 0.83 | 0.79 to 0.86 | 0.93 |
 | 235B (22B) | qwen3-235b-a22b | 0.76 | 0.72 to 0.80 | 0.84 |
 | undisclosed | gpt-5-nano (4,096 tokens) | 0.95 | 0.93 to 0.97 | 0.99 |
 
-With the reference as a grid, nothing under 12B beats always answering
-"1"; as rows, the knee drops to about 4B. The 30B MoE with 3.3B active
-sits with the 30B dense models. Rows beats table for nine of ten, by up to
-+0.23. Every intervals-overlap caveat is in O-004.
+With the reference as a grid, nothing under 12B reads it (quads near
+zero); as rows, the knee drops to about 4B. The 30B MoE with 3.3B active
+sits with the 30B dense models, on both item sets. Rows beats table for
+nine of ten. Replicated on a second, disjoint 400-item set for the four
+rungs around the knee (O-005): order and MoE placement hold, every model
+lands within 0.05 of its first number, and "beats always-1" turned out to
+depend on the item mix while "reads the chart" did not.
 
 ## Why this task
 
@@ -294,12 +298,27 @@ now carries CI bars: the eight rungs from 12B up are separated from the
 four below by more than their intervals; 27B, 30B-A3B and 32B overlap
 each other under table.
 
-### 16. Next
+### 16. Replication and the last rerun (O-005, D-012 closed)
+
+Registered in REPLICATION.md before running: a second 400-item set (the
+dev 100, never shown to these four, plus 300 new cells; no immunities
+were left to draw, so this set's majority is 0.478 against 0.408), the
+four rungs around the knee, table, three epochs. Order held, the MoE's
+placement held, and every model landed within 0.05 of its pinned number.
+The one clause that failed is the one worth knowing: 12B tied this set's
+majority instead of beating it. "Reads the chart" replicated; "beats the
+dumbest strategy" was a property of the item mix.
+
+qwen3-32b rerun at 4,096 tokens: 0.697 became 0.828, one truncated call
+in 1,200. A 0.13 swing from the token budget alone. The old log is in
+`logs/superseded/`; the curve carries the new point.
+
+### 17. Next
 
 The write-up, from the ledger: reference-following as a function of
-model size, with the on-device class as the audience. Then, if credit
-returns: the qwen3-32b table rerun at 4,096 (D-012), and Haiku on rows on
-the pinned set.
+model size, with the on-device class as the audience. Publish: GitHub,
+site, the related-work leads in `writeup/RELATED.md` verified first. $1.28
+of credit left; Haiku on rows on the pinned set waits for more.
 
 ## Reproduce
 

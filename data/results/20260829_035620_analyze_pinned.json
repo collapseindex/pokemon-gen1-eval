@@ -1,5 +1,334 @@
 [
   {
+    "log": "2026-08-29T10-44-35-00-00_pokemon-gen1_5xhPdCXd5XaZRmunkrCEFR.eval",
+    "model": "openrouter/qwen/qwen3-32b",
+    "condition": {
+      "chart": "gen1",
+      "show_types": "list",
+      "cot": true,
+      "items": "items_s0_n400.csv"
+    },
+    "n_samples": 1200,
+    "epochs": 3,
+    "accuracy_mean": 0.8283,
+    "n_items": 400,
+    "accuracy_ci95": [
+      0.7883,
+      0.8621
+    ],
+    "accuracy_epoch_range": 0.025,
+    "accuracy_per_epoch": {
+      "1": 0.8175,
+      "2": 0.8425,
+      "3": 0.825
+    },
+    "parse_failures": 0.0008,
+    "misses": 206,
+    "misses_on_asymmetric_cells": 169,
+    "transposed_misses": 79,
+    "chart_format": "table",
+    "upstream_providers": {
+      "DeepInfra": 1200
+    },
+    "upstream_provider_errors": {},
+    "max_tokens": 4096,
+    "input_tokens_per_sample": 2767,
+    "output_tokens_per_sample": 618,
+    "bucket_accuracy": 0.8525,
+    "mean_steps_off": 0.2758,
+    "bucket_by_stratum": {
+      "differs": 0.7042,
+      "dual": 0.8636,
+      "immune": 0.966,
+      "quad": 0.7483,
+      "single": 0.9394
+    },
+    "baseline_chance": 0.1667,
+    "baseline_majority": 0.4075,
+    "by_stratum": {
+      "differs": {
+        "n": 213,
+        "n_items": 71,
+        "accuracy": 0.6948,
+        "ci95": [
+          0.58,
+          0.7896
+        ]
+      },
+      "dual": {
+        "n": 396,
+        "n_items": 132,
+        "accuracy": 0.8333,
+        "ci95": [
+          0.7605,
+          0.8873
+        ]
+      },
+      "immune": {
+        "n": 147,
+        "n_items": 49,
+        "accuracy": 0.966,
+        "ci95": [
+          0.8727,
+          0.9916
+        ]
+      },
+      "quad": {
+        "n": 147,
+        "n_items": 49,
+        "accuracy": 0.6463,
+        "ci95": [
+          0.5063,
+          0.765
+        ]
+      },
+      "single": {
+        "n": 297,
+        "n_items": 99,
+        "accuracy": 0.9394,
+        "ci95": [
+          0.874,
+          0.9719
+        ]
+      }
+    },
+    "by_answer_class": {
+      "0": {
+        "n": 189,
+        "n_items": 63,
+        "accuracy": 0.873,
+        "ci95": [
+          0.7689,
+          0.9342
+        ]
+      },
+      "1": {
+        "n": 489,
+        "n_items": 163,
+        "accuracy": 0.8875,
+        "ci95": [
+          0.8298,
+          0.9273
+        ]
+      },
+      "1/2": {
+        "n": 135,
+        "n_items": 45,
+        "accuracy": 0.8,
+        "ci95": [
+          0.6618,
+          0.891
+        ]
+      },
+      "1/4": {
+        "n": 93,
+        "n_items": 31,
+        "accuracy": 0.6559,
+        "ci95": [
+          0.48,
+          0.7974
+        ]
+      },
+      "2": {
+        "n": 207,
+        "n_items": 69,
+        "accuracy": 0.8261,
+        "ci95": [
+          0.7202,
+          0.8976
+        ]
+      },
+      "4": {
+        "n": 87,
+        "n_items": 29,
+        "accuracy": 0.6322,
+        "ci95": [
+          0.4511,
+          0.7824
+        ]
+      }
+    },
+    "by_attack_type": {
+      "bug": {
+        "n": 135,
+        "n_items": 45,
+        "accuracy": 0.7185,
+        "ci95": [
+          0.574,
+          0.8286
+        ]
+      },
+      "dragon": {
+        "n": 60,
+        "n_items": 20,
+        "accuracy": 0.8167,
+        "ci95": [
+          0.6022,
+          0.9291
+        ]
+      },
+      "electric": {
+        "n": 75,
+        "n_items": 25,
+        "accuracy": 0.9333,
+        "ci95": [
+          0.7678,
+          0.9834
+        ]
+      },
+      "fighting": {
+        "n": 78,
+        "n_items": 26,
+        "accuracy": 0.8846,
+        "ci95": [
+          0.7102,
+          0.96
+        ]
+      },
+      "fire": {
+        "n": 54,
+        "n_items": 18,
+        "accuracy": 0.9074,
+        "ci95": [
+          0.6946,
+          0.9769
+        ]
+      },
+      "flying": {
+        "n": 54,
+        "n_items": 18,
+        "accuracy": 0.6667,
+        "ci95": [
+          0.4375,
+          0.8372
+        ]
+      },
+      "ghost": {
+        "n": 132,
+        "n_items": 44,
+        "accuracy": 0.8561,
+        "ci95": [
+          0.724,
+          0.931
+        ]
+      },
+      "grass": {
+        "n": 87,
+        "n_items": 29,
+        "accuracy": 0.7356,
+        "ci95": [
+          0.5547,
+          0.8614
+        ]
+      },
+      "ground": {
+        "n": 93,
+        "n_items": 31,
+        "accuracy": 0.914,
+        "ci95": [
+          0.7647,
+          0.972
+        ]
+      },
+      "ice": {
+        "n": 99,
+        "n_items": 33,
+        "accuracy": 0.7879,
+        "ci95": [
+          0.6225,
+          0.8933
+        ]
+      },
+      "normal": {
+        "n": 75,
+        "n_items": 25,
+        "accuracy": 1.0,
+        "ci95": [
+          0.8668,
+          1.0
+        ]
+      },
+      "poison": {
+        "n": 117,
+        "n_items": 39,
+        "accuracy": 0.8291,
+        "ci95": [
+          0.6831,
+          0.9161
+        ]
+      },
+      "psychic": {
+        "n": 45,
+        "n_items": 15,
+        "accuracy": 0.8222,
+        "ci95": [
+          0.5718,
+          0.9412
+        ]
+      },
+      "rock": {
+        "n": 39,
+        "n_items": 13,
+        "accuracy": 0.5641,
+        "ci95": [
+          0.3122,
+          0.7868
+        ]
+      },
+      "water": {
+        "n": 57,
+        "n_items": 19,
+        "accuracy": 0.9298,
+        "ci95": [
+          0.7302,
+          0.9848
+        ]
+      }
+    },
+    "confusion": {
+      "0->0": 165,
+      "0->1": 13,
+      "0->1/2": 1,
+      "0->2": 9,
+      "0->4": 1,
+      "1->0": 1,
+      "1->1": 434,
+      "1->1/2": 40,
+      "1->1/4": 2,
+      "1->2": 11,
+      "1->4": 1,
+      "1/2->1": 11,
+      "1/2->1/2": 108,
+      "1/2->1/4": 12,
+      "1/2->2": 4,
+      "1/4->(none)": 1,
+      "1/4->1": 18,
+      "1/4->1/2": 13,
+      "1/4->1/4": 61,
+      "2->0": 1,
+      "2->1": 23,
+      "2->1/2": 9,
+      "2->1/4": 1,
+      "2->2": 171,
+      "2->4": 2,
+      "4->1": 27,
+      "4->1/2": 2,
+      "4->1/4": 1,
+      "4->2": 2,
+      "4->4": 55
+    },
+    "predicted_letters": {
+      "(none)": 1,
+      "A": 167,
+      "B": 77,
+      "C": 173,
+      "D": 526,
+      "E": 197,
+      "F": 59
+    },
+    "differs_under_modern_chart": null
+  },
+  {
     "log": "2026-08-29T10-11-57-00-00_pokemon-gen1_BE3YdX6rNguyKhodMRNTzY.eval",
     "model": "openrouter/qwen/qwen3-235b-a22b-2507",
     "condition": {
@@ -3880,334 +4209,6 @@
       "D": 430,
       "E": 197,
       "F": 79
-    },
-    "differs_under_modern_chart": null
-  },
-  {
-    "log": "2026-08-29T09-55-43-00-00_pokemon-gen1_AZEWYYZubRvnWs9Kk6VMYJ.eval",
-    "model": "openrouter/qwen/qwen3-32b",
-    "condition": {
-      "chart": "gen1",
-      "show_types": "list",
-      "cot": true,
-      "items": "items_s0_n400.csv"
-    },
-    "n_samples": 1200,
-    "epochs": 3,
-    "accuracy_mean": 0.6967,
-    "n_items": 400,
-    "accuracy_ci95": [
-      0.6499,
-      0.7397
-    ],
-    "accuracy_epoch_range": 0.0175,
-    "accuracy_per_epoch": {
-      "1": 0.6875,
-      "2": 0.6975,
-      "3": 0.705
-    },
-    "parse_failures": 0.1433,
-    "misses": 364,
-    "misses_on_asymmetric_cells": 164,
-    "transposed_misses": 80,
-    "chart_format": "table",
-    "upstream_providers": {
-      "DeepInfra": 1200
-    },
-    "upstream_provider_errors": {},
-    "max_tokens": 1024,
-    "input_tokens_per_sample": 2767,
-    "output_tokens_per_sample": 557,
-    "bucket_accuracy": 0.7117,
-    "mean_steps_off": 0.8333,
-    "bucket_by_stratum": {
-      "differs": 0.5258,
-      "dual": 0.7172,
-      "immune": 0.8095,
-      "quad": 0.517,
-      "single": 0.8855
-    },
-    "baseline_chance": 0.1667,
-    "baseline_majority": 0.4075,
-    "by_stratum": {
-      "differs": {
-        "n": 213,
-        "n_items": 71,
-        "accuracy": 0.5211,
-        "ci95": [
-          0.4068,
-          0.6332
-        ]
-      },
-      "dual": {
-        "n": 396,
-        "n_items": 132,
-        "accuracy": 0.697,
-        "ci95": [
-          0.6139,
-          0.7689
-        ]
-      },
-      "immune": {
-        "n": 147,
-        "n_items": 49,
-        "accuracy": 0.8095,
-        "ci95": [
-          0.6788,
-          0.8952
-        ]
-      },
-      "quad": {
-        "n": 147,
-        "n_items": 49,
-        "accuracy": 0.4558,
-        "ci95": [
-          0.3247,
-          0.5933
-        ]
-      },
-      "single": {
-        "n": 297,
-        "n_items": 99,
-        "accuracy": 0.8855,
-        "ci95": [
-          0.8079,
-          0.9343
-        ]
-      }
-    },
-    "by_answer_class": {
-      "0": {
-        "n": 189,
-        "n_items": 63,
-        "accuracy": 0.6772,
-        "ci95": [
-          0.5545,
-          0.7796
-        ]
-      },
-      "1": {
-        "n": 489,
-        "n_items": 163,
-        "accuracy": 0.8119,
-        "ci95": [
-          0.745,
-          0.8645
-        ]
-      },
-      "1/2": {
-        "n": 135,
-        "n_items": 45,
-        "accuracy": 0.6667,
-        "ci95": [
-          0.5207,
-          0.7864
-        ]
-      },
-      "1/4": {
-        "n": 93,
-        "n_items": 31,
-        "accuracy": 0.5269,
-        "ci95": [
-          0.3581,
-          0.6897
-        ]
-      },
-      "2": {
-        "n": 207,
-        "n_items": 69,
-        "accuracy": 0.6763,
-        "ci95": [
-          0.5592,
-          0.7749
-        ]
-      },
-      "4": {
-        "n": 87,
-        "n_items": 29,
-        "accuracy": 0.3678,
-        "ci95": [
-          0.2176,
-          0.5489
-        ]
-      }
-    },
-    "by_attack_type": {
-      "bug": {
-        "n": 135,
-        "n_items": 45,
-        "accuracy": 0.6222,
-        "ci95": [
-          0.4763,
-          0.7489
-        ]
-      },
-      "dragon": {
-        "n": 60,
-        "n_items": 20,
-        "accuracy": 0.7833,
-        "ci95": [
-          0.5661,
-          0.9092
-        ]
-      },
-      "electric": {
-        "n": 75,
-        "n_items": 25,
-        "accuracy": 0.7467,
-        "ci95": [
-          0.5518,
-          0.8759
-        ]
-      },
-      "fighting": {
-        "n": 78,
-        "n_items": 26,
-        "accuracy": 0.7949,
-        "ci95": [
-          0.6072,
-          0.9067
-        ]
-      },
-      "fire": {
-        "n": 54,
-        "n_items": 18,
-        "accuracy": 0.7037,
-        "ci95": [
-          0.4731,
-          0.8627
-        ]
-      },
-      "flying": {
-        "n": 54,
-        "n_items": 18,
-        "accuracy": 0.537,
-        "ci95": [
-          0.3213,
-          0.7397
-        ]
-      },
-      "ghost": {
-        "n": 132,
-        "n_items": 44,
-        "accuracy": 0.7273,
-        "ci95": [
-          0.5815,
-          0.8366
-        ]
-      },
-      "grass": {
-        "n": 87,
-        "n_items": 29,
-        "accuracy": 0.5057,
-        "ci95": [
-          0.334,
-          0.676
-        ]
-      },
-      "ground": {
-        "n": 93,
-        "n_items": 31,
-        "accuracy": 0.6774,
-        "ci95": [
-          0.5014,
-          0.8143
-        ]
-      },
-      "ice": {
-        "n": 99,
-        "n_items": 33,
-        "accuracy": 0.6162,
-        "ci95": [
-          0.4466,
-          0.7616
-        ]
-      },
-      "normal": {
-        "n": 75,
-        "n_items": 25,
-        "accuracy": 1.0,
-        "ci95": [
-          0.8668,
-          1.0
-        ]
-      },
-      "poison": {
-        "n": 117,
-        "n_items": 39,
-        "accuracy": 0.7179,
-        "ci95": [
-          0.5622,
-          0.8345
-        ]
-      },
-      "psychic": {
-        "n": 45,
-        "n_items": 15,
-        "accuracy": 0.7111,
-        "ci95": [
-          0.4589,
-          0.8772
-        ]
-      },
-      "rock": {
-        "n": 39,
-        "n_items": 13,
-        "accuracy": 0.4872,
-        "ci95": [
-          0.2514,
-          0.7289
-        ]
-      },
-      "water": {
-        "n": 57,
-        "n_items": 19,
-        "accuracy": 0.807,
-        "ci95": [
-          0.5855,
-          0.9253
-        ]
-      }
-    },
-    "confusion": {
-      "0->(none)": 38,
-      "0->0": 128,
-      "0->1": 14,
-      "0->1/2": 2,
-      "0->2": 7,
-      "1->(none)": 44,
-      "1->0": 1,
-      "1->1": 397,
-      "1->1/2": 38,
-      "1->2": 9,
-      "1/2->(none)": 16,
-      "1/2->1": 12,
-      "1/2->1/2": 90,
-      "1/2->1/4": 8,
-      "1/2->2": 9,
-      "1/4->(none)": 19,
-      "1/4->1": 16,
-      "1/4->1/2": 9,
-      "1/4->1/4": 49,
-      "2->(none)": 34,
-      "2->1": 24,
-      "2->1/2": 8,
-      "2->2": 140,
-      "2->4": 1,
-      "4->(none)": 21,
-      "4->1": 31,
-      "4->1/2": 1,
-      "4->1/4": 2,
-      "4->4": 32
-    },
-    "predicted_letters": {
-      "(none)": 172,
-      "A": 129,
-      "B": 59,
-      "C": 148,
-      "D": 494,
-      "E": 165,
-      "F": 33
     },
     "differs_under_modern_chart": null
   },

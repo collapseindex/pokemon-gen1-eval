@@ -27,7 +27,8 @@ Ids are permanent. PLAN.md is never edited; a mistake in it is a D entry here.
 | [D-009](#d-009) | upstream routing | OpenRouter split one llama run across two hosts and one of them returned HTTP 500 mid-generation on 31 of 100 items, scored as parse failures; provider pinned, host recorded per run; Qwen was served by ten different hosts in one run | fixed, census added |
 | [O-003](#o-003) | two on-device-class models, dev set | llama-3.2-3b at chance (0.18) in both formats; gemma-3-4b below the majority baseline (0.26 table, 0.34 rows) with immunities the worst stratum | observed on dev, not scored against a prediction |
 | [D-011](#d-011) | parse_failures metric | wrong whenever epochs > 1: Inspect's epoch reduction drops the `answer` field, so the in-log metric reads 0.94 on a run whose true rate is 0.198; analyze, which reads per-epoch samples, is the record | fixed: a `parsed` scorer with a numeric value, negative-tested at epochs=2 |
-| [D-012](#d-012) | qwen3-32b, table | a thinking model at 1,024 tokens: 14% of table calls truncated before the answer line, 2% under rows; the table number (0.697) is a floor, not rerun for budget | flagged, not rerun |
+| [D-012](#d-012) | qwen3-32b, table | a thinking model at 1,024 tokens: 14% of table calls truncated before the answer line; rerun at 4,096: 0.828 [0.788, 0.862], 0.08% truncated; the 0.697 floor is superseded | rerun, fixed |
+| [O-005](#o-005) | replication, four knee models, a second 400-item set | order and MoE placement replicate (R2, R3); every model lands inside its pinned interval or within the baseline shift (R4); the "12B beats always-1" half of R1 fails on a set whose majority is 0.478: 12B is where reading starts, not where it beats the dumbest strategy | scored |
 | [O-004](#o-004) | the ladder, pinned set | the knee is between 8B and 12B total params; nothing under 12B beats always-"1"; the MoE sits with its total size; rows beats table for 9 of 10 models, by up to +0.23; predictions scored: P1, P3, A6 (accuracy clause) held; A1, A2 (bucket clause), A4, A5, A6 (transposition clause), A7 (MoE clause) failed | scored |
 | [D-010](#d-010) | model list | the question changed from "four labs" to "how small a model can do this": a nine-model size ladder replaces the addendum's list; Haiku and Flash-Lite drop from the pinned run (dev numbers kept); host, quantisation and parameter counts pinned in a registry; A7 registered | deviation declared |
 
@@ -458,17 +459,26 @@ line; the rows run, whose prompt is shorter, truncated 2%. The D-007 rule
 says raise the budget and rerun. It was not applied: a 32B rerun at 4,096
 costs about $0.80 of the $2.79 left in the wallet, and the rows number for
 the same model (0.930, 2% truncated) already shows what the model can do.
-So the table number, **0.697, is a floor**: 14% of its calls were scored
-wrong without an answer having been produced. It is marked as such in the
-curve CSV (`parse_failures 0.14`) and wherever it is quoted. If budget
-returns, this is the first rerun.
+So the table number, **0.697, was a floor**: 14% of its calls were scored
+wrong without an answer having been produced.
+
+**Rerun, same day**, registered in REPLICATION.md before running: 4,096
+tokens, same host, same three epochs on the pinned set. **0.828 [0.788,
+0.862]**, range 0.025, 1 truncated call in 1,200. The 1,024 log is in
+`logs/superseded/` and is no longer in the curve. Two consequences for
+O-004: under table, qwen3-32b dense (0.83) now passes qwen3-235b-a22b
+(0.76) as well as under rows, so the 32B dense point is the top of the
+open ladder in both formats; and the rows-minus-table gain for 32B shrinks
+from +0.23 to +0.10, in line with its neighbours. A 0.13 swing from the
+token budget alone is the reason the budget is printed beside every
+number.
 
 ### O-004
 **The ladder: a knee between 8B and 12B, and a grid that costs every model something**
 nine models plus a ceiling · pinned 400 · table x3 epochs, rows x1 · 2026-08-29
 
-Source: `data/results/20260829_033058_analyze_pinned.json`, curve
-`20260829_033058_curve_pinned.csv` and `.svg`. Exact accuracy; majority
+Source: `data/results/20260829_035620_analyze_pinned.json`, curve
+`20260829_035620_curve_pinned.csv` and `.svg`. Exact accuracy; majority
 baseline 0.408, chance 0.167. Table has a three-epoch range; rows is one
 epoch and carries only its binomial stderr (about 0.02 at n=400).
 
@@ -534,3 +544,48 @@ In order of how much the data supports it:
 
 Cost: the wallet went from $7.00 to $2.79 across every run in this ledger,
 $4.21, under the addendum's $5 ceiling with the 32B rerun (D-012) left out.
+
+### O-005
+**Replication: the shape holds, and one clause of the knee was set-dependent**
+llama-3.1-8b, gemma-3-12b, gemma-3-27b, qwen3-30b-a3b · `repl_s2_n400.csv` (dev 100 + 300 new, no overlap with the pinned set) · table x3 · 2026-08-29
+
+Registered in REPLICATION.md (commit `b5a081d`) before any call. Source
+`data/results/20260829_035523_analyze_replication.json`. This set's
+majority baseline is **0.478** (the pinned set's is 0.408): the fresh pool
+had no immunities left and few quads, so it is an easier set for a model
+that leans on "1".
+
+| params (active) | model | replication | 95% CI | pinned | shift | inside pinned CI |
+|---|---|---|---|---|---|---|
+| 8.0B | llama-3.1-8b | 0.326 | 0.282 to 0.373 | 0.279 | +0.047 | no, but under the 0.07 baseline allowance |
+| 12.2B | gemma-3-12b | 0.480 | 0.431 to 0.529 | 0.507 | -0.027 | yes |
+| 27.4B | gemma-3-27b | 0.649 | 0.601 to 0.694 | 0.617 | +0.032 | yes |
+| 30.5B (3.3B) | qwen3-30b-a3b | 0.687 | 0.640 to 0.730 | 0.642 | +0.044 | yes |
+
+- **R2 held.** 0.326 < 0.480 < 0.649; each step is 0.15 to 0.17, against
+  epoch ranges of 0.018 to 0.045.
+- **R3 held.** The MoE's interval overlaps 27B's (0.640 to 0.694 against
+  0.601 to 0.694) and is nowhere near 8B's. Second set, same answer: the
+  30B MoE with 3.3B active behaves like a 30B model.
+- **R4 held**, all four. Three land inside their pinned intervals; 8B moves
+  up 0.047 on an easier set, inside the 0.07 allowance the registration
+  set for the baseline shift. No model moved more than 0.05 between two
+  disjoint draws of 400.
+- **R1 half failed.** 8B's interval is entirely below 0.478, as
+  predicted. 12B's (0.431 to 0.529) straddles it. On the pinned set 12B
+  beat its majority (0.507 against 0.408); here it ties. The claim that
+  survives both sets is the weaker and more useful one: 12B is the first
+  rung that reads the chart (quads 0.34 here against 0.10 for 8B, immune
+  0.76 against 0.36), not the first rung that beats always answering "1".
+  Whether a 12B model "beats the baseline" depends on how many neutral
+  cells the item set has; whether it reads the chart does not.
+
+What this does not do: it does not touch the `differs` cells or the
+rows format, and it does not rerun the other six models. The knee's shape
+is replicated; the exact accuracy at which a model "passes" is a property
+of the item mix and is reported as such.
+
+Cost of the replication and the D-012 rerun together: $1.51 ($2.79 to
+$1.28). Project total $5.72, which is $0.72 over the addendum's $5
+ceiling; the overrun is the two runs REPLICATION.md registered after the
+ceiling was set, and is recorded here rather than absorbed.

@@ -32,7 +32,7 @@
 <text x="74" y="40.1" fill="#52514e">gpt-5-nano (rows) 99%, size undisclosed</text>
 <line x1="70" x2="850" y1="58.8" y2="58.8" stroke="#2a78d6" stroke-width="1.5" stroke-dasharray="6 4"/>
 <text x="74" y="53.8" fill="#52514e">gpt-5-nano (table) 95%, size undisclosed</text>
-<path d="M101.5,358.8 L231.5,347.5 L271.5,337.2 L356.9,335.5 L414.1,241.9 L524.7,197.2 L539.4,186.6 L549.3,164.4 L818.5,136.7" fill="none" stroke="#2a78d6" stroke-width="2" stroke-linejoin="round"/>
+<path d="M101.5,358.8 L231.5,347.5 L271.5,337.2 L356.9,335.5 L414.1,241.9 L524.7,197.2 L539.4,186.6 L549.3,110.4 L818.5,136.7" fill="none" stroke="#2a78d6" stroke-width="2" stroke-linejoin="round"/>
 <line x1="101.5" x2="101.5" y1="341.0" y2="374.4" stroke="#2a78d6" stroke-width="1.5"/>
 <line x1="98.5" x2="104.5" y1="341.0" y2="341.0" stroke="#2a78d6" stroke-width="1.5"/>
 <line x1="98.5" x2="104.5" y1="374.4" y2="374.4" stroke="#2a78d6" stroke-width="1.5"/>
@@ -68,11 +68,11 @@
 <line x1="536.4" x2="542.4" y1="206.3" y2="206.3" stroke="#2a78d6" stroke-width="1.5"/>
 <rect x="534.4" y="181.6" width="10" height="10" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
 <text x="549.4" y="190.6" text-anchor="start" fill="#52514e" font-size="10">qwen3-30b-a3b</text>
-<line x1="549.3" x2="549.3" y1="146.7" y2="183.5" stroke="#2a78d6" stroke-width="1.5"/>
-<line x1="546.3" x2="552.3" y1="146.7" y2="146.7" stroke="#2a78d6" stroke-width="1.5"/>
-<line x1="546.3" x2="552.3" y1="183.5" y2="183.5" stroke="#2a78d6" stroke-width="1.5"/>
-<circle cx="549.3" cy="164.4" r="5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
-<text x="539.3" y="141.7" text-anchor="end" fill="#52514e" font-size="10">qwen3-32b</text>
+<line x1="549.3" x2="549.3" y1="96.5" y2="126.8" stroke="#2a78d6" stroke-width="1.5"/>
+<line x1="546.3" x2="552.3" y1="96.5" y2="96.5" stroke="#2a78d6" stroke-width="1.5"/>
+<line x1="546.3" x2="552.3" y1="126.8" y2="126.8" stroke="#2a78d6" stroke-width="1.5"/>
+<circle cx="549.3" cy="110.4" r="5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text x="539.3" y="91.5" text-anchor="end" fill="#52514e" font-size="10">qwen3-32b</text>
 <line x1="818.5" x2="818.5" y1="120.7" y2="154.7" stroke="#2a78d6" stroke-width="1.5"/>
 <line x1="815.5" x2="821.5" y1="120.7" y2="120.7" stroke="#2a78d6" stroke-width="1.5"/>
 <line x1="815.5" x2="821.5" y1="154.7" y2="154.7" stroke="#2a78d6" stroke-width="1.5"/>
