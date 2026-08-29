@@ -253,7 +253,21 @@ log too. And qwen3-32b, a thinking model, truncated 14% of its table calls
 at 1,024 tokens; its table number is kept as a floor rather than rerun,
 because the wallet said so.
 
-### 15. Next
+### 15. Intervals, and a viewer column that was not the headline
+
+The Inspect task list shows one metric per run and, with thirty attached
+to the exact scorer, it picked a grouped one: gemma-3-12b showed 0.968
+where its accuracy is 0.642. The in-log metrics are now just accuracy, a
+95% Wilson interval, stderr and the one-epoch parse-failure number; every
+grouping moved to `analyze`, with n and its own interval. The interval
+uses n = items, not items times epochs, because repeats of one item are
+not independent trials. One function in `src/stats.py` computes it for
+the log and for the results file, so the two never disagree. The curve
+now carries CI bars: the eight rungs from 12B up are separated from the
+four below by more than their intervals; 27B, 30B-A3B and 32B overlap
+each other under table.
+
+### 16. Next
 
 The write-up, from the ledger: reference-following as a function of
 model size, with the on-device class as the audience. Then, if credit
@@ -284,17 +298,26 @@ Other parameters: `-T chart={none,gen1,modern}`, `-T show_types={list,inline,fal
 
 ## How to read a run
 
-1. `parse_failures` first. Anything above zero: open those samples. Truncation
-   and format drift are harness problems, not model findings.
-2. `accuracy` against the two baselines on the same line. A number below the
-   majority share means the model is worse than answering "1" every time.
+1. `parsed` (its mean) first, or `parse_failures` on a one-epoch run.
+   Anything below 1.0: open those samples. Truncation, host errors and
+   format drift are harness problems, not model findings.
+2. `accuracy` with its `ci95_low` / `ci95_high` (Wilson, n = items, since
+   epoch repeats are not independent trials) against the two baselines. A
+   number whose interval covers the majority share has not beaten "1".
+   Two models whose intervals overlap have not been separated.
 3. Strata. `single` is a one-cell lookup; `dual` is two cells and a multiply;
    `quad` and `immune` are where the multiply has to be right; `differs`
    (pinned set only) is where Gen 1 and modern disagree.
 4. Confusion matrix. Where do the misses land?
 5. Predicted letters. Fixed order means a lean toward D is a lean toward "1".
 6. Epoch range before any comparison between conditions or models. If the
-   difference is inside the band, it is not a difference.
+   difference is inside the band, or inside both intervals, it is not a
+   difference.
+
+The viewer's task-list SCORE column shows one metric per run; with the
+trimmed metric list that is `accuracy`. On logs written before 2026-08-29
+03:30 it was one of the grouped metrics and is not the headline: open the
+run.
 
 ## Layout
 

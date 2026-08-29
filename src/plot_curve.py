@@ -4,7 +4,7 @@ this only renders it.
     python -m src.plot_curve [data/results/<stamp>_curve_pinned.csv]
 
 Writes data/results/<stamp>_curve_pinned.svg: exact accuracy against total
-parameters (log axis), one series per chart format, binomial stderr bars,
+parameters (log axis), one series per chart format, 95% Wilson CI bars,
 family written beside each point, the majority and chance baselines, and the
 ceiling model as a dashed line since it has no parameter count.
 """
@@ -104,8 +104,11 @@ def render(rows: list[dict], majority: float, chance: float) -> str:
                 place[i] = ("below", "right", "above")[k % 3] if len(g) > 1 else "below"
         for r in s:
             x, a = X(_f(r["params_total_b"])), _f(r["exact"])
-            se = _f(r["exact_stderr"]) or 0
-            out.append(f'<line x1="{x:.1f}" x2="{x:.1f}" y1="{Y(a+se):.1f}" y2="{Y(a-se):.1f}" stroke="{col}" stroke-width="1.5"/>')
+            lo, hi = _f(r["exact_ci95_low"]), _f(r["exact_ci95_high"])
+            if lo is not None and hi is not None:
+                out.append(f'<line x1="{x:.1f}" x2="{x:.1f}" y1="{Y(hi):.1f}" y2="{Y(lo):.1f}" stroke="{col}" stroke-width="1.5"/>')
+                out.append(f'<line x1="{x-3:.1f}" x2="{x+3:.1f}" y1="{Y(hi):.1f}" y2="{Y(hi):.1f}" stroke="{col}" stroke-width="1.5"/>')
+                out.append(f'<line x1="{x-3:.1f}" x2="{x+3:.1f}" y1="{Y(lo):.1f}" y2="{Y(lo):.1f}" stroke="{col}" stroke-width="1.5"/>')
             shape = "moe" if _f(r["params_active_b"]) and _f(r["params_active_b"]) < _f(r["params_total_b"]) else "dense"
             if shape == "moe":
                 out.append(f'<rect x="{x-5:.1f}" y="{Y(a)-5:.1f}" width="10" height="10" fill="{col}" stroke="{SURFACE}" stroke-width="2"/>')
@@ -114,12 +117,14 @@ def render(rows: list[dict], majority: float, chance: float) -> str:
             if fmt == "table":
                 label = r["model"].split("/")[-1].replace("-instruct", "").replace("-it", "").replace("-2507", "")
                 where = place[s.index(r)]
+                y_lo = Y(lo) if lo is not None else Y(a) + 6
+                y_hi = Y(hi) if hi is not None else Y(a) - 6
                 if where == "below":
-                    out.append(f'<text x="{x:.1f}" y="{Y(a)+18:.1f}" text-anchor="middle" fill="{INK2}" font-size="10">{label}</text>')
+                    out.append(f'<text x="{x:.1f}" y="{y_lo+13:.1f}" text-anchor="middle" fill="{INK2}" font-size="10">{label}</text>')
                 elif where == "right":
                     out.append(f'<text x="{x+10:.1f}" y="{Y(a)+4:.1f}" text-anchor="start" fill="{INK2}" font-size="10">{label}</text>')
                 else:
-                    out.append(f'<text x="{x-10:.1f}" y="{Y(a)-8:.1f}" text-anchor="end" fill="{INK2}" font-size="10">{label}</text>')
+                    out.append(f'<text x="{x-10:.1f}" y="{y_hi-5:.1f}" text-anchor="end" fill="{INK2}" font-size="10">{label}</text>')
     # legend
     lx = W - R - 300
     ly = Y(0.34)
@@ -127,8 +132,8 @@ def render(rows: list[dict], majority: float, chance: float) -> str:
         y = ly + i * 18
         out.append(f'<line x1="{lx}" x2="{lx+22}" y1="{y}" y2="{y}" stroke="{col}" stroke-width="2"/>')
         out.append(f'<circle cx="{lx+11}" cy="{y}" r="4" fill="{col}"/>')
-        out.append(f'<text x="{lx+30}" y="{y+4}" fill="{INK}">chart as {fmt}{" (3 epochs, stderr bars)" if fmt == "table" else " (1 epoch)"}</text>')
-    out.append(f'<text x="{lx}" y="{ly+2*18+4:.1f}" fill="{INK2}" font-size="11">circle dense, square MoE (x is total params; active is in the CSV)</text>')
+        out.append(f'<text x="{lx+30}" y="{y+4}" fill="{INK}">chart as {fmt}{" (3 epochs)" if fmt == "table" else " (1 epoch)"}</text>')
+    out.append(f'<text x="{lx}" y="{ly+2*18+4:.1f}" fill="{INK2}" font-size="11">bars: 95% Wilson CI over 400 items. circle dense, square MoE</text>')
     out.append("</svg>")
     return "\n".join(out)
 

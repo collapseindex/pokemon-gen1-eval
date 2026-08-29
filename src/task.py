@@ -33,7 +33,6 @@ from inspect_ai.scorer import (
     Target,
     accuracy,
     choice,
-    grouped,
     mean,
     metric,
     scorer,
@@ -43,8 +42,10 @@ from inspect_ai.solver import TaskState, multiple_choice, system_message
 
 try:  # imported as a package (pytest, python -m src.*) ...
     from .key import MULTIPLIERS, PROCESSED, chart_rows, chart_table, typings
+    from .stats import wilson
 except ImportError:  # ... or loaded as a standalone file by `inspect eval src/task.py`
     from key import MULTIPLIERS, PROCESSED, chart_rows, chart_table, typings  # type: ignore[no-redef]
+    from stats import wilson  # type: ignore[no-redef]
 
 LETTERS = "ABCDEF"
 MAX_TOKENS = 1024  # reasoning is allowed; truncations are counted by parse_failures()
@@ -142,6 +143,38 @@ def build_samples(rows: list[dict[str, str]], chart: str, show_types: str | bool
     return samples
 
 
+def _ci(which: int) -> Metric:
+    """95% Wilson bound on accuracy with n = number of distinct items (epoch
+    repeats are not independent trials). Reads the reduced per-item scores,
+    which is what Inspect hands a metric after epoch reduction."""
+
+    def m(scores: list[SampleScore]) -> float:
+        vals = []
+        for s in scores:
+            v = s.score.value
+            if isinstance(v, (int, float)):
+                vals.append(float(v))
+            elif v == "C":
+                vals.append(1.0)
+            elif v == "I":
+                vals.append(0.0)
+        if not vals:
+            return float("nan")
+        return wilson(sum(vals) / len(vals), len(vals))[which]
+
+    return m
+
+
+@metric
+def ci95_low() -> Metric:
+    return _ci(0)
+
+
+@metric
+def ci95_high() -> Metric:
+    return _ci(1)
+
+
 @metric
 def parse_failures() -> Metric:
     """Share of samples where no ANSWER letter could be parsed (truncation,
@@ -172,21 +205,13 @@ def closeness_of(predicted: str | None, target: str) -> dict[str, float]:
     return {"bucket": bucket, "steps": steps}
 
 
-@scorer(
-    name="choice",
-    metrics=[
-        accuracy(),
-        stderr(),
-        parse_failures(),
-        grouped(accuracy(), "stratum", all=False),
-        grouped(accuracy(), "answer_class", all=False),
-        grouped(accuracy(), "attack_type", all=False),
-    ],
-)
+@scorer(name="choice", metrics=[accuracy(), ci95_low(), ci95_high(), stderr(), parse_failures()])
 def exact() -> Scorer:
-    """Primary scorer: Inspect's choice() (exact ANSWER letter match) with this
-    task's metrics attached to it, so the metrics list is per scorer and the
-    closeness scorer keeps its own."""
+    """Primary scorer: Inspect's choice() (exact ANSWER letter match). The log
+    carries the headline (accuracy, its 95% Wilson interval over items,
+    stderr, and the single-epoch parse-failure metric); every grouping (by
+    stratum, answer class, attack type) lives in analyze, with n. Fewer
+    in-log metrics also means the viewer's task-list column is accuracy."""
     return choice()
 
 

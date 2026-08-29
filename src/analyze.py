@@ -24,6 +24,7 @@ from inspect_ai.log import EvalLog, list_eval_logs, read_eval_log
 
 from .key import MULTIPLIERS, ROOT, efficacy, typings
 from .models import BY_ID
+from .stats import wilson
 
 LETTERS = "ABCDEF"
 CHANCE = 1 / len(MULTIPLIERS)
@@ -124,10 +125,19 @@ def summarize(log: EvalLog) -> dict:
     n_total = sum(len(v) for v in per_epoch.values())
     epoch_acc = {e: _rate(sum(v), len(v)) for e, v in sorted(per_epoch.items())}
     accs = [a for a in epoch_acc.values() if a is not None]
+    n_items = n_total // max(len(per_epoch), 1)
+    mean_acc = sum(accs) / len(accs) if accs else None
+    ci = wilson(mean_acc, n_items) if mean_acc is not None else (None, None)
     majority = max(targets.values()) / sum(targets.values()) if targets else None
 
     def grouped(d):
-        return {k: {"n": len(v), "accuracy": _rate(sum(v), len(v))} for k, v in sorted(d.items(), key=lambda kv: str(kv[0]))}
+        out = {}
+        for k, v in sorted(d.items(), key=lambda kv: str(kv[0])):
+            acc = _rate(sum(v), len(v))
+            n_i = len(v) // max(len(per_epoch), 1)
+            lo, hi = wilson(acc, n_i) if acc is not None else (None, None)
+            out[k] = {"n": len(v), "n_items": n_i, "accuracy": acc, "ci95": [round(lo, 4), round(hi, 4)] if acc is not None else None}
+        return out
 
     return {
         "log": Path(log.location).name,
@@ -135,7 +145,9 @@ def summarize(log: EvalLog) -> dict:
         "condition": {"chart": chart, "show_types": args.get("show_types", False), "cot": args.get("cot", True), "items": args.get("items")},
         "n_samples": n_total,
         "epochs": len(per_epoch),
-        "accuracy_mean": round(sum(accs) / len(accs), 4) if accs else None,
+        "accuracy_mean": round(mean_acc, 4) if mean_acc is not None else None,
+        "n_items": n_items,
+        "accuracy_ci95": [round(ci[0], 4), round(ci[1], 4)] if mean_acc is not None else None,
         "accuracy_epoch_range": round(max(accs) - min(accs), 4) if accs else None,
         "accuracy_per_epoch": epoch_acc,
         "parse_failures": _rate(parse_fail, n_total),
@@ -188,6 +200,8 @@ def curve_rows(rows: list[dict]) -> list[dict]:
             "epochs": r["epochs"],
             "exact": acc,
             "exact_stderr": round((acc * (1 - acc) / n) ** 0.5, 4) if acc is not None and n else "",
+            "exact_ci95_low": r["accuracy_ci95"][0] if r["accuracy_ci95"] else "",
+            "exact_ci95_high": r["accuracy_ci95"][1] if r["accuracy_ci95"] else "",
             "exact_epoch_range": r["accuracy_epoch_range"],
             "bucket": r["bucket_accuracy"],
             "steps_off": r["mean_steps_off"],
@@ -204,15 +218,15 @@ def curve_rows(rows: list[dict]) -> list[dict]:
 
 
 def table(rows: list[dict]) -> str:
-    head = "| model | format | max_tok | n | epochs | acc | bucket | steps | range | parse fail | transposed / asym misses / misses | majority | immune | quad | dual | single | differs |"
-    sep = "|" + "---|" * 18
+    head = "| model | format | max_tok | n | epochs | acc | 95% CI | bucket | steps | range | parse fail | transposed / asym misses / misses | majority | immune | quad | dual | single | differs |"
+    sep = "|" + "---|" * 19
     out = [head, sep]
     for r in rows:
         st = r["by_stratum"]
         cell = lambda k: (f"{st[k]['accuracy']:.2f}" if k in st and st[k]["accuracy"] is not None else "-")
         out.append(
             f"| {r['model'].replace('openrouter/', '')} | {r['chart_format']} | {r['max_tokens'] or 1024} | {r['n_samples']} | {r['epochs']} "
-            f"| {r['accuracy_mean']:.3f} | {(r['bucket_accuracy'] if r['bucket_accuracy'] is not None else float('nan')):.3f} | {(r['mean_steps_off'] if r['mean_steps_off'] is not None else float('nan')):.2f} "
+            f"| {r['accuracy_mean']:.3f} | {r['accuracy_ci95'][0]:.3f} to {r['accuracy_ci95'][1]:.3f} | {(r['bucket_accuracy'] if r['bucket_accuracy'] is not None else float('nan')):.3f} | {(r['mean_steps_off'] if r['mean_steps_off'] is not None else float('nan')):.2f} "
             f"| {r['accuracy_epoch_range']:.3f} | {r['parse_failures']:.2f} | {r['transposed_misses']} / {r['misses_on_asymmetric_cells']} / {r['misses']} | {r['baseline_majority']:.2f} "
             f"| {cell('immune')} | {cell('quad')} | {cell('dual')} | {cell('single')} | {cell('differs')} |"
         )
@@ -254,7 +268,7 @@ def main() -> None:
     for c in curve:
         if c["format"] == "table" and c["params_total_b"] not in ("", None) and c["params_total_b"] == c["params_total_b"]:
             band = f" range {c['exact_epoch_range']:.3f}" if c["epochs"] > 1 else " (1 epoch)"
-            print(f"  {c['params_total_b']:>7.1f}B  {c['model']:<40} {c['exact']:.3f} +/- {c['exact_stderr']}{band}  active {c['params_active_b']}B {c['quant']}")
+            print(f"  {c['params_total_b']:>7.1f}B  {c['model']:<40} {c['exact']:.3f} [{c['exact_ci95_low']:.3f}, {c['exact_ci95_high']:.3f}]{band}  active {c['params_active_b']}B {c['quant']}")
 
 
 if __name__ == "__main__":

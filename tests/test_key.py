@@ -192,6 +192,18 @@ def test_model_registry():
     assert '"allow_fallbacks":false' in LADDER[0].provider_arg
 
 
+def test_wilson_interval():
+    from src.stats import wilson
+    lo, hi = wilson(0.5, 400)
+    assert 0.451 < lo < 0.452 and 0.548 < hi < 0.549
+    assert wilson(1.0, 400)[1] == pytest.approx(1.0) and wilson(0.0, 400)[0] == pytest.approx(0.0)
+    assert wilson(1.0, 400)[0] > 0.99
+    lo4, hi4 = wilson(0.5, 4000)
+    assert hi4 - lo4 < hi - lo  # narrower with more items
+    import math
+    assert all(math.isnan(v) for v in wilson(0.5, 0))
+
+
 def test_closeness_values():
     # exact
     assert closeness_of("2", "2") == {"bucket": 1.0, "steps": 0.0}
@@ -262,6 +274,11 @@ def test_parsed_scorer_survives_epoch_reduction(tmp_path):
     log = inspect_eval(t, model=model, log_dir=str(tmp_path), epochs=2, display="none")[0]
     by = {sc.name: sc.metrics for sc in log.results.scores}
     assert by["parsed"]["mean"].value == pytest.approx(5 / 6)
+    # CI is over 3 items, not 6 trials: wide, and it brackets the accuracy
+    from src.stats import wilson
+    acc = by["choice"]["accuracy"].value
+    lo, hi = wilson(acc, 3)
+    assert by["choice"]["ci95_low"].value == pytest.approx(lo) and by["choice"]["ci95_high"].value == pytest.approx(hi)
     # the metric on the exact scorer is computed after reduction and does not
     # equal the true rate (it read 0.94 on a 0.198 run in D-011; here 0.33 on 0.17)
     assert by["choice"]["parse_failures"].value != pytest.approx(1 / 6)
