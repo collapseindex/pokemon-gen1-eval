@@ -1,0 +1,33 @@
+{
+  "generation": 1,
+  "dex_max": 151,
+  "types": [
+    "normal",
+    "fighting",
+    "flying",
+    "poison",
+    "ground",
+    "rock",
+    "bug",
+    "ghost",
+    "fire",
+    "water",
+    "grass",
+    "electric",
+    "psychic",
+    "ice",
+    "dragon"
+  ],
+  "cells": 2265,
+  "dual_cells": 930,
+  "differs_cells": 71,
+  "gen1_multiplier_counts": {
+    "0": 77,
+    "1/4": 54,
+    "1/2": 363,
+    "1": 1331,
+    "2": 400,
+    "4": 40
+  },
+  "key_sha256": "ccf0cc142b65299fdd5242125fffce673e3ecef9ca26306e632a601eff5c5180"
+}

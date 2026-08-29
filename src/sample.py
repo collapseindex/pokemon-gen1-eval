@@ -1,0 +1,78 @@
+"""Draw the pinned item set from the key, stratified, seeded.
+
+Strata (a cell belongs to the first that matches):
+  differs   Gen 1 and modern charts disagree on this cell: all of them
+  immune    gen1 multiplier is 0
+  quad      gen1 multiplier is 4 or 1/4
+  dual      dual-typed defender, ordinary multiplier
+  single    single-typed defender, ordinary multiplier
+
+Usage: python -m src.sample --n 400 --seed 0
+Writes data/processed/items_s<seed>_n<n>.csv; the task reads that file.
+"""
+
+from __future__ import annotations
+
+import argparse
+import csv
+import random
+from collections import Counter
+from pathlib import Path
+
+from .key import PROCESSED, Cell, read_key
+
+STRATA = ["differs", "immune", "quad", "dual", "single"]
+# share of the non-"differs" budget; "differs" is taken whole
+SHARES = {"immune": 0.15, "quad": 0.15, "dual": 0.40, "single": 0.30}
+
+
+def stratum(c: Cell) -> str:
+    if c.differs:
+        return "differs"
+    if c.gen1_multiplier == "0":
+        return "immune"
+    if c.gen1_multiplier in ("4", "1/4"):
+        return "quad"
+    return "dual" if c.dual else "single"
+
+
+def draw(cells: list[Cell], n: int, seed: int) -> list[Cell]:
+    rng = random.Random(seed)
+    pools: dict[str, list[Cell]] = {s: [] for s in STRATA}
+    for c in cells:
+        pools[stratum(c)].append(c)
+    chosen = list(pools["differs"])
+    budget = n - len(chosen)
+    if budget < 0:
+        raise ValueError(f"n={n} is smaller than the {len(chosen)} differing cells")
+    for s, share in SHARES.items():
+        k = min(round(budget * share), len(pools[s]))
+        chosen.extend(rng.sample(pools[s], k))
+    rng.shuffle(chosen)
+    return chosen
+
+
+def write_items(items: list[Cell], path: Path) -> None:
+    with path.open("w", newline="", encoding="utf-8") as fh:
+        w = csv.writer(fh)
+        w.writerow(["item_id", "stratum", "attack_type", "pokemon_id", "pokemon", "def_type1", "def_type2", "gen1_multiplier", "modern_multiplier"])
+        for i, c in enumerate(items):
+            w.writerow([f"i{i:04d}", stratum(c), c.attack_type, c.pokemon_id, c.pokemon, c.def_type1, c.def_type2, c.gen1_multiplier, c.modern_multiplier])
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--n", type=int, default=400)
+    ap.add_argument("--seed", type=int, default=0)
+    a = ap.parse_args()
+    cells = read_key(PROCESSED / "gen1_key.csv")
+    items = draw(cells, a.n, a.seed)
+    out = PROCESSED / f"items_s{a.seed}_n{a.n}.csv"
+    write_items(items, out)
+    print(f"wrote {len(items)} items to {out}")
+    print("strata:", dict(Counter(stratum(c) for c in items)))
+    print("gen1 multipliers:", dict(Counter(c.gen1_multiplier for c in items)))
+
+
+if __name__ == "__main__":
+    main()
