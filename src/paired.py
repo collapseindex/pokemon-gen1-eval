@@ -40,7 +40,8 @@ def per_item(log_dir: str, want: dict) -> dict[str, dict[str, list[float]]]:
     for info in list_eval_logs(str(ROOT / log_dir)):
         log = read_eval_log(info.name)
         args = log.eval.task_args or {}
-        if log.status != "success" or any(args.get(k, d) != v for k, (v, d) in want.items()):
+        # a log that died mid-run (D-018: credit exhausted) still carries its scored samples
+        if log.status not in ("success", "error") or not log.samples or any(args.get(k, d) != v for k, (v, d) in want.items()):
             continue
         model = log.eval.model.split("/")[-1]
         hits: dict[str, list[float]] = defaultdict(list)

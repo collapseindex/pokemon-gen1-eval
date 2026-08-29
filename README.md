@@ -21,8 +21,9 @@ rungs and the 235B MoE on a second host (REVIEW.md, O-006, O-007); after a
 second review, a recall pass on all ten models, shuffled options on the two
 leaning models, and temperature 0 on the 12B rung (REVIEW2.md, O-009,
 O-010, D-014); after a third, a relabelled-chart pass on all ten and a
-discarded no-thinking run (REVIEW3.md, O-011, O-012, D-015, D-016). $10.57
-total; $2.44 of credit left. Seventeen D entries and thirteen O entries. Paper draft in
+discarded no-thinking run (REVIEW3.md, O-011, O-012, D-015, D-016). After a sixth read, Qwen3 dense 8B and 14B with
+thinking on (REVIEW4.md, O-015, D-018): a thinking 8B beats every
+non-thinking model on the ladder. $12.05 total; $0.95 of credit left. Eighteen D entries and fifteen O entries. Paper draft in
 `writeup/paper/` (untracked until the preprint goes up).
 
 ## Result
@@ -400,7 +401,23 @@ the 1B just stops without an answer line. The registered run stands.
 python -m src.paired     # paired bootstrap + McNemar over items, differs-within-class
 ```
 
-### 20. Next
+### 20. The Qwen3 dense rungs, and the knee turns out to be a one-pass property (O-015, D-018)
+
+A sixth read asked for the missing dense ladder inside Qwen. qwen3-8b and
+qwen3-14b, hybrid models run with reasoning on like the 32B: 0.850 and
+0.896 under table, above the 32B's 0.828 and three times llama-3.1-8b's
+0.279. Three of four registered predictions failed, all in the same
+direction: a thinking 8B beats every non-thinking model on the ladder,
+including the 235B mixture. The knee between 8B and 12B is what you get
+when the model answers in one pass. The 8B's reasoning traces also cost
+twice the estimate and the 14B's third epoch died on a 402 (D-018).
+
+```
+python -m src.run_ladder --only qwen3-8b,qwen3-14b --formats table --log-dir logs/qwen_dense
+python -m src.paired_qwen        # Y1 to Y4
+```
+
+### 21. Next
 
 Submit: LIGHT (long, 9 pages, non-archival) first, preprint alongside.
 Publish the repository. Not run: gemma-3-1b (not served), a second MoE

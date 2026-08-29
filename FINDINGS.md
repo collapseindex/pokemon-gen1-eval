@@ -45,6 +45,8 @@ Ids are permanent. PLAN.md is never edited; a mistake in it is a D entry here.
 | [O-013](#o-013) | paired tests, within-class differs gap, taxonomy ordering (review 4) | paired over items: Gemma 4B->12B +0.233 [+0.185, +0.279]; Llama 1B->8B +0.057 [+0.019, +0.092] (p=0.007, so not inside the noise as the draft said); 27B vs 30B-A3B +0.026 [-0.014, +0.068] (level); rows gain excludes zero for 9 of 10; within answer class the contradicted-cell gap is clear from 27B up and inconsistent below; with immunity filed before mirrored the immunity share is flat 0.13 to 0.24 at every rung but 235B | scored |
 | [D-017](#d-017) | token budget rule | llama-3.2-1b leaves 19.8% of table answers unparsed at 1,024 and was never rerun under the 5% rule; rerun at 4,096: 0.211, 19.3% unparsed, no call at the cap, so the unparsed answers are missing answer lines, not truncation; the registered run stands | resolved |
 | [O-014](#o-014) | relabelled chart, the agreeing cells (review 6) | on the 329 cells where the charts agree, relabelling costs the 235B 0.040 and the ceiling 0.029 (27B 0.000, 30B-A3B +0.024): the prior is a tax of 0.07 to 0.22 on contradicted cells and a subsidy of at most 0.04 elsewhere, X2's direction under its 0.05 threshold; the rows prompt is 6% longer than the table prompt (2,891 vs 2,728 tokens on Gemma) | scored |
+| [O-015](#o-015) | Qwen3 dense 8B and 14B, thinking on (REVIEW4.md) | qwen3-8b 0.850 [0.81, 0.88] and qwen3-14b 0.896 [0.85, 0.93] under table with reasoning on, against 0.828 for the 32B, 0.642 for the 30B-A3B and 0.279 for llama-8b: a thinking 8B beats every non-thinking model on the ladder; the knee is a one-pass-answer property; Y1 and Y2 and Y4 failed, Y3 held | scored |
+| [D-018](#d-018) | budget | the 8B's reasoning traces (1,154 output tokens per call) cost about twice the estimate and the 14B run hit HTTP 402 (credit exhausted) 129 items into its third epoch; reported at two complete epochs plus the partial third, 825 scored calls | recorded |
 
 ## Defects in this harness
 
@@ -1023,3 +1025,45 @@ the rows prompt is about 6% longer and its gain runs against any length
 effect. Several hosts report cached-prompt counts (71 for the 30B MoE on
 CoreWeave, 63 for the 3B on Parasail), so the per-model usage field is not a
 prompt length. Cost: none.
+
+### O-015
+**A thinking 8B beats every non-thinking model on the ladder**
+qwen3-8b, qwen3-14b · table, 4,096 tokens, reasoning on · `logs/qwen_dense/` · 2026-08-29
+
+Registered in REVIEW4.md before running. Both are Qwen3 hybrid models served
+with reasoning on (every call carried a reasoning block; 1,154 and 731 output
+tokens per call; no truncation). 8B on Alibaba (quantisation not reported),
+14B on DeepInfra fp8, the 32B's host.
+
+| model | exact | 95% CI | range | epochs | quad | immune | differs |
+|---|---|---|---|---|---|---|---|
+| qwen3-8b (thinking) | 0.850 | 0.81 to 0.88 | 0.023 | 3 | 0.75 | 1.00 | 0.79 |
+| qwen3-14b (thinking) | 0.896 | 0.85 to 0.93 | 0.005 over two epochs | 2 + 129 items (D-018) | 0.86 | 1.00 | 0.89 |
+| qwen3-32b (thinking, 4,096) | 0.828 | 0.79 to 0.86 | 0.025 | 3 | 0.65 | 0.97 | 0.69 |
+| qwen3-30b-a3b (no thinking) | 0.642 | 0.59 to 0.69 | 0.050 | 3 | 0.21 | 0.78 | 0.44 |
+| llama-3.1-8b (no thinking) | 0.279 | 0.24 to 0.33 | 0.010 | 3 | 0.08 | 0.29 | 0.31 |
+
+**Y1 (8B < 14B < 32B, monotone):** failed; the 32B is below both. **Y2
+(the 30B-A3B at or above the thinking 14B):** failed by 0.25. **Y3 (thinking
+Qwen 8B above Llama 8B beyond the ranges):** held, by 0.57. **Y4 (Qwen 8B at
+or below the majority baseline):** failed; it is at 0.850.
+
+Reading: the knee between 8B and 12B that the ladder reports is a property
+of models that answer in one pass. With a reasoning trace the task is done at
+8B, and the 0.19 gap between the 30B-A3B and the 32B (O-011) is thinking,
+not density. The 32B sitting below the 8B and 14B of its own family is
+unexplained here (fp8 on both the 14B and 32B; the 8B's quantisation is not
+reported). Paired tests in `data/results/20260829_paired_qwen.json`. Cost
+about $1.48 (the 8B alone about $1.20 against $0.80 estimated).
+
+### D-018
+**Credit ran out 129 items into the 14B's third epoch**
+`logs/qwen_dense/` · 2026-08-29 · recorded
+
+The REVIEW4.md estimate ($1.40 for both runs) assumed about 700 output
+tokens per call; the 8B averaged 1,154 and the pass cost about $1.20. The
+14B run then returned HTTP 402 from OpenRouter (insufficient credits) on 104
+calls of its third epoch and Inspect closed the log with status `error`;
+825 calls scored across all 400 items (epochs 1 and 2 complete, 129 of the
+third). `src.paired` and the paper treat that log as a two-epoch run with a
+partial third and say so; nothing was resampled. $0.95 of credit remains.
