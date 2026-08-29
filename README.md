@@ -2,7 +2,7 @@
 
 **A narrow capability eval, built the way a safety eval is built.**
 
-v0.1.0 · Apache-2.0 · pre-registered in [PLAN.md](PLAN.md) (commit `82c6bde`, blob `378f365` via `git hash-object PLAN.md`; not edited after this line) · addendum [ADDENDUM.md](ADDENDUM.md) (commit `48dd575`, blob `b3eee1d`; supersedes the plan's conditions, models, ceiling and P2/P4/P5/P6; not edited after this line) · replication [REPLICATION.md](REPLICATION.md) (commit `b5a081d`, blob `d6a1573`; not edited after this line) · review runs [REVIEW.md](REVIEW.md) (commit `c4dccd8`, blob `4faeb2b`; not edited after this line) · ledger in [FINDINGS.md](FINDINGS.md) · method walk in [CHECKLIST.md](CHECKLIST.md)
+v0.1.0 · Apache-2.0 · pre-registered in [PLAN.md](PLAN.md) (commit `82c6bde`, blob `378f365` via `git hash-object PLAN.md`; not edited after this line) · addendum [ADDENDUM.md](ADDENDUM.md) (commit `48dd575`, blob `b3eee1d`; supersedes the plan's conditions, models, ceiling and P2/P4/P5/P6; not edited after this line) · replication [REPLICATION.md](REPLICATION.md) (commit `b5a081d`, blob `d6a1573`; not edited after this line) · review runs [REVIEW.md](REVIEW.md) (commit `c4dccd8`, blob `4faeb2b`; not edited after this line) · ledger in [FINDINGS.md](FINDINGS.md)
 
 Six-way multiple choice on the damage multiplier when a move of one of the 15
 Generation I types hits one of the original 151 Pokémon as typed in Red/Blue.
@@ -378,7 +378,6 @@ run.
 ```
 PLAN.md              the pre-registration; not edited after its hash is recorded
 ADDENDUM.md          the re-registration after the budget arithmetic; same rule; item-set balance pass inside
-CHECKLIST.md         the internal analyst checklist walked against this eval, box by box
 REPLICATION.md       the registered replication: a second 400-item set, four knee models, R1-R4
 FINDINGS.md          the ledger: D defects, O observations, N negative results
 src/key.py           Gen 1 chart + typings -> 2,265-cell key; the 26 known-answer cells
@@ -397,6 +396,15 @@ logs/                Inspect logs (gitignored)
 
 ## Source and license
 
-Type and typing data from [PokeAPI](https://github.com/PokeAPI/pokeapi)
-(BSD-3, `data/raw/POKEAPI_LICENSE.md`). Pokémon and Pokémon character names
-are trademarks of Nintendo. Code here is Apache-2.0.
+Three things with three licenses, the same split as the other case studies:
+
+- **Code** (`src/`, `tests/`, the scripts): Apache-2.0, `LICENSE`.
+- **Data.** The seven CSVs in `data/raw/` are PokeAPI's, BSD-3-Clause
+  (`data/raw/POKEAPI_LICENSE.md`), and everything derived from them (the key,
+  both item sets, the prompts) keeps that attribution; see `NOTICE`.
+- **Reports and the ledger** (`README.md`, `FINDINGS.md`, `PLAN.md`,
+  `ADDENDUM.md`, `REPLICATION.md`, `REVIEW.md`, `writeup/`): CC BY 4.0.
+
+Pokémon and Pokémon character names are trademarks of Nintendo / Creatures
+Inc. / GAME FREAK inc., used here to identify the game data being measured;
+this repository is not affiliated with or endorsed by them.

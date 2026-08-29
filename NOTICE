@@ -1,0 +1,15 @@
+pokemon-gen1-eval
+Copyright 2026 Alex Kwon
+
+This product includes data derived from PokeAPI
+(https://github.com/PokeAPI/pokeapi), copyright (c) 2013-2023 Paul Hallett and
+PokeAPI contributors, licensed under the BSD 3-Clause License. The seven source
+files are in data/raw/ with their license (data/raw/POKEAPI_LICENSE.md); the
+derived files (data/processed/gen1_key.csv, the item sets, and the prompts
+built from them) carry the same attribution. PokeAPI's data was in turn
+compiled from the veekun pokedex project.
+
+Pokemon and Pokemon character names are trademarks of Nintendo / Creatures
+Inc. / GAME FREAK inc. They are used here nominatively, to identify the game
+data being measured; nothing in this repository is affiliated with or endorsed
+by those companies.

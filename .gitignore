@@ -6,3 +6,5 @@ logs/
 .env.*
 *.env
 writeup/paper/
+CHECKLIST.md
+writeup/raw/*review*
