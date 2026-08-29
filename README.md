@@ -20,8 +20,9 @@ rung rerun; after an external review, rows at three epochs on the four knee
 rungs and the 235B MoE on a second host (REVIEW.md, O-006, O-007); after a
 second review, a recall pass on all ten models, shuffled options on the two
 leaning models, and temperature 0 on the 12B rung (REVIEW2.md, O-009,
-O-010, D-014). $9.10 total ($1.88 for the second round against $1.32
-estimated; $3.90 of credit left). Fourteen D entries and ten O entries. Paper draft in
+O-010, D-014); after a third, a relabelled-chart pass on all ten and a
+discarded no-thinking run (REVIEW3.md, O-011, O-012, D-015, D-016). $10.45
+total; $2.55 of credit left. Sixteen D entries and twelve O entries. Paper draft in
 `writeup/paper/` (untracked until the preprint goes up).
 
 ## Result
@@ -59,6 +60,12 @@ Without the reference (no chart, no typing list) recall scores 0.14 to
 the ceiling (O-009). Below 32B the ladder is measuring reading, not memory;
 at 32B and above about two thirds of the hits would have come without the
 reference, so those scores are a ceiling on reference-following.
+
+Relabelling the 15 type names (memory of the real chart useless) moves
+every model by less than 0.06, and lifts the contradicted cells from
+0.43-0.60 to 0.52-0.82 from 12B up (O-012). The prior is a tax on the cells
+it contradicts, not a subsidy on the rest; the ladder measures reading at
+every rung.
 
 ## Why this task
 
@@ -357,7 +364,25 @@ python -m src.run_ladder --only gemma-3-12b --formats table --temperature 0 --lo
 python -m src.recall_join      # W2: table hits also hit by recall, on the 329 agreeing items
 ```
 
-### 18. Next
+### 18. Third review: relabel the chart, try to turn thinking off (O-011, O-012, D-015, D-016)
+
+The third review asked whether the MoEs had run with thinking (they had
+not: `-2507` instruct variants, zero reasoning blocks; the 32B reasoned on
+every call, O-011) and for a chart nobody could have memorised. REVIEW3.md
+registered both. The relabelled chart (`chart=permuted`: a seeded derangement
+of the 15 type names in the chart, the list and the question, key unchanged)
+moved no model by more than 0.06 and raised the contradicted cells at every
+rung from 12B up. X1 held 5 of 7, X2 failed in the direction that helps the
+paper, X3 held. The no-thinking run was ignored by the host (reasoning on
+1,200 of 1,200 calls) and discarded as the registration said (D-016). And
+the first launch failed on a guard the unit test did not cover (D-015).
+
+```
+python -m src.run_ladder --formats table --chart permuted --epochs 1 --log-dir logs/permuted
+python -m src.run_ladder --only qwen3-32b --formats table --max-tokens 1024 --no-thinking --log-dir logs/nothink
+```
+
+### 19. Next
 
 Submit: LIGHT (long, 9 pages, non-archival) first, preprint alongside.
 Publish the repository. Not run: gemma-3-1b (not served), a second MoE

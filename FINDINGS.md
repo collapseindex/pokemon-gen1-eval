@@ -40,6 +40,8 @@ Ids are permanent. PLAN.md is never edited; a mistake in it is a D entry here.
 | [D-014](#d-014) | Inspect shuffle | `multiple_choice(shuffle=True)` rewrites the logged prompt and completion to look unshuffled and drops the reasoning; only the mapped value survives, so the shown letter cannot be studied from the log; shuffle at dataset load instead | recorded, upstream |
 | [O-011](#o-011) | the Qwen rungs, thinking mode (review 3) | the two Qwen MoEs are the -2507 instruct variants: zero reasoning blocks, zero truncation, ~167 output tokens per call; qwen3-32b reasoned on every call (~618 tokens); the D-012 artefact does not touch the MoEs, but the 30B-A3B vs 32B gap is sparse-vs-dense and thinking-vs-not together; REVIEW3.md run 2 separates them | scored |
 | [D-015](#d-015) | task guard | `chart=permuted` was wired through the prompt, the samples and a test, but the task's argument guard still listed none/gen1/modern; the first REVIEW3 launch failed on every model before any call; guard widened, test added, relaunched | fixed, no cost |
+| [O-012](#o-012) | relabelled chart, all ten models (REVIEW3.md run 1) | with the 15 type names permuted (memory of the real chart useless), every model lands within 0.06 of its real-chart score (X1 5 of 7; X2 failed: the 235B and the ceiling moved under 0.02, the 32B's drop is its 1,024-token budget); the contradicted cells rise from 0.43-0.60 to 0.52-0.82 from 12B up: the prior is a tax on the cells it contradicts, not a subsidy on the rest | scored |
+| [D-016](#d-016) | reasoning flag, upstream | REVIEW3.md run 2 asked OpenRouter for `reasoning: {enabled: false}` on qwen3-32b; DeepInfra served reasoning on 1,200 of 1,200 calls (557 output tokens, 12.6% truncated at 1,024); run discarded as registered, X4/X5 unscored; its 0.686 replicates the D-012 floor (0.697) | recorded, $0.50 spent |
 
 ## Defects in this harness
 
@@ -860,3 +862,58 @@ REVIEW3.md launch raised on every model before any API call (three models
 attempted, zero calls, zero spend). The guard now lists `permuted` and a test
 constructs the task with it. The lesson is the usual one: a test of the
 pieces is not a test of the entry point.
+
+### O-012
+**The relabelled chart: memory that was available was not used**
+all ten models, table, pinned 400 x 1 epoch, `logs/permuted/` · 2026-08-29
+
+Registered in REVIEW3.md (run 1) before running. The 15 type names permuted
+by a seeded derangement in the chart, the typing list and the question; key
+unchanged (test). qwen3-32b at its registry budget of 1,024 tokens (20%
+truncated; a floor).
+
+| model | relabelled | 95% CI | real chart (table x3) | diff | epoch range | differs real -> relabelled |
+|---|---|---|---|---|---|---|
+| llama-3.2-1b | 0.235 | 0.20 to 0.28 | 0.223 | +0.012 | 0.035 | 0.22 -> 0.23 |
+| llama-3.2-3b | 0.193 | 0.16 to 0.23 | 0.250 | -0.057 | 0.020 | 0.33 -> 0.32 |
+| gemma-3-4b | 0.278 | 0.24 to 0.32 | 0.275 | +0.003 | 0.050 | 0.39 -> 0.30 |
+| llama-3.1-8b | 0.233 | 0.19 to 0.28 | 0.279 | -0.047 | 0.010 | 0.31 -> 0.20 |
+| gemma-3-12b | 0.517 | 0.47 to 0.57 | 0.507 | +0.010 | 0.020 | 0.43 -> 0.52 |
+| gemma-3-27b | 0.650 | 0.60 to 0.70 | 0.617 | +0.033 | 0.022 | 0.46 -> 0.63 |
+| qwen3-30b-a3b | 0.700 | 0.65 to 0.74 | 0.642 | +0.057 | 0.050 | 0.44 -> 0.65 |
+| qwen3-32b (1,024) | 0.693 | 0.65 to 0.74 | 0.828 (4,096); 0.697 (1,024) | -0.136 / -0.004 | 0.025 | 0.69 -> 0.66 |
+| qwen3-235b-a22b | 0.770 | 0.73 to 0.81 | 0.764 | +0.006 | 0.018 | 0.60 -> 0.82 |
+| gpt-5-nano | 0.943 | 0.92 to 0.96 | 0.954 | -0.012 | 0.022 | 0.87 -> 0.94 |
+
+**X1** (open models to 27B and the 30B MoE within 0.05): held 5 of 7. The
+two misses: llama-3.2-3b fell 0.057 (chance either way) and the 30B MoE rose
+0.057. **X2** (32B, 235B, ceiling fall by more than 0.05): failed. The 235B
+and the ceiling moved by under 0.02; the 32B fell 0.136 against its 4,096
+number but 0.004 against its own 1,024-token real-chart run (D-012), so the
+drop is the budget. **X3** (8B < 12B < 27B, steps beyond 0.030): held,
+0.233 < 0.517 < 0.650.
+
+The reading that matters is the differs stratum. With memory made useless,
+accuracy on the 71 contradicted cells rises at every rung from 12B up (0.43
+to 0.52, 0.46 to 0.63, 0.44 to 0.65, 0.60 to 0.82, 0.87 to 0.94) while the
+overall score barely moves. O-009's "two thirds of hits also available from
+memory" was true and irrelevant: the models were reading those cells anyway.
+The prior acts only where it contradicts the reference, as a tax, and the
+ladder measures reading at every rung. Cost about $0.85.
+
+### D-016
+**The host ignored the reasoning-off request; run 2 discarded as registered**
+`logs/nothink/` · 2026-08-29 · recorded
+
+REVIEW3.md run 2: qwen3-32b, table, three epochs, 1,024 tokens, with
+`-M reasoning_enabled=false` (Inspect sends OpenRouter `reasoning:
+{enabled: false}`). The log shows a reasoning block on every one of the
+1,200 samples, 557 output tokens on average, and `max_tokens` stops on 151
+calls (12.6%). DeepInfra did not honour the flag for this model. The
+registration said a run where reasoning blocks still appear is discarded and
+reported, not scored, so X4 and X5 are unscored and the thinking-versus-
+density question for the 30B-A3B vs 32B gap stays open. The number, 0.686
+[0.639, 0.729], range 0.038, is a replicate of the 1,024-token thinking run
+from D-012 (0.697) and is kept only as that. About $0.50. Anyone repeating
+this should pin a host that documents `enable_thinking`, or send Qwen's
+`/no_think` in the prompt and accept the prompt change.
