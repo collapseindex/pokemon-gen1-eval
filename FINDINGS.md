@@ -44,6 +44,7 @@ Ids are permanent. PLAN.md is never edited; a mistake in it is a D entry here.
 | [D-016](#d-016) | reasoning flag, upstream | REVIEW3.md run 2 asked OpenRouter for `reasoning: {enabled: false}` on qwen3-32b; DeepInfra served reasoning on 1,200 of 1,200 calls (557 output tokens, 12.6% truncated at 1,024); run discarded as registered, X4/X5 unscored; its 0.686 replicates the D-012 floor (0.697) | recorded, $0.50 spent |
 | [O-013](#o-013) | paired tests, within-class differs gap, taxonomy ordering (review 4) | paired over items: Gemma 4B->12B +0.233 [+0.185, +0.279]; Llama 1B->8B +0.057 [+0.019, +0.092] (p=0.007, so not inside the noise as the draft said); 27B vs 30B-A3B +0.026 [-0.014, +0.068] (level); rows gain excludes zero for 9 of 10; within answer class the contradicted-cell gap is clear from 27B up and inconsistent below; with immunity filed before mirrored the immunity share is flat 0.13 to 0.24 at every rung but 235B | scored |
 | [D-017](#d-017) | token budget rule | llama-3.2-1b leaves 19.8% of table answers unparsed at 1,024 and was never rerun under the 5% rule; rerun at 4,096: 0.211, 19.3% unparsed, no call at the cap, so the unparsed answers are missing answer lines, not truncation; the registered run stands | resolved |
+| [O-014](#o-014) | relabelled chart, the agreeing cells (review 6) | on the 329 cells where the charts agree, relabelling costs the 235B 0.040 and the ceiling 0.029 (27B 0.000, 30B-A3B +0.024): the prior is a tax of 0.07 to 0.22 on contradicted cells and a subsidy of at most 0.04 elsewhere, X2's direction under its 0.05 threshold; the rows prompt is 6% longer than the table prompt (2,891 vs 2,728 tokens on Gemma) | scored |
 
 ## Defects in this harness
 
@@ -988,3 +989,37 @@ and the mean 129. So the 1B's unparsed answers are not truncation: the
 model ends its reply without an `ANSWER:` line. The 5% rule is a truncation
 rule and did not in fact apply; the registered 1,024 run stands as the
 pinned number and the paper says why. About $0.10.
+
+### O-014
+**The agreeing cells under relabelling: a small subsidy after all**
+`logs/permuted/` against `logs/pinned/` table · 2026-08-29
+
+A sixth review pointed out that if the 71 contradicted cells rise by 0.07 to
+0.22 under relabelling while the total moves less than 0.06, the 329 agreeing
+cells must have fallen for the models with a high memory share. They did:
+
+| model | agree, table | agree, relabelled | delta | differs delta |
+|---|---|---|---|---|
+| llama-3.2-1b | 0.223 | 0.237 | +0.014 | +0.005 |
+| llama-3.2-3b | 0.232 | 0.164 | -0.068 | -0.009 |
+| gemma-3-4b | 0.250 | 0.274 | +0.023 | -0.094 |
+| llama-3.1-8b | 0.272 | 0.240 | -0.031 | -0.117 |
+| gemma-3-12b | 0.525 | 0.517 | -0.008 | +0.094 |
+| gemma-3-27b | 0.651 | 0.653 | +0.002 | +0.178 |
+| qwen3-30b-a3b | 0.687 | 0.711 | +0.024 | +0.211 |
+| qwen3-32b (1,024) | 0.857 | 0.699 | -0.158 | -0.033 |
+| qwen3-235b-a22b | 0.799 | 0.760 | -0.040 | +0.216 |
+| gpt-5-nano | 0.972 | 0.942 | -0.029 | +0.070 |
+
+So O-012's "not a subsidy on the rest" was too strong: for the 235B and the
+ceiling the prior is worth 0.03 to 0.04 on the agreeing cells, which is the
+direction X2 predicted, under its 0.05 threshold. The paper now states the
+agree-cell delta instead of inferring "memory unused". The 32B row is the
+1,024-token budget, not memory.
+
+Also asked: prompt length per format. Input tokens per call on Gemma's
+tokenizer (DeepInfra reports uncached counts): table 2,728, rows 2,891, so
+the rows prompt is about 6% longer and its gain runs against any length
+effect. Several hosts report cached-prompt counts (71 for the 30B MoE on
+CoreWeave, 63 for the 3B on Parasail), so the per-model usage field is not a
+prompt length. Cost: none.

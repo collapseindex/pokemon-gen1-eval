@@ -46,6 +46,10 @@ LADDER: list[Model] = [
     Model("qwen/qwen3-32b", "qwen-3", 32.8, 32.8, "fp8", "DeepInfra", note="dense pair for the 30B-A3B MoE; no bf16 host"),
     Model("qwen/qwen3-235b-a22b-2507", "qwen-3", 235.0, 22.0, "fp8", "GMICloud", note="MoE: 22B active; dev runs were spread over ten hosts (D-009)"),
     Model("openai/gpt-5-nano", "gpt-5", float("nan"), float("nan"), "unknown", "Azure", max_tokens=4096, note="ceiling reference; size undisclosed, not on the curve. Pinned to Azure (served every dev call); pinning 'OpenAI' returned 404 No endpoints found"),
+    # REVIEW4.md: the Qwen3 dense rungs below the 32B, same thinking regime as the 32B (hybrid model,
+    # reasoning on by default), 4,096 tokens like the 32B rerun. Run into their own log dir, not logs/pinned.
+    Model("qwen/qwen3-8b", "qwen-3", 8.2, 8.2, "unknown", "Alibaba", max_tokens=4096, note="REVIEW4 run 1; only host on OpenRouter, quantisation not reported"),
+    Model("qwen/qwen3-14b", "qwen-3", 14.8, 14.8, "fp8", "DeepInfra", max_tokens=4096, note="REVIEW4 run 1; same host and quantisation as the 32B"),
 ]
 
 # Dev-only models, reported as dev numbers and not on the pinned curve (D-010).
