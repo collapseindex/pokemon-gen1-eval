@@ -69,19 +69,6 @@ def gen_types() -> dict[int, str]:
     }
 
 
-def _past_override(rows: list[dict[str, str]], key_fields: tuple[str, ...]) -> dict[tuple, dict[str, str]]:
-    """For each key, the past row in force in GENERATION: the smallest
-    generation_id that is >= GENERATION (the row holds *through* that gen)."""
-    chosen: dict[tuple, dict[str, str]] = {}
-    for r in rows:
-        g = int(r["generation_id"])
-        if g < GENERATION:
-            continue
-        k = tuple(r[f] for f in key_fields)
-        if k not in chosen or g < int(chosen[k]["generation_id"]):
-            chosen[k] = r
-    return chosen
-
 
 def efficacy(past: bool) -> dict[tuple[str, str], int]:
     """(attack, target) -> factor (0/50/100/200). ``past=True`` applies the

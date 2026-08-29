@@ -2,7 +2,7 @@
 
 **A narrow capability eval, built the way a safety eval is built.**
 
-v0.1.0 · Apache-2.0 · pre-registered in [PLAN.md](PLAN.md) · ledger in [FINDINGS.md](FINDINGS.md)
+v0.1.0 · Apache-2.0 · pre-registered in [PLAN.md](PLAN.md) (commit `82c6bde`, blob `378f365` via `git hash-object PLAN.md`; not edited after this line) · ledger in [FINDINGS.md](FINDINGS.md)
 
 Six-way multiple choice on the damage multiplier when a move of one of the 15
 Generation I types hits one of the original 151 Pokémon as typed in Red/Blue.
