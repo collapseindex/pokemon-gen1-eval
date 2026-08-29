@@ -149,7 +149,7 @@ multiplication. The plan is not edited; this entry is the record.
   "close" by word and is exactly the multiply failure the quad stratum
   exists to catch.
 
-**Addendum predictions, registered here before any model call.** P1 and P3
+**Addendum predictions.** Canonical text and the item-set balance pass are in [ADDENDUM.md](ADDENDUM.md) (commit `48dd575`), hashed like the plan; A4 and A5 were added there. As first written here: P1 and P3
 from PLAN.md still apply (P3 read as "the best model is at least 95%").
 
 - **A1, the word is easier than the number.** For every model, bucket

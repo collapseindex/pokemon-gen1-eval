@@ -2,7 +2,7 @@
 
 **A narrow capability eval, built the way a safety eval is built.**
 
-v0.1.0 · Apache-2.0 · pre-registered in [PLAN.md](PLAN.md) (commit `82c6bde`, blob `378f365` via `git hash-object PLAN.md`; not edited after this line) · ledger in [FINDINGS.md](FINDINGS.md)
+v0.1.0 · Apache-2.0 · pre-registered in [PLAN.md](PLAN.md) (commit `82c6bde`, blob `378f365` via `git hash-object PLAN.md`; not edited after this line) · addendum [ADDENDUM.md](ADDENDUM.md) (commit `48dd575`, blob `b3eee1d`; supersedes the plan's conditions, models, ceiling and P2/P4/P5/P6; not edited after this line) · ledger in [FINDINGS.md](FINDINGS.md) · method walk in [CHECKLIST.md](CHECKLIST.md)
 
 Six-way multiple choice on the damage multiplier when a move of one of the 15
 Generation I types hits one of the original 151 Pokémon as typed in Red/Blue.
@@ -215,6 +215,8 @@ Other parameters: `-T chart={none,gen1,modern}`, `-T show_types={list,inline,fal
 
 ```
 PLAN.md              the pre-registration; not edited after its hash is recorded
+ADDENDUM.md          the re-registration after the budget arithmetic; same rule; item-set balance pass inside
+CHECKLIST.md         the internal analyst checklist walked against this eval, box by box
 FINDINGS.md          the ledger: D defects, O observations, N negative results
 src/key.py           Gen 1 chart + typings -> 2,265-cell key; the 26 known-answer cells
 src/sample.py        stratified, seeded draw; --exclude, --no-differs, --balance for dev sets
