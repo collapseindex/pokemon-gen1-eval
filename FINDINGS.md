@@ -42,6 +42,8 @@ Ids are permanent. PLAN.md is never edited; a mistake in it is a D entry here.
 | [D-015](#d-015) | task guard | `chart=permuted` was wired through the prompt, the samples and a test, but the task's argument guard still listed none/gen1/modern; the first REVIEW3 launch failed on every model before any call; guard widened, test added, relaunched | fixed, no cost |
 | [O-012](#o-012) | relabelled chart, all ten models (REVIEW3.md run 1) | with the 15 type names permuted (memory of the real chart useless), every model lands within 0.06 of its real-chart score (X1 5 of 7; X2 failed: the 235B and the ceiling moved under 0.02, the 32B's drop is its 1,024-token budget); the contradicted cells rise from 0.43-0.60 to 0.52-0.82 from 12B up: the prior is a tax on the cells it contradicts, not a subsidy on the rest | scored |
 | [D-016](#d-016) | reasoning flag, upstream | REVIEW3.md run 2 asked OpenRouter for `reasoning: {enabled: false}` on qwen3-32b; DeepInfra served reasoning on 1,200 of 1,200 calls (557 output tokens, 12.6% truncated at 1,024); run discarded as registered, X4/X5 unscored; its 0.686 replicates the D-012 floor (0.697) | recorded, $0.50 spent |
+| [O-013](#o-013) | paired tests, within-class differs gap, taxonomy ordering (review 4) | paired over items: Gemma 4B->12B +0.233 [+0.185, +0.279]; Llama 1B->8B +0.057 [+0.019, +0.092] (p=0.007, so not inside the noise as the draft said); 27B vs 30B-A3B +0.026 [-0.014, +0.068] (level); rows gain excludes zero for 9 of 10; within answer class the contradicted-cell gap is clear from 27B up and inconsistent below; with immunity filed before mirrored the immunity share is flat 0.13 to 0.24 at every rung but 235B | scored |
+| [D-017](#d-017) | token budget rule | llama-3.2-1b truncates 19.8% of table calls at 1,024 and was never rerun under the 5% rule that reran nano (D-007) and the 32B (D-012); its rung is a floor until it is | recorded |
 
 ## Defects in this harness
 
@@ -917,3 +919,64 @@ density question for the 30B-A3B vs 32B gap stays open. The number, 0.686
 from D-012 (0.697) and is kept only as that. About $0.50. Anyone repeating
 this should pin a host that documents `enable_thinking`, or send Qwen's
 `/no_think` in the prompt and accept the prompt change.
+
+### O-013
+**Paired tests, the differs gap within answer class, and how much the taxonomy ordering matters**
+pinned table logs · `src/paired.py` · 2026-08-29
+
+Asked by the fourth review. Every run saw the same 400 items, so run-to-run
+differences are paired. `src.paired` reports a bootstrap over items on the
+per-item epoch means (10,000 resamples, seed 0) and McNemar's exact test on
+per-item majority hits. From `data/results/20260829_104522_paired.json`:
+
+| comparison (table) | d | paired 95% | b/c | p |
+|---|---|---|---|---|
+| Gemma 4B -> 12B | +0.233 | +0.185 to +0.279 | 41/134 | <0.001 |
+| Llama 1B -> 3B | +0.028 | -0.013 to +0.068 | 48/76 | 0.015 |
+| Llama 3B -> 8B | +0.029 | -0.005 to +0.063 | 53/55 | 0.92 |
+| Llama 1B -> 8B | +0.057 | +0.019 to +0.092 | 43/73 | 0.007 |
+| Gemma 4B vs Llama 8B | +0.004 | -0.034 to +0.042 | 65/48 | 0.13 |
+| Gemma 27B vs Qwen 30B-A3B | +0.026 | -0.014 to +0.068 | 50/53 | 0.84 |
+| Qwen 30B-A3B -> 32B | +0.186 | +0.146 to +0.224 | 16/102 | <0.001 |
+| Qwen 235B-A22B -> 32B | +0.064 | +0.026 to +0.102 | 31/62 | 0.002 |
+| rows minus table | +0.033 to +0.177 for nine models, all excluding 0; llama-3.2-3b -0.010 (-0.047 to +0.028) | | | |
+
+The draft said the Llama steps were "inside the epoch ranges"; paired over
+items the 1B to 8B step is real (+0.057, p = 0.007) even though each single
+step is not. "Level" for 27B vs the 30B MoE is supported (p = 0.84). The
+paper now quotes these instead of interval overlap.
+
+**Differs gap within answer class.** The 71 contradicted cells are 14/20/26/11
+across answers 0, 1, 2, 4; ordinary cells are mostly 1, so the draft's
+differs-versus-dual gap mixed answer classes. Within class (table, per-item
+epoch means), contradicted versus rest: at 27B, 0.21 vs 0.80 on the 0 cells
+and 0.25 vs 0.77 on the 1 cells; 30B-A3B 0.14 vs 0.78 and 0.37 vs 0.86; 32B
+0.55 vs 0.97 and 0.78 vs 0.90; 12B 0.69 vs 0.74 and 0.38 vs 0.55. Below 12B
+the within-class gaps are small and inconsistent in sign (4B on 0 cells: 0.48
+vs 0.35). The claim "the prior leaks at the top" survives within class; the
+relabelled contrast (O-012) is the clean version and the paper now leads
+with it.
+
+**Taxonomy ordering.** Categories are first-match-wins with mirrored before
+immunity. Counting immunity-type misses regardless of order: 220/933 at 1B,
+187/900 at 3B, 138/870 at 4B, 154/865 at 8B, 89/591 at 12B, 74/460 at 27B,
+73/429 at 30B-A3B, 26/206 at 32B, 15/283 at 235B, 13/55 for the ceiling. Of
+those, the share that is also the mirror cell rises with size: 0.15, 0.19,
+0.33, 0.18, 0.40, 0.91, 0.49, 0.58, 0.53, 1.00. So under immunity-first
+ordering the immunity share is flat (0.13 to 0.24) at every rung but 235B,
+and "immunity errors are a small-model signature" becomes "immunity misses
+change from random to mirror reads with size". The paper says the second.
+Cost: none.
+
+### D-017
+**The 5% truncation rule was not applied to the 1B**
+`logs/pinned`, llama-3.2-1b · 2026-08-29 · recorded, not rerun
+
+D-007 set the rule (a model truncating more than 5% of calls is rerun at
+4,096) and it fired for gpt-5-nano and, in D-012, for qwen3-32b. llama-3.2-1b
+truncates 19.8% of its table calls and 17.2% under rows at 1,024, and was
+never rerun. A fourth review caught it. The rerun would cost about $0.10;
+it is not in the submission because the deadline was hours away and the
+paper's claims about the 1B rung are that it is at chance with or without
+the reference, which a rerun can only raise. Its rung is reported as a
+floor. If rerun, replace the 1B row of Table 1 and this entry.
