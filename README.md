@@ -13,11 +13,13 @@ reported beside it, never blended in.
 
 ## Status
 
-Run and replication complete, 2026-08-29. Nine open models from 1B to
-235B plus a ceiling model on the pinned 400, two chart formats; the four
-knee rungs replicated on a second disjoint 400; the one truncated rung
-rerun. $5.72 total, $0.72 over the registered ceiling and logged as such.
-Twelve D entries and five O entries. Write-up next.
+Run, replication and review round complete, 2026-08-29. Nine open models
+from 1B to 235B plus a ceiling model on the pinned 400, two chart formats;
+the four knee rungs replicated on a second disjoint 400; the one truncated
+rung rerun; after an external review, rows at three epochs on the four knee
+rungs and the 235B MoE on a second host (REVIEW.md, O-006, O-007). $7.22
+total. Thirteen D entries and seven O entries. Paper draft in
+`writeup/paper/` (untracked until the preprint goes up).
 
 ## Result
 
