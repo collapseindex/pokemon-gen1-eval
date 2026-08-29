@@ -1,0 +1,336 @@
+[
+  {
+    "log": "2026-08-29T17-21-10-00-00_pokemon-gen1_egN9CRF9k3v8wFeUKuvdS6.eval",
+    "model": "openrouter/qwen/qwen3-32b",
+    "condition": {
+      "chart": "gen1",
+      "show_types": "list",
+      "cot": true,
+      "items": "items_s0_n400.csv"
+    },
+    "n_samples": 1200,
+    "epochs": 3,
+    "accuracy_mean": 0.6858,
+    "n_items": 400,
+    "accuracy_ci95": [
+      0.6388,
+      0.7294
+    ],
+    "accuracy_epoch_range": 0.0375,
+    "accuracy_per_epoch": {
+      "1": 0.71,
+      "2": 0.675,
+      "3": 0.6725
+    },
+    "parse_failures": 0.1258,
+    "lenient_accuracy": 0.6875,
+    "lenient_recovered": 3,
+    "misses": 377,
+    "misses_on_asymmetric_cells": 189,
+    "transposed_misses": 97,
+    "chart_format": "table",
+    "shuffle": false,
+    "upstream_providers": {
+      "DeepInfra": 1200
+    },
+    "upstream_provider_errors": {},
+    "max_tokens": 1024,
+    "input_tokens_per_sample": 2767,
+    "output_tokens_per_sample": 557,
+    "bucket_accuracy": 0.7017,
+    "mean_steps_off": 0.8058,
+    "bucket_by_stratum": {
+      "differs": 0.4601,
+      "dual": 0.6995,
+      "immune": 0.8571,
+      "quad": 0.5102,
+      "single": 0.8956
+    },
+    "baseline_chance": 0.1667,
+    "baseline_majority": 0.4075,
+    "by_stratum": {
+      "differs": {
+        "n": 213,
+        "n_items": 71,
+        "accuracy": 0.4507,
+        "ci95": [
+          0.3405,
+          0.566
+        ]
+      },
+      "dual": {
+        "n": 396,
+        "n_items": 132,
+        "accuracy": 0.6818,
+        "ci95": [
+          0.5982,
+          0.7552
+        ]
+      },
+      "immune": {
+        "n": 147,
+        "n_items": 49,
+        "accuracy": 0.8571,
+        "ci95": [
+          0.7333,
+          0.929
+        ]
+      },
+      "quad": {
+        "n": 147,
+        "n_items": 49,
+        "accuracy": 0.4422,
+        "ci95": [
+          0.3124,
+          0.5804
+        ]
+      },
+      "single": {
+        "n": 297,
+        "n_items": 99,
+        "accuracy": 0.8956,
+        "ci95": [
+          0.8199,
+          0.9417
+        ]
+      }
+    },
+    "by_answer_class": {
+      "0": {
+        "n": 189,
+        "n_items": 63,
+        "accuracy": 0.7249,
+        "ci95": [
+          0.6041,
+          0.8198
+        ]
+      },
+      "1": {
+        "n": 489,
+        "n_items": 163,
+        "accuracy": 0.7873,
+        "ci95": [
+          0.7182,
+          0.8431
+        ]
+      },
+      "1/2": {
+        "n": 135,
+        "n_items": 45,
+        "accuracy": 0.7333,
+        "ci95": [
+          0.5896,
+          0.8403
+        ]
+      },
+      "1/4": {
+        "n": 93,
+        "n_items": 31,
+        "accuracy": 0.4194,
+        "ci95": [
+          0.2642,
+          0.5924
+        ]
+      },
+      "2": {
+        "n": 207,
+        "n_items": 69,
+        "accuracy": 0.6329,
+        "ci95": [
+          0.515,
+          0.7368
+        ]
+      },
+      "4": {
+        "n": 87,
+        "n_items": 29,
+        "accuracy": 0.3678,
+        "ci95": [
+          0.2176,
+          0.5489
+        ]
+      }
+    },
+    "by_attack_type": {
+      "bug": {
+        "n": 135,
+        "n_items": 45,
+        "accuracy": 0.5333,
+        "ci95": [
+          0.3907,
+          0.6706
+        ]
+      },
+      "dragon": {
+        "n": 60,
+        "n_items": 20,
+        "accuracy": 0.7833,
+        "ci95": [
+          0.5661,
+          0.9092
+        ]
+      },
+      "electric": {
+        "n": 75,
+        "n_items": 25,
+        "accuracy": 0.76,
+        "ci95": [
+          0.5657,
+          0.885
+        ]
+      },
+      "fighting": {
+        "n": 78,
+        "n_items": 26,
+        "accuracy": 0.7692,
+        "ci95": [
+          0.5795,
+          0.8896
+        ]
+      },
+      "fire": {
+        "n": 54,
+        "n_items": 18,
+        "accuracy": 0.7778,
+        "ci95": [
+          0.5479,
+          0.91
+        ]
+      },
+      "flying": {
+        "n": 54,
+        "n_items": 18,
+        "accuracy": 0.5556,
+        "ci95": [
+          0.3372,
+          0.7544
+        ]
+      },
+      "ghost": {
+        "n": 132,
+        "n_items": 44,
+        "accuracy": 0.7424,
+        "ci95": [
+          0.5975,
+          0.8484
+        ]
+      },
+      "grass": {
+        "n": 87,
+        "n_items": 29,
+        "accuracy": 0.5057,
+        "ci95": [
+          0.334,
+          0.676
+        ]
+      },
+      "ground": {
+        "n": 93,
+        "n_items": 31,
+        "accuracy": 0.6989,
+        "ci95": [
+          0.5231,
+          0.8309
+        ]
+      },
+      "ice": {
+        "n": 99,
+        "n_items": 33,
+        "accuracy": 0.6061,
+        "ci95": [
+          0.4369,
+          0.7532
+        ]
+      },
+      "normal": {
+        "n": 75,
+        "n_items": 25,
+        "accuracy": 1.0,
+        "ci95": [
+          0.8668,
+          1.0
+        ]
+      },
+      "poison": {
+        "n": 117,
+        "n_items": 39,
+        "accuracy": 0.6581,
+        "ci95": [
+          0.5012,
+          0.7867
+        ]
+      },
+      "psychic": {
+        "n": 45,
+        "n_items": 15,
+        "accuracy": 0.5333,
+        "ci95": [
+          0.3011,
+          0.7519
+        ]
+      },
+      "rock": {
+        "n": 39,
+        "n_items": 13,
+        "accuracy": 0.5641,
+        "ci95": [
+          0.3122,
+          0.7868
+        ]
+      },
+      "water": {
+        "n": 57,
+        "n_items": 19,
+        "accuracy": 0.8772,
+        "ci95": [
+          0.665,
+          0.9626
+        ]
+      }
+    },
+    "confusion": {
+      "0->(none)": 31,
+      "0->0": 137,
+      "0->1": 8,
+      "0->1/2": 2,
+      "0->2": 11,
+      "1->(none)": 38,
+      "1->0": 2,
+      "1->1": 385,
+      "1->1/2": 40,
+      "1->1/4": 2,
+      "1->2": 19,
+      "1->4": 3,
+      "1/2->(none)": 11,
+      "1/2->0": 2,
+      "1/2->1": 14,
+      "1/2->1/2": 99,
+      "1/2->1/4": 6,
+      "1/2->2": 3,
+      "1/4->(none)": 15,
+      "1/4->1": 31,
+      "1/4->1/2": 8,
+      "1/4->1/4": 39,
+      "2->(none)": 36,
+      "2->0": 1,
+      "2->1": 23,
+      "2->1/2": 13,
+      "2->2": 131,
+      "2->4": 3,
+      "4->(none)": 20,
+      "4->1": 33,
+      "4->2": 2,
+      "4->4": 32
+    },
+    "predicted_letters": {
+      "(none)": 151,
+      "A": 142,
+      "B": 47,
+      "C": 162,
+      "D": 494,
+      "E": 166,
+      "F": 38
+    },
+    "differs_under_modern_chart": null
+  }
+]

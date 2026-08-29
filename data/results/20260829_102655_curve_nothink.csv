@@ -1,0 +1,2 @@
+model,family,params_total_b,params_active_b,quant,host_pinned,hosts_seen,host_errors,format,max_tokens,items,epochs,exact,exact_stderr,exact_ci95_low,exact_ci95_high,exact_epoch_range,bucket,steps_off,parse_failures,lenient_accuracy,transposed_misses,misses,quad,immune,differs,log
+qwen/qwen3-32b,qwen-3,32.8,32.8,fp8,DeepInfra,DeepInfra:1200,0,table,1024,400,3,0.6858,0.0232,0.6388,0.7294,0.0375,0.7017,0.8058,0.1258,0.6875,97,377,0.4422,0.8571,0.4507,2026-08-29T17-21-10-00-00_pokemon-gen1_egN9CRF9k3v8wFeUKuvdS6.eval
