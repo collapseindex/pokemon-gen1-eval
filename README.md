@@ -180,10 +180,12 @@ the confusion matrix and the exact-vs-bucket gap. Only then the pinned set.
 ## Reproduce
 
 ```bash
+python -m venv .venv && .venv/Scripts/activate      # the global env's openai SDK is too old for Inspect's OpenRouter provider
 pip install -r requirements.txt
 python -m src.key                                   # build the key, print the 26 known cells
 python -m src.sample --n 400 --seed 0               # pin the item set (reproduces the committed file)
 python -m src.sample --n 100 --seed 1 --exclude items_s0_n400.csv --no-differs --tag dev --balance
+python -m src.export_dino && dinostomp stomp data/processed/items_s0_n400_dino.jsonl   # at-rest audit, no spend
 pytest                                              # 15 tests, no API calls, about 40 s
 
 # dev run, one condition, one model (needs ANTHROPIC_API_KEY)
