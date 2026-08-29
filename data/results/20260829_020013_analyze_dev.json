@@ -1,0 +1,163 @@
+[
+  {
+    "log": "2026-08-29T08-58-40-00-00_pokemon-gen1_NJHSyki4BXErRoEZxtrSUT.eval",
+    "model": "openrouter/anthropic/claude-haiku-4.5",
+    "condition": {
+      "chart": "gen1",
+      "show_types": "list",
+      "cot": true,
+      "items": "dev_s1_n100.csv"
+    },
+    "n_samples": 100,
+    "epochs": 1,
+    "accuracy_mean": 0.84,
+    "accuracy_epoch_range": 0.0,
+    "accuracy_per_epoch": {
+      "1": 0.84
+    },
+    "parse_failures": 0.0,
+    "bucket_accuracy": 0.85,
+    "mean_steps_off": 0.27,
+    "bucket_by_stratum": {
+      "dual": 0.8293,
+      "immune": 1.0,
+      "quad": 0.8,
+      "single": 0.8333
+    },
+    "baseline_chance": 0.1667,
+    "baseline_majority": 0.42,
+    "by_stratum": {
+      "dual": {
+        "n": 41,
+        "accuracy": 0.8293
+      },
+      "immune": {
+        "n": 14,
+        "accuracy": 1.0
+      },
+      "quad": {
+        "n": 15,
+        "accuracy": 0.7333
+      },
+      "single": {
+        "n": 30,
+        "accuracy": 0.8333
+      }
+    },
+    "by_answer_class": {
+      "0": {
+        "n": 14,
+        "accuracy": 1.0
+      },
+      "1": {
+        "n": 42,
+        "accuracy": 0.8571
+      },
+      "1/2": {
+        "n": 12,
+        "accuracy": 0.8333
+      },
+      "1/4": {
+        "n": 8,
+        "accuracy": 1.0
+      },
+      "2": {
+        "n": 17,
+        "accuracy": 0.7647
+      },
+      "4": {
+        "n": 7,
+        "accuracy": 0.4286
+      }
+    },
+    "by_attack_type": {
+      "bug": {
+        "n": 6,
+        "accuracy": 0.8333
+      },
+      "dragon": {
+        "n": 4,
+        "accuracy": 0.75
+      },
+      "electric": {
+        "n": 8,
+        "accuracy": 1.0
+      },
+      "fighting": {
+        "n": 9,
+        "accuracy": 1.0
+      },
+      "fire": {
+        "n": 6,
+        "accuracy": 0.6667
+      },
+      "flying": {
+        "n": 6,
+        "accuracy": 0.8333
+      },
+      "ghost": {
+        "n": 11,
+        "accuracy": 0.8182
+      },
+      "grass": {
+        "n": 7,
+        "accuracy": 0.7143
+      },
+      "ground": {
+        "n": 9,
+        "accuracy": 0.6667
+      },
+      "ice": {
+        "n": 6,
+        "accuracy": 0.8333
+      },
+      "normal": {
+        "n": 4,
+        "accuracy": 1.0
+      },
+      "poison": {
+        "n": 7,
+        "accuracy": 0.8571
+      },
+      "psychic": {
+        "n": 5,
+        "accuracy": 1.0
+      },
+      "rock": {
+        "n": 5,
+        "accuracy": 0.6
+      },
+      "water": {
+        "n": 7,
+        "accuracy": 1.0
+      }
+    },
+    "confusion": {
+      "0->0": 14,
+      "1->1": 36,
+      "1->1/2": 3,
+      "1->1/4": 1,
+      "1->2": 2,
+      "1/2->1": 2,
+      "1/2->1/2": 10,
+      "1/4->1/4": 8,
+      "2->0": 2,
+      "2->1": 1,
+      "2->1/2": 1,
+      "2->2": 13,
+      "4->1": 2,
+      "4->1/4": 1,
+      "4->2": 1,
+      "4->4": 3
+    },
+    "predicted_letters": {
+      "A": 16,
+      "B": 10,
+      "C": 14,
+      "D": 41,
+      "E": 16,
+      "F": 3
+    },
+    "differs_under_modern_chart": null
+  }
+]

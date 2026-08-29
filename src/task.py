@@ -41,7 +41,10 @@ from inspect_ai.scorer import (
 )
 from inspect_ai.solver import TaskState, multiple_choice, system_message
 
-from .key import MULTIPLIERS, PROCESSED, chart_table, typings
+try:  # imported as a package (pytest, python -m src.*) ...
+    from .key import MULTIPLIERS, PROCESSED, chart_table, typings
+except ImportError:  # ... or loaded as a standalone file by `inspect eval src/task.py`
+    from key import MULTIPLIERS, PROCESSED, chart_table, typings  # type: ignore[no-redef]
 
 LETTERS = "ABCDEF"
 MAX_TOKENS = 1024  # reasoning is allowed; truncations are counted by parse_failures()
