@@ -22,7 +22,7 @@ second review, a recall pass on all ten models, shuffled options on the two
 leaning models, and temperature 0 on the 12B rung (REVIEW2.md, O-009,
 O-010, D-014); after a third, a relabelled-chart pass on all ten and a
 discarded no-thinking run (REVIEW3.md, O-011, O-012, D-015, D-016). $10.45
-total; $2.55 of credit left. Sixteen D entries and twelve O entries. Paper draft in
+total; $2.55 of credit left. Seventeen D entries and thirteen O entries. Paper draft in
 `writeup/paper/` (untracked until the preprint goes up).
 
 ## Result
@@ -382,7 +382,23 @@ python -m src.run_ladder --formats table --chart permuted --epochs 1 --log-dir l
 python -m src.run_ladder --only qwen3-32b --formats table --max-tokens 1024 --no-thinking --log-dir logs/nothink
 ```
 
-### 19. Next
+### 19. Fourth review: paired tests, the differs gap within class, the taxonomy's ordering (O-013, D-017)
+
+Every run saw the same 400 items, so `src/paired.py` now gives a paired
+bootstrap and McNemar over items for every comparison the paper makes; the
+Llama 1B-to-8B step turned out real (+0.057, p = 0.007) where the draft had
+called it noise, and "27B level with the 30B MoE" held (p = 0.84). The
+contradicted-cell gap was re-done within answer class (it survives from 27B
+up). Filing immunity before mirrored flattens the "immunity is a small-model
+signature" line into "immunity misses become mirror reads with size", which
+is what the paper now says. The review also caught that the 1B truncates
+19.8% and was never rerun under our own 5% rule (D-017).
+
+```
+python -m src.paired     # paired bootstrap + McNemar over items, differs-within-class
+```
+
+### 20. Next
 
 Submit: LIGHT (long, 9 pages, non-archival) first, preprint alongside.
 Publish the repository. Not run: gemma-3-1b (not served), a second MoE
