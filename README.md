@@ -18,6 +18,33 @@ model on the pinned 400, two chart formats, $4.21. The curve is in
 `data/results/`; the reading is O-004 in the ledger; twelve D entries and
 four O entries, every one dated. Write-up next.
 
+## Result
+
+![scaling curve](data/results/20260829_033058_curve_pinned.svg)
+
+Exact accuracy on the pinned 400 (majority baseline 0.41, chance 0.17);
+table format at three epochs with its 95% Wilson interval over items, rows
+at one epoch. Full table with strata, parse rates and hosts in
+`data/results/20260829_033058_curve_pinned.csv`; the reading is O-004.
+
+| params (active) | model | table | 95% CI | rows |
+|---|---|---|---|---|
+| 1.2B | llama-3.2-1b | 0.22 | 0.18 to 0.27 | 0.30 |
+| 3.2B | llama-3.2-3b | 0.25 | 0.21 to 0.30 | 0.24 |
+| 4.3B | gemma-3-4b | 0.28 | 0.23 to 0.32 | 0.45 |
+| 8.0B | llama-3.1-8b | 0.28 | 0.24 to 0.33 | 0.43 |
+| 12.2B | gemma-3-12b | 0.51 | 0.46 to 0.56 | 0.64 |
+| 27.4B | gemma-3-27b | 0.62 | 0.57 to 0.66 | 0.69 |
+| 30.5B (3.3B) | qwen3-30b-a3b | 0.64 | 0.59 to 0.69 | 0.82 |
+| 32.8B | qwen3-32b | 0.70 (floor, D-012) | 0.65 to 0.74 | 0.93 |
+| 235B (22B) | qwen3-235b-a22b | 0.76 | 0.72 to 0.80 | 0.84 |
+| undisclosed | gpt-5-nano (4,096 tokens) | 0.95 | 0.93 to 0.97 | 0.99 |
+
+With the reference as a grid, nothing under 12B beats always answering
+"1"; as rows, the knee drops to about 4B. The 30B MoE with 3.3B active
+sits with the 30B dense models. Rows beats table for nine of ten, by up to
++0.23. Every intervals-overlap caveat is in O-004.
+
 ## Why this task
 
 The trap in a capability eval is breadth: a broad eval becomes a trivia game
@@ -283,18 +310,26 @@ python -m src.key                                   # build the key, print the 2
 python -m src.sample --n 400 --seed 0               # pin the item set (reproduces the committed file)
 python -m src.sample --n 100 --seed 1 --exclude items_s0_n400.csv --no-differs --tag dev --balance
 python -m src.export_dino && dinostomp stomp data/processed/items_s0_n400_dino.jsonl   # at-rest audit, no spend
-pytest                                              # 15 tests, no API calls, about 40 s
+pytest                                              # 19 tests, no API calls, about 25 s
 
-# dev run, one condition, one model (needs ANTHROPIC_API_KEY)
-inspect eval src/task.py -T chart=gen1 -T show_types=true -T items=dev_s1_n100.csv \
-  --model anthropic/claude-haiku-4-5-20251001 --log-dir logs/dev
-inspect view --log-dir logs/dev
+# one model on the dev set (OPENROUTER_API_KEY in .env, which is gitignored)
+inspect eval src/task.py -T items=dev_s1_n100.csv --model openrouter/google/gemma-3-4b-it \
+  -M 'provider={"order":["DeepInfra"],"allow_fallbacks":false}' --log-dir logs/dev
 python -m src.analyze --log-dir logs/dev
+inspect view --log-dir logs/dev
+
+# the ladder on the pinned set: table x3 epochs for every model in src/models.py, then rows x1
+python -m src.run_ladder                            # about $3.20; --only 3b,4b to subset, --formats rows
+python -m src.analyze --log-dir logs/pinned         # results JSON + curve CSV, with 95% CIs
+python -m src.plot_curve                            # curve SVG from the latest curve CSV
 ```
 
-Defaults are the registered condition (`chart=gen1`, `show_types=list`).
-Other parameters: `-T chart={none,gen1,modern}`, `-T show_types={list,inline,false}`,
+Defaults are the registered condition (`chart=gen1`, `show_types=list`,
+`chart_format=table`). Other parameters: `-T chart_format={table,rows}`,
+`-T chart={none,gen1,modern}`, `-T show_types={list,inline,false}`,
 `-T items=<csv in data/processed>`, `-T cot={true,false}`, `-T max_tokens=N`.
+Pin the upstream host with `-M provider=...` (D-009); the hosts used are in
+`src/models.py`.
 
 ## How to read a run
 
