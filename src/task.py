@@ -41,10 +41,10 @@ from inspect_ai.scorer import (
 from inspect_ai.solver import TaskState, multiple_choice, system_message
 
 try:  # imported as a package (pytest, python -m src.*) ...
-    from .key import MULTIPLIERS, PROCESSED, chart_rows, chart_table, typings
+    from .key import MULTIPLIERS, PROCESSED, chart_rows, chart_table, type_permutation, typings
     from .stats import wilson
 except ImportError:  # ... or loaded as a standalone file by `inspect eval src/task.py`
-    from key import MULTIPLIERS, PROCESSED, chart_rows, chart_table, typings  # type: ignore[no-redef]
+    from key import MULTIPLIERS, PROCESSED, chart_rows, chart_table, type_permutation, typings  # type: ignore[no-redef]
     from stats import wilson  # type: ignore[no-redef]
 
 LETTERS = "ABCDEF"
@@ -74,24 +74,32 @@ def _display(identifier: str) -> str:
     return special.get(identifier, identifier.replace("-", " ").title())
 
 
-def typing_list() -> str:
+def typing_list(relabel: dict[str, str] | None = None) -> str:
     """All 151 typings as a numbered list in dex order; identical for every
     item, so the prefix is cacheable where the provider supports it."""
+    name = relabel or {}
     return "\n".join(
-        f"{pid:>3}. {_display(name)}: {'/'.join(t.title() for t in ts)}"
-        for pid, (name, ts) in sorted(typings().items())
+        f"{pid:>3}. {_display(name_)}: {'/'.join(name.get(t, t).title() for t in ts)}"
+        for pid, (name_, ts) in sorted(typings().items())
     )
+
+
+def _relabel(chart: str) -> dict[str, str] | None:
+    """chart="permuted": the Gen 1 chart and typings shown under a seeded
+    relabelling of the 15 type names (REVIEW3.md run 1). Nothing else changes."""
+    return type_permutation(0) if chart == "permuted" else None
 
 
 def system_prompt(chart: str, show_types: str | bool, chart_format: str = "table") -> str:
     parts = [SYSTEM_RULES]
+    relabel = _relabel(chart)
     if chart != "none":
-        label = "Generation I" if chart == "gen1" else "current"
-        past = chart == "gen1"
+        label = {"gen1": "Generation I", "permuted": "relabelled"}.get(chart, "current")
+        past = chart in ("gen1", "permuted")
         if chart_format == "table":
-            body = f"Rows are the attacking type, columns the defending type.\n\n{chart_table(past=past)}"
+            body = f"Rows are the attacking type, columns the defending type.\n\n{chart_table(past=past, relabel=relabel)}"
         elif chart_format == "rows":
-            body = f"Each line is one attacking type, followed by its multiplier against every defending type.\n\n{chart_rows(past=past)}"
+            body = f"Each line is one attacking type, followed by its multiplier against every defending type.\n\n{chart_rows(past=past, relabel=relabel)}"
         else:
             raise ValueError("chart_format must be table or rows")
         parts.append(
@@ -99,16 +107,18 @@ def system_prompt(chart: str, show_types: str | bool, chart_format: str = "table
             f"what you remember about the games. {body}"
         )
     if show_types == "list":
-        parts.append("The typing of every Pokemon, as in Red and Blue:\n\n" + typing_list())
+        parts.append("The typing of every Pokemon, as in Red and Blue:\n\n" + typing_list(relabel))
     return "\n\n".join(parts)
 
 
-def _question(row: dict[str, str], show_types: str | bool) -> str:
+def _question(row: dict[str, str], show_types: str | bool, relabel: dict[str, str] | None = None) -> str:
     mon = _display(row["pokemon"])
+    name = relabel or {}
     if show_types is True or show_types == "inline":
-        typing = row["def_type1"].title() + ("/" + row["def_type2"].title() if row["def_type2"] else "")
+        typing = name.get(row["def_type1"], row["def_type1"]).title() + ("/" + name.get(row["def_type2"], row["def_type2"]).title() if row["def_type2"] else "")
         mon = f"{mon} ({typing})"
-    return f"A {row['attack_type'].title()}-type move hits {mon}. What is the damage multiplier from type effectiveness alone?"
+    attack = name.get(row["attack_type"], row["attack_type"])
+    return f"A {attack.title()}-type move hits {mon}. What is the damage multiplier from type effectiveness alone?"
 
 
 def load_items(path: Path) -> list[dict[str, str]]:
@@ -118,13 +128,14 @@ def load_items(path: Path) -> list[dict[str, str]]:
 
 def build_samples(rows: list[dict[str, str]], chart: str, show_types: str | bool) -> list[Sample]:
     answer_field = "modern_multiplier" if chart == "modern" else "gen1_multiplier"
+    relabel = _relabel(chart)
     samples = []
     for r in rows:
         target = LETTERS[MULTIPLIERS.index(r[answer_field])]
         samples.append(
             Sample(
                 id=r["item_id"],
-                input=_question(r, show_types),
+                input=_question(r, show_types, relabel),
                 choices=list(MULTIPLIERS),
                 target=target,
                 metadata={

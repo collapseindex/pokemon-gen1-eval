@@ -307,3 +307,24 @@ def test_analyze_recomputes_what_the_log_says(tmp_path):
     assert r["by_answer_class"]["1"]["accuracy"] == 1.0
     assert sum(r["confusion"].values()) == 100
     assert r["differs_under_modern_chart"] is None
+
+
+def test_permuted_chart_is_the_same_key_under_other_names():
+    """REVIEW3.md run 1: relabelling the 15 types must move no cell value."""
+    perm = K.type_permutation(0)
+    assert sorted(perm) == sorted(perm.values()) and all(a != b for a, b in perm.items())
+    inv = {v: k for k, v in perm.items()}
+    plain = K.chart_table(past=True).splitlines()
+    shown = K.chart_table(past=True, relabel=perm).splitlines()
+    assert len(plain) == len(shown)
+    for p, s in zip(plain[2:], shown[2:]):
+        pc, sc = [c.strip() for c in p.strip("|").split("|")], [c.strip() for c in s.strip("|").split("|")]
+        assert inv[sc[0]] == pc[0] and sc[1:] == pc[1:]
+    head_plain = [c.strip() for c in plain[0].strip("|").split("|")][1:]
+    head_shown = [c.strip() for c in shown[0].strip("|").split("|")][1:]
+    assert [inv[t] for t in head_shown] == head_plain
+    from src import task as T
+    row = {"pokemon": "golem", "attack_type": "water", "def_type1": "rock", "def_type2": "ground"}
+    assert T._question(row, "list", perm).startswith(f"A {perm['water'].title()}-type move hits Golem.")
+    assert f"Golem: {perm['rock'].title()}/{perm['ground'].title()}" in T.typing_list(perm)
+    assert "relabelled chart" in T.system_prompt("permuted", "list")

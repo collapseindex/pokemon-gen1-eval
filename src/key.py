@@ -188,32 +188,52 @@ def read_key(path: Path) -> list[Cell]:
         ]
 
 
-def chart_table(past: bool) -> str:
+def type_permutation(seed: int = 0) -> dict[str, str]:
+    """A seeded relabelling of the 15 type names with no fixed point (REVIEW3.md).
+    Under it the displayed chart is consistent but matches nothing a model has
+    memorised, so a score can only come from reading. The key is unchanged:
+    cell (a, t) keeps its value, it is just shown under the names perm[a], perm[t]."""
+    import random
+
+    types = list(gen_types().values())
+    rng = random.Random(seed)
+    while True:
+        shuffled = types[:]
+        rng.shuffle(shuffled)
+        if all(a != b for a, b in zip(types, shuffled)):
+            return dict(zip(types, shuffled))
+
+
+def chart_table(past: bool, relabel: dict[str, str] | None = None) -> str:
     """The chart as a markdown table, attack type down the rows, defender
-    across the columns. Used verbatim in the prompt for the chart conditions."""
+    across the columns. Used verbatim in the prompt for the chart conditions.
+    ``relabel`` shows every type under another name (see type_permutation);
+    the cell values do not move."""
     types = list(gen_types().values())
     chart = efficacy(past=past)
     show = {0: "0", 50: "1/2", 100: "1", 200: "2"}
-    head = "| attack \\ defend | " + " | ".join(types) + " |"
+    name = relabel or {}
+    head = "| attack \\ defend | " + " | ".join(name.get(t, t) for t in types) + " |"
     sep = "|" + "---|" * (len(types) + 1)
     rows = [head, sep]
     for a in types:
-        rows.append(f"| {a} | " + " | ".join(show[chart[(a, t)]] for t in types) + " |")
+        rows.append(f"| {name.get(a, a)} | " + " | ".join(show[chart[(a, t)]] for t in types) + " |")
     return "\n".join(rows)
 
 
 
-def chart_rows(past: bool) -> str:
+def chart_rows(past: bool, relabel: dict[str, str] | None = None) -> str:
     """The same chart as one line per attacking type: "Ground attacking:
     Normal 1, Fighting 1, ...". No axis to transpose; every cell is named by
     both types in the order they are read."""
     types = list(gen_types().values())
     chart = efficacy(past=past)
     show = {0: "0", 50: "1/2", 100: "1", 200: "2"}
+    name = relabel or {}
     lines = []
     for a in types:
-        cells = ", ".join(f"{t.title()} {show[chart[(a, t)]]}" for t in types)
-        lines.append(f"{a.title()} attacking: {cells}")
+        cells = ", ".join(f"{name.get(t, t).title()} {show[chart[(a, t)]]}" for t in types)
+        lines.append(f"{name.get(a, a).title()} attacking: {cells}")
     return "\n".join(lines)
 
 
