@@ -30,6 +30,7 @@ Ids are permanent. PLAN.md is never edited; a mistake in it is a D entry here.
 | [D-012](#d-012) | qwen3-32b, table | a thinking model at 1,024 tokens: 14% of table calls truncated before the answer line; rerun at 4,096: 0.828 [0.788, 0.862], 0.08% truncated; the 0.697 floor is superseded | rerun, fixed |
 | [O-005](#o-005) | replication, four knee models, a second 400-item set | order and MoE placement replicate (R2, R3); every model lands inside its pinned interval or within the baseline shift (R4); the "12B beats always-1" half of R1 fails on a set whose majority is 0.478: 12B is where reading starts, not where it beats the dumbest strategy | scored |
 | [O-006](#o-006) | rows x3, four knee rungs (REVIEW.md run 1) | the format gain has a band: rows minus table exceeds the sum of both epoch ranges by 2 to 3x for all four (V1 held); every one-epoch rows number within 0.02 of its three-epoch mean (V2 held) | scored |
+| [O-007](#o-007) | qwen3-235b-a22b on a second host (REVIEW.md run 2) | DeepInfra 0.725 [0.679, 0.766] against GMICloud 0.764 [0.720, 0.803]: inside the interval (V3 held, at the edge); the host moves the number by 0.04; on both hosts the 235B MoE is below the 32B dense model (0.828) | scored |
 | [O-004](#o-004) | the ladder, pinned set | the knee is between 8B and 12B total params; nothing under 12B beats always-"1"; the MoE sits with its total size; rows beats table for 9 of 10 models, by up to +0.23; predictions scored: P1, P3, A6 (accuracy clause) held; A1, A2 (bucket clause), A4, A5, A6 (transposition clause), A7 (MoE clause) failed | scored |
 | [D-010](#d-010) | model list | the question changed from "four labs" to "how small a model can do this": a nine-model size ladder replaces the addendum's list; Haiku and Flash-Lite drop from the pinned run (dev numbers kept); host, quantisation and parameter counts pinned in a registry; A7 registered | deviation declared |
 
@@ -616,3 +617,32 @@ Source: `logs/rows3/`, analyzed to `data/results/`.
   now says so with the measurement rather than the assumption.
 
 Cost about $1.05 (REVIEW.md budget: $7.28 available after a top-up).
+
+### O-007
+**The 235B MoE on a second host: the host moves it by 0.04, the ordering does not move**
+qwen3-235b-a22b-2507 · DeepInfra (fp8) against GMICloud (fp8) · table, pinned 400, three epochs · 2026-08-29
+
+Registered in REVIEW.md (run 2) after an external review noted that the
+"235B MoE below 32B dense" ordering rested on one host for the model D-009 had
+seen served by ten hosts. Source: `logs/host2/`, analyzed to `data/results/`.
+
+| host | exact | 95% CI | range | quad | single | differs | host errors |
+|---|---|---|---|---|---|---|---|
+| GMICloud (pinned run) | 0.764 | 0.720 to 0.803 | 0.018 | 0.82 | 0.85 | 0.60 | 0 |
+| DeepInfra (this run) | 0.725 | 0.679 to 0.766 | 0.013 | 0.62 | 0.87 | 0.55 | 0 |
+| qwen3-32b dense, for comparison | 0.828 | 0.788 to 0.862 | 0.025 | 0.65 | 0.94 | 0.69 | 0 |
+
+- **V3 held, at the edge.** 0.725 is inside GMICloud's interval, whose lower
+  bound is 0.720. The registration said that if the second host landed
+  above 0.828 the ordering would flip; it landed 0.04 lower instead.
+- **What the 0.04 means.** Two hosts, same model id, same declared
+  quantisation, differ by twice this model's epoch range and by about the
+  gap between neighbouring rungs of the ladder. Quad accuracy moved from
+  0.82 to 0.62. A single-host number for a model with many hosts carries
+  roughly that much extra uncertainty, and the paper now says so instead
+  of listing "host pinned" as if pinning removed the problem.
+- **The ordering stands.** On both hosts the 235B MoE is below the 32B dense
+  model, whose interval starts at 0.788. Contribution 2's total-parameter
+  clause is restored with "on two hosts" attached.
+
+Cost about $0.45. Review-round total (runs 1 and 2): about $1.50.
