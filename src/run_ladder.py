@@ -24,17 +24,22 @@ ITEMS = "items_s0_n400.csv"
 EPOCHS = {"table": 3, "rows": 1}
 
 
-def run_one(model, fmt: str, log_dir: Path, items: str = ITEMS, max_tokens: int | None = None, epochs: int | None = None, host: str | None = None) -> int:
+def run_one(model, fmt: str, log_dir: Path, items: str = ITEMS, max_tokens: int | None = None, epochs: int | None = None,
+            host: str | None = None, chart: str = "gen1", show_types: str = "list", shuffle: bool = False,
+            temperature: float | None = None) -> int:
     mt = max_tokens or model.max_tokens
     ep = epochs or EPOCHS[fmt]
     provider_arg = model.provider_arg if host is None else 'provider={"order":["%s"],"allow_fallbacks":false}' % host
     cmd = [
         str(INSPECT), "eval", "src/task.py",
         "-T", f"items={items}", "-T", f"chart_format={fmt}", "-T", f"max_tokens={mt}",
+        "-T", f"chart={chart}", "-T", f"show_types={show_types}", "-T", f"shuffle={'true' if shuffle else 'false'}",
         "--model", model.inspect_model, "-M", provider_arg,
         "--epochs", str(ep), "--log-dir", str(log_dir), "--display", "plain",
     ]
-    print(f"\n### {model.id} [{fmt}] x{ep} items={items} host={host or model.host} quant={model.quant if host is None else '?'} max_tokens={mt}", flush=True)
+    if temperature is not None:
+        cmd += ["--temperature", str(temperature)]
+    print(f"\n### {model.id} [{fmt}] x{ep} items={items} host={host or model.host} quant={model.quant if host is None else '?'} max_tokens={mt} chart={chart} show_types={show_types} shuffle={shuffle} temperature={temperature}", flush=True)
     proc = subprocess.run(cmd, cwd=ROOT, text=True, capture_output=True)
     tail = [l for l in (proc.stdout + proc.stderr).splitlines() if l.strip() and "warning" not in l.lower()]
     for line in tail:
@@ -55,6 +60,10 @@ def main() -> None:
     ap.add_argument("--max-tokens", type=int, default=None, help="override the registry token budget")
     ap.add_argument("--epochs", type=int, default=None, help="override the per-format epoch count")
     ap.add_argument("--host", default=None, help="override the registry host (REVIEW.md run 2)")
+    ap.add_argument("--chart", default="gen1", help="gen1 | none | modern (REVIEW2.md run 1 uses none)")
+    ap.add_argument("--show-types", default="list", help="list | inline | false")
+    ap.add_argument("--shuffle", action="store_true", help="shuffle option order per item (REVIEW2.md run 2)")
+    ap.add_argument("--temperature", type=float, default=None, help="request a temperature (REVIEW2.md run 3)")
     a = ap.parse_args()
     log_dir = ROOT / a.log_dir
     log_dir.mkdir(parents=True, exist_ok=True)
@@ -62,7 +71,7 @@ def main() -> None:
     failures = []
     for fmt in a.formats.split(","):
         for m in wanted:
-            if run_one(m, fmt, log_dir, a.items, a.max_tokens, a.epochs, a.host) != 0:
+            if run_one(m, fmt, log_dir, a.items, a.max_tokens, a.epochs, a.host, a.chart, a.show_types, a.shuffle, a.temperature) != 0:
                 failures.append((m.id, fmt))
     print("\nladder done;", "all runs exited 0" if not failures else f"failed: {failures}", flush=True)
     sys.exit(1 if failures else 0)

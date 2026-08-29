@@ -114,9 +114,12 @@ def summarize(log: EvalLog) -> dict:
             bucket_hits.append(float(cl.value["bucket"]))
             steps.append(float(cl.value["steps"]))
             bucket_by_stratum[(s.metadata or {}).get("stratum", "?")].append(float(cl.value["bucket"]))
-        predicted = _letter_to_mult(sc.answer)
-        target = _letter_to_mult(s.target if isinstance(s.target, str) else s.target[0])
         meta = s.metadata or {}
+        # the closeness scorer records the chosen option's value; under shuffle the
+        # letter no longer maps to a fixed multiplier, so prefer the value
+        cl_ans = (s.scores.get("closeness").answer if s.scores and s.scores.get("closeness") else "") or ""
+        predicted = cl_ans if cl_ans in MULTIPLIERS else (_letter_to_mult(sc.answer) if not args.get("shuffle") else None)
+        target = meta.get("answer_class") or _letter_to_mult(s.target if isinstance(s.target, str) else s.target[0])
         per_epoch[s.epoch].append(hit)
         if predicted is None:
             parse_fail += 1
@@ -182,6 +185,7 @@ def summarize(log: EvalLog) -> dict:
         "misses_on_asymmetric_cells": detectable_misses,
         "transposed_misses": transposed_misses,
         "chart_format": args.get("chart_format", "table"),
+        "shuffle": bool(args.get("shuffle", False)),
         "upstream_providers": dict(providers),
         "upstream_provider_errors": dict(provider_errors),
         "max_tokens": args.get("max_tokens"),

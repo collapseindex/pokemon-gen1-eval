@@ -236,12 +236,15 @@ def closeness() -> Scorer:
     reports bucket match and steps off. Never averaged with exact accuracy."""
 
     async def score(state: TaskState, target: Target) -> Score:
+        # read the chosen option's value, not its position: correct under shuffle
         answered = None
-        for i, c in enumerate(state.choices):
+        for c in state.choices:
             if c.correct:
-                answered = MULTIPLIERS[i]
+                answered = c.value
                 break
-        t = MULTIPLIERS[LETTERS.index(target.text)]
+        t = state.metadata.get("answer_class") if state.metadata else None
+        if t is None:
+            t = MULTIPLIERS[LETTERS.index(target.text)]
         val = closeness_of(answered, t)
         return Score(
             value=val,
@@ -260,6 +263,7 @@ def pokemon_gen1(
     cot: bool = True,
     max_tokens: int = MAX_TOKENS,
     chart_format: str = "table",
+    shuffle: bool = False,
 ) -> Task:
     if chart not in ("none", "gen1", "modern"):
         raise ValueError("chart must be none, gen1 or modern")
@@ -269,8 +273,8 @@ def pokemon_gen1(
         raise ValueError("chart_format must be table or rows")
     rows = load_items(PROCESSED / items)
     return Task(
-        dataset=MemoryDataset(build_samples(rows, chart, show_types), name=f"gen1_{chart}_{show_types}_{chart_format}"),
-        solver=[system_message(system_prompt(chart, show_types, chart_format)), multiple_choice(shuffle=False, cot=cot)],
+        dataset=MemoryDataset(build_samples(rows, chart, show_types), name=f"gen1_{chart}_{show_types}_{chart_format}{'_shuffled' if shuffle else ''}"),
+        solver=[system_message(system_prompt(chart, show_types, chart_format)), multiple_choice(shuffle=shuffle, cot=cot)],
         scorer=[exact(), closeness(), parsed()],
         config=GenerateConfig(max_tokens=max_tokens),
     )
