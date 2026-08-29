@@ -26,7 +26,9 @@ Ids are permanent. PLAN.md is never edited; a mistake in it is a D entry here.
 | [O-002](#o-002) | four models, dev set, two chart formats | rows beats table for every model (+0.07 to +0.19 exact); for Haiku and Qwen the transposed misses fall with the format, for Gemini Flash-Lite they do not: its mirror-cell answers come from its prior, not the grid | observed on dev, not scored against a prediction |
 | [D-009](#d-009) | upstream routing | OpenRouter split one llama run across two hosts and one of them returned HTTP 500 mid-generation on 31 of 100 items, scored as parse failures; provider pinned, host recorded per run; Qwen was served by ten different hosts in one run | fixed, census added |
 | [O-003](#o-003) | two on-device-class models, dev set | llama-3.2-3b at chance (0.18) in both formats; gemma-3-4b below the majority baseline (0.26 table, 0.34 rows) with immunities the worst stratum | observed on dev, not scored against a prediction |
-| [D-011](#d-011) | parse_failures metric | wrong whenever epochs > 1: Inspect's epoch reduction drops the `answer` field, so the in-log metric reads 0.94 on a run whose true rate is 0.198; analyze, which reads per-epoch samples, is the record | open until the ladder finishes, then fixed |
+| [D-011](#d-011) | parse_failures metric | wrong whenever epochs > 1: Inspect's epoch reduction drops the `answer` field, so the in-log metric reads 0.94 on a run whose true rate is 0.198; analyze, which reads per-epoch samples, is the record | fixed: a `parsed` scorer with a numeric value, negative-tested at epochs=2 |
+| [D-012](#d-012) | qwen3-32b, table | a thinking model at 1,024 tokens: 14% of table calls truncated before the answer line, 2% under rows; the table number (0.697) is a floor, not rerun for budget | flagged, not rerun |
+| [O-004](#o-004) | the ladder, pinned set | the knee is between 8B and 12B total params; nothing under 12B beats always-"1"; the MoE sits with its total size; rows beats table for 9 of 10 models, by up to +0.23; predictions scored: P1, P3, A6 (accuracy clause) held; A1, A2 (bucket clause), A4, A5, A6 (transposition clause), A7 (MoE clause) failed | scored |
 | [D-010](#d-010) | model list | the question changed from "four labs" to "how small a model can do this": a nine-model size ladder replaces the addendum's list; Haiku and Flash-Lite drop from the pinned run (dev numbers kept); host, quantisation and parameter counts pinned in a registry; A7 registered | deviation declared |
 
 ## Defects in this harness
@@ -445,3 +447,90 @@ finished `stop` on one host with zero host errors. The 238 unparsed
 completions either give the answer without the required last line ("The
 correct answer is C) 1/2") or start reproducing the type chart. That is
 the model, and it is counted against it as the format demands.
+
+### D-012
+**One rung ran with its reasoning cut short, and the number is kept as a floor**
+qwen3-32b, table format · 2026-08-29 · flagged, not rerun
+
+qwen3-32b thinks before it answers by default. At `max_tokens` 1,024 the
+table run (1,200 calls) truncated 14% of completions before the `ANSWER:`
+line; the rows run, whose prompt is shorter, truncated 2%. The D-007 rule
+says raise the budget and rerun. It was not applied: a 32B rerun at 4,096
+costs about $0.80 of the $2.79 left in the wallet, and the rows number for
+the same model (0.930, 2% truncated) already shows what the model can do.
+So the table number, **0.697, is a floor**: 14% of its calls were scored
+wrong without an answer having been produced. It is marked as such in the
+curve CSV (`parse_failures 0.14`) and wherever it is quoted. If budget
+returns, this is the first rerun.
+
+### O-004
+**The ladder: a knee between 8B and 12B, and a grid that costs every model something**
+nine models plus a ceiling · pinned 400 · table x3 epochs, rows x1 · 2026-08-29
+
+Source: `data/results/20260829_031436_analyze_pinned.json`, curve
+`20260829_031436_curve_pinned.csv` and `.svg`. Exact accuracy; majority
+baseline 0.408, chance 0.167. Table has a three-epoch range; rows is one
+epoch and carries only its binomial stderr (about 0.02 at n=400).
+
+| params (active) | model | table | range | rows | rows minus table | true parse fail (table / rows) |
+|---|---|---|---|---|---|---|
+| 1.2B | llama-3.2-1b | 0.223 | 0.035 | 0.295 | +0.07 | 0.20 / 0.17 |
+| 3.2B | llama-3.2-3b | 0.250 | 0.020 | 0.240 | -0.01 | 0.01 / 0.01 |
+| 4.3B | gemma-3-4b | 0.275 | 0.050 | 0.450 | +0.18 | 0.00 / 0.00 |
+| 8.0B | llama-3.1-8b | 0.279 | 0.010 | 0.432 | +0.15 | 0.02 / 0.03 |
+| 12.2B | gemma-3-12b | 0.507 | 0.020 | 0.642 | +0.14 | 0.00 / 0.00 |
+| 27.4B | gemma-3-27b | 0.617 | 0.022 | 0.688 | +0.07 | 0.00 / 0.00 |
+| 30.5B (3.3B) | qwen3-30b-a3b | 0.642 | 0.050 | 0.820 | +0.18 | 0.00 / 0.00 |
+| 32.8B | qwen3-32b | 0.697 (floor, D-012) | 0.018 | 0.930 | +0.23 | 0.14 / 0.02 |
+| 235B (22B) | qwen3-235b-a22b | 0.764 | 0.018 | 0.843 | +0.08 | 0.00 / 0.00 |
+| undisclosed | gpt-5-nano (4,096) | 0.954 | 0.022 | 0.988 | +0.03 | 0.00 / 0.01 |
+
+In order of how much the data supports it:
+
+1. **Nothing under 12B beats always answering "1."** 1B through 8B sit at
+   0.22 to 0.28 under table, below the 0.41 majority, with quads at 0.01 to
+   0.08. Gemma 12B is the first rung above the baseline (0.507) and the
+   Gemma line is monotone from there (0.507, 0.617). The knee on this task,
+   with the chart as a grid, is between 8B and 12B total parameters. Under
+   rows the 4B and 8B rungs clear the baseline (0.45, 0.43) and the knee
+   moves down to roughly 4B, which is the on-device class.
+2. **The MoE goes with its total, not its active, size.** qwen3-30b-a3b
+   (3.3B active) scores 0.642 table / 0.820 rows, beside the 27B and 32B
+   dense points and far from the 3B and 4B points. Whatever limits the
+   small dense models, it is not the compute per token. A7's MoE clause
+   predicted the opposite and **failed**.
+3. **Rows beats table for 9 of 10 models**, by more than the table range
+   everywhere except llama-3.2-3b (which is at chance either way). The gain
+   is +0.14 to +0.23 in the middle of the ladder and +0.03 at the ceiling.
+   Under rows, qwen3-32b (0.930) passes qwen3-235b (0.843) and comes within
+   0.06 of the ceiling model's table number. The grid is a reading tax that
+   every model pays and the larger ones pay less of; A6's accuracy clause
+   **held** for 9 of 10.
+4. **The full-mirror transposition count does not fall with the format**
+   for most models (A6's second clause **failed**, 8 of 10). Only nano and
+   qwen3-32b halve it. For everyone else a mirror-cell answer under rows is
+   as common as under table, so, as with Gemini on dev (O-002), the
+   mirrored answers below 32B are mostly the stored relation, not the grid.
+   The format helps those models for other reasons (the visible one in the
+   logs: fewer lookups land on the wrong row entirely).
+5. **The prior leaks at the top, not the bottom** (A4 **failed**, and in an
+   informative way). `differs` cells, where the chart in context contradicts
+   the memorised chart, run 0.09 below `dual` for nano and 235B, 0.18 to
+   0.28 below for 27B to 32B, and show no gap at all for 1B to 8B. A model
+   has to be able to read the chart before its memory can compete with it.
+6. **The word is not much easier than the number** (A1 **failed** for 13 of
+   20 runs). Bucket accuracy exceeds exact by 0.00 to 0.07, and for the
+   models above 12B by about 0.02: their misses are mostly not the adjacent
+   multiplier. A2's exact clause (quad below single) **held** for 9 of 10;
+   its bucket clause failed everywhere, for the same reason.
+7. **Position lean appears below 12B under table** (A5 **failed** for 6 of
+   20 runs, all small models): gemma-3-4b predicts D on 10% of items where
+   41% are D, and llama-3.2-3b on 11%. The small models are not falling
+   back on the majority letter; they are answering something else.
+8. **P1 held** for all ten (three-epoch ranges 0.010 to 0.050). **P3 held**
+   on the ceiling model only: 0.954 under table. No open model reached 0.90
+   under table; under rows the smallest to do so is qwen3-32b (A7's last
+   clause, read against rows: 32B, not 12B).
+
+Cost: the wallet went from $7.00 to $2.79 across every run in this ledger,
+$4.21, under the addendum's $5 ceiling with the 32B rerun (D-012) left out.

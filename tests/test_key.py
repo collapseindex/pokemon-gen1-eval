@@ -247,6 +247,27 @@ def test_scorer_awards_key_rejects_wrong_and_counts_unparsed():
 
 
 @pytest.mark.slow
+def test_parsed_scorer_survives_epoch_reduction(tmp_path):
+    """D-011: at epochs=2, the exact scorer's parse_failures metric reads ~1.0
+    (every reduced score has answer=None) while the parsed scorer's mean is
+    the true rate. Plant: 3 items, 2 epochs, one unparsed completion in six."""
+    from inspect_ai import eval as inspect_eval
+    from inspect_ai.model import ModelOutput, get_model
+    from src.task import pokemon_gen1
+
+    t = pokemon_gen1(items="dev_s1_n100.csv")
+    t.dataset = t.dataset[:3]
+    outs = ["x\nANSWER: D"] * 5 + ["I ran out of"]
+    model = get_model("mockllm/model", custom_outputs=[ModelOutput.from_content("mockllm/model", o) for o in outs])
+    log = inspect_eval(t, model=model, log_dir=str(tmp_path), epochs=2, display="none")[0]
+    by = {sc.name: sc.metrics for sc in log.results.scores}
+    assert by["parsed"]["mean"].value == pytest.approx(5 / 6)
+    # the metric on the exact scorer is computed after reduction and does not
+    # equal the true rate (it read 0.94 on a 0.198 run in D-011; here 0.33 on 0.17)
+    assert by["choice"]["parse_failures"].value != pytest.approx(1 / 6)
+
+
+@pytest.mark.slow
 def test_analyze_recomputes_what_the_log_says(tmp_path):
     """A mock that always answers D ("1") on the dev set: analyze must report
     accuracy equal to the majority share, a D-only letter distribution, zero

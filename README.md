@@ -13,12 +13,10 @@ reported beside it, never blended in.
 
 ## Status
 
-Harness complete, no model called yet. Key built and verified on 26 known
-cells; 400-item set pinned; 100-item dev set drawn disjoint from it; both
-scorers, the metrics and the analysis script negative-tested with a mock
-model. Five ledger entries, all against the harness or the plan, all found
-before the first API call. Registered condition: chart and full typing list
-in context, four models across four labs, three epochs, under $4.
+Run complete, 2026-08-29. Nine open models from 1B to 235B plus a ceiling
+model on the pinned 400, two chart formats, $4.21. The curve is in
+`data/results/`; the reading is O-004 in the ledger; twelve D entries and
+four O entries, every one dated. Write-up next.
 
 ## Why this task
 
@@ -236,11 +234,31 @@ parameter counts. `analyze` writes the curve as a CSV with stderr and
 epoch range per point; the plot is drawn from that file, not by hand.
 Prediction A7: monotone within family, active params predict the MoE.
 
-### 14. Next
+### 14. The curve (O-004, D-011, D-012)
 
-`python -m src.run_ladder`: table at three epochs for all nine, bottom
-up, then rows at one epoch. Then `python -m src.analyze --log-dir
-logs/pinned` and the curve.
+Nine models on the pinned 400, table at three epochs, rows at one, $4.21
+total. The knee is between 8B and 12B with the chart as a grid: nothing
+under 12B beats always answering "1", and quads are near zero there. With
+the chart as rows the knee drops to about 4B. The 30B MoE with 3.3B active
+sits with the 30B dense models, so the limit is not compute per token.
+Rows beats table for nine of ten, by up to +0.23 (qwen3-32b, 0.70 to
+0.93). Predictions: P1, P3 and the accuracy half of A6 held; A1, A4, A5,
+A7's MoE clause and the transposition halves of A6 and A2 failed, each in
+a way the ledger reads out.
+
+Two harness entries on the way. The in-log parse-failure metric is wrong at
+`epochs > 1` (Inspect's reduction drops the answer field); analyze was
+right all along and a `parsed` scorer with a numeric value now fixes the
+log too. And qwen3-32b, a thinking model, truncated 14% of its table calls
+at 1,024 tokens; its table number is kept as a floor rather than rerun,
+because the wallet said so.
+
+### 15. Next
+
+The write-up, from the ledger: reference-following as a function of
+model size, with the on-device class as the audience. Then, if credit
+returns: the qwen3-32b table rerun at 4,096 (D-012), and Haiku on rows on
+the pinned set.
 
 ## Reproduce
 
@@ -291,6 +309,7 @@ src/task.py          the Inspect task: rules + chart + typing list, six fixed op
 src/models.py        the ladder: params (total, active), quant, pinned host, token budget
 src/run_ladder.py    runs the ladder on the pinned set, one inspect eval per (model, format)
 src/analyze.py       logs -> results JSON + scaling-curve CSV in data/results/
+src/plot_curve.py    curve CSV -> SVG (exact vs log params, both formats, stderr bars, baselines)
 tests/               key, sampler, prompt, scorer and analyze, each negative-tested
 data/raw/            PokeAPI CSVs frozen at commit 7af36d9, sha256 beside them
 data/processed/      the key, its manifest, the pinned set, the dev set

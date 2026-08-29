@@ -190,6 +190,20 @@ def exact() -> Scorer:
     return choice()
 
 
+@scorer(metrics=[mean()])
+def parsed() -> Scorer:
+    """1 if an ANSWER letter was parsed, else 0. A numeric value, so Inspect's
+    epoch reduction averages it correctly; the parse_failures metric on the
+    exact scorer does not survive reduction (FINDINGS D-011) and is kept only
+    for one-epoch runs."""
+
+    async def score(state: TaskState, target: Target) -> Score:
+        answered = any(c.correct for c in state.choices)
+        return Score(value=1.0 if answered else 0.0, answer="parsed" if answered else "")
+
+    return score
+
+
 @scorer(metrics=[{"bucket": [mean(), stderr()], "steps": [mean()]}])
 def closeness() -> Scorer:
     """Secondary scorer. Reads the letter the multiple_choice solver marked
@@ -232,6 +246,6 @@ def pokemon_gen1(
     return Task(
         dataset=MemoryDataset(build_samples(rows, chart, show_types), name=f"gen1_{chart}_{show_types}_{chart_format}"),
         solver=[system_message(system_prompt(chart, show_types, chart_format)), multiple_choice(shuffle=False, cot=cot)],
-        scorer=[exact(), closeness()],
+        scorer=[exact(), closeness(), parsed()],
         config=GenerateConfig(max_tokens=max_tokens),
     )
