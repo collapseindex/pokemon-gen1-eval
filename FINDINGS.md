@@ -26,6 +26,7 @@ Ids are permanent. PLAN.md is never edited; a mistake in it is a D entry here.
 | [O-002](#o-002) | four models, dev set, two chart formats | rows beats table for every model (+0.07 to +0.19 exact); for Haiku and Qwen the transposed misses fall with the format, for Gemini Flash-Lite they do not: its mirror-cell answers come from its prior, not the grid | observed on dev, not scored against a prediction |
 | [D-009](#d-009) | upstream routing | OpenRouter split one llama run across two hosts and one of them returned HTTP 500 mid-generation on 31 of 100 items, scored as parse failures; provider pinned, host recorded per run; Qwen was served by ten different hosts in one run | fixed, census added |
 | [O-003](#o-003) | two on-device-class models, dev set | llama-3.2-3b at chance (0.18) in both formats; gemma-3-4b below the majority baseline (0.26 table, 0.34 rows) with immunities the worst stratum | observed on dev, not scored against a prediction |
+| [D-010](#d-010) | model list | the question changed from "four labs" to "how small a model can do this": a nine-model size ladder replaces the addendum's list; Haiku and Flash-Lite drop from the pinned run (dev numbers kept); host, quantisation and parameter counts pinned in a registry; A7 registered | deviation declared |
 
 ## Defects in this harness
 
@@ -359,3 +360,58 @@ needed in context, and the 3B-4B class cannot do it at a rate that beats
 guessing the commonest answer. It does not say what these models know
 about Pokemon; they were never asked to recall anything. Dev set, one
 epoch, unscored.
+
+### D-010
+**The question got better, so the model list changed: a size ladder**
+`src/models.py` · 2026-08-29 · deviation declared before any pinned run
+
+The dev runs (O-001 to O-003) showed the frontier tier clears this task
+(nano 0.98, Haiku 0.96 under rows) and the 3B class does not (llama at
+chance). The interesting question is the one in between: **how small a
+model can you get away with for find, look up, multiply over a reference
+in context**, which is the on-device shape. The addendum's list (four labs,
+one model each) does not answer it. This entry replaces the list and says
+what that costs.
+
+**The ladder**, one host per model, quantisation held constant within a
+family where a host offers it, parameter counts as published:
+
+| params | model | family | quant | host |
+|---|---|---|---|---|
+| 1.2B | llama-3.2-1b-instruct | llama-3 | unknown | Cloudflare (only host) |
+| 3.2B | llama-3.2-3b-instruct | llama-3 | bf16 | Parasail |
+| 4.3B | gemma-3-4b-it | gemma-3 | bf16 | DeepInfra |
+| 8.0B | llama-3.1-8b-instruct | llama-3 | fp8 | DeepInfra |
+| 12.2B | gemma-3-12b-it | gemma-3 | bf16 | DeepInfra |
+| 27.4B | gemma-3-27b-it | gemma-3 | bf16 | Novita |
+| 30.5B (3.3B active) | qwen3-30b-a3b-instruct-2507 | qwen-3 | bf16 | CoreWeave |
+| 32.8B | qwen3-32b | qwen-3 | fp8 | DeepInfra |
+| 235B (22B active) | qwen3-235b-a22b-2507 | qwen-3 | fp8 | GMICloud |
+| undisclosed | gpt-5-nano (4,096 tokens) | ceiling | | OpenAI |
+
+Table format at three epochs for every model, then rows at one epoch.
+Projected about $3.20 on top of the $1.25 spent; the $5 ceiling stands.
+
+**Removed from the pinned run**, which the addendum said would not happen:
+`claude-haiku-4.5` ($1.60 a pass, and its finding is the format, measured
+on dev) and `gemini-2.5-flash-lite` (undisclosed size, does not sit on a
+curve). Their dev numbers are reported as dev numbers. gpt-5-nano stays as
+the ceiling and is not on the curve either, for the same reason.
+
+**How the curve is tracked.** `src/models.py` is the single source for
+parameter counts (total and active, because a 30B MoE with 3.3B active is
+two different points depending on the axis), host, quantisation and token
+budget; nothing downstream types a number. `analyze` writes a
+`_curve_.csv` beside the results JSON with, per (model, format): both
+parameter counts, the pinned host and every host actually seen, host-side
+error count, exact accuracy with its binomial stderr and the epoch range,
+bucket, steps off, parse failures, transposed misses, and the quad, immune
+and differs strata. The curve is that file, plotted; the plot is not the
+record.
+
+**A7, registered now.** Within each dense family (llama 1→3→8, gemma
+4→12→27), exact accuracy is monotone in parameter count and every step is
+larger than the two epoch ranges. The 30B-A3B MoE lands nearer the 3B-4B
+points than the 32B dense point on exact accuracy: active parameters, not
+total, predict this task. The smallest model to reach 0.90 exact under
+table is at or above 12B.

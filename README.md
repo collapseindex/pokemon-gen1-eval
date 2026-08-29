@@ -224,12 +224,23 @@ runs had been served by ten different hosts. For the pinned runs every
 model is pinned to one host and the host is in the results file: the host
 is part of the instrument.
 
-### 13. Next
+### 13. The size ladder (D-010)
 
-The pinned set. Haiku once at list price (the `:batch` route is
-batch-endpoint only); the three cheap models at three epochs, table, then
-rows as budget allows. Under the $5 ceiling or the shortfall is a ledger
-entry.
+The frontier tier clears this and the 3B class does not, so the question
+became "how small a model can do find, look up, multiply over a reference
+in context." Nine models, two dense families (Llama 1→3→8, Gemma 4→12→27)
+plus Qwen for the MoE question (30B with 3.3B active against 32B dense,
+and 235B with 22B active), and nano as the ceiling. One host per model,
+bf16 wherever a host offers it, all in `src/models.py` with published
+parameter counts. `analyze` writes the curve as a CSV with stderr and
+epoch range per point; the plot is drawn from that file, not by hand.
+Prediction A7: monotone within family, active params predict the MoE.
+
+### 14. Next
+
+`python -m src.run_ladder`: table at three epochs for all nine, bottom
+up, then rows at one epoch. Then `python -m src.analyze --log-dir
+logs/pinned` and the curve.
 
 ## Reproduce
 
@@ -277,7 +288,9 @@ FINDINGS.md          the ledger: D defects, O observations, N negative results
 src/key.py           Gen 1 chart + typings -> 2,265-cell key; the 26 known-answer cells
 src/sample.py        stratified, seeded draw; --exclude, --no-differs, --balance for dev sets
 src/task.py          the Inspect task: rules + chart + typing list, six fixed options, CoT, two scorers
-src/analyze.py       logs -> one timestamped summary in data/results/
+src/models.py        the ladder: params (total, active), quant, pinned host, token budget
+src/run_ladder.py    runs the ladder on the pinned set, one inspect eval per (model, format)
+src/analyze.py       logs -> results JSON + scaling-curve CSV in data/results/
 tests/               key, sampler, prompt, scorer and analyze, each negative-tested
 data/raw/            PokeAPI CSVs frozen at commit 7af36d9, sha256 beside them
 data/processed/      the key, its manifest, the pinned set, the dev set

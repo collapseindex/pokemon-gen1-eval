@@ -23,6 +23,7 @@ from pathlib import Path
 from inspect_ai.log import EvalLog, list_eval_logs, read_eval_log
 
 from .key import MULTIPLIERS, ROOT, efficacy, typings
+from .models import BY_ID
 
 LETTERS = "ABCDEF"
 CHANCE = 1 / len(MULTIPLIERS)
@@ -161,6 +162,47 @@ def summarize(log: EvalLog) -> dict:
     }
 
 
+def curve_rows(rows: list[dict]) -> list[dict]:
+    """One line per (model, format) for the scaling curve: parameter counts
+    from the registry, accuracy with its stderr and epoch range from the
+    log. A model not in the registry gets no parameter count and is kept
+    with a blank, never guessed."""
+    out = []
+    for r in rows:
+        mid = r["model"].replace("openrouter/", "")
+        m = BY_ID.get(mid)
+        n = r["n_samples"] / max(r["epochs"], 1)
+        acc = r["accuracy_mean"]
+        out.append({
+            "model": mid,
+            "family": m.family if m else "",
+            "params_total_b": m.params_total_b if m else "",
+            "params_active_b": m.params_active_b if m else "",
+            "quant": m.quant if m else "",
+            "host_pinned": m.host if m else "",
+            "hosts_seen": ";".join(f"{k}:{v}" for k, v in sorted(r["upstream_providers"].items())),
+            "host_errors": sum(r["upstream_provider_errors"].values()),
+            "format": r["chart_format"],
+            "max_tokens": r["max_tokens"] or 1024,
+            "items": int(n),
+            "epochs": r["epochs"],
+            "exact": acc,
+            "exact_stderr": round((acc * (1 - acc) / n) ** 0.5, 4) if acc is not None and n else "",
+            "exact_epoch_range": r["accuracy_epoch_range"],
+            "bucket": r["bucket_accuracy"],
+            "steps_off": r["mean_steps_off"],
+            "parse_failures": r["parse_failures"],
+            "transposed_misses": r["transposed_misses"],
+            "misses": r["misses"],
+            "quad": r["by_stratum"].get("quad", {}).get("accuracy", ""),
+            "immune": r["by_stratum"].get("immune", {}).get("accuracy", ""),
+            "differs": r["by_stratum"].get("differs", {}).get("accuracy", ""),
+            "log": r["log"],
+        })
+    out.sort(key=lambda c: (c["format"], float(c["params_total_b"]) if c["params_total_b"] not in ("", None) and c["params_total_b"] == c["params_total_b"] else 1e9, c["model"]))
+    return out
+
+
 def table(rows: list[dict]) -> str:
     head = "| model | format | max_tok | n | epochs | acc | bucket | steps | range | parse fail | transposed / asym misses / misses | majority | immune | quad | dual | single | differs |"
     sep = "|" + "---|" * 18
@@ -191,6 +233,13 @@ def main() -> None:
     stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     out = RESULTS / f"{stamp}_analyze_{log_dir.name}.json"
     out.write_text(json.dumps(rows, indent=2), encoding="utf-8")
+    import csv as _csv
+    curve = curve_rows(rows)
+    curve_path = RESULTS / f"{stamp}_curve_{log_dir.name}.csv"
+    with curve_path.open("w", newline="", encoding="utf-8") as fh:
+        w = _csv.DictWriter(fh, fieldnames=list(curve[0].keys()))
+        w.writeheader()
+        w.writerows(curve)
     print(table(rows))
     print(f"\nchance {CHANCE:.3f}; majority is the share of the commonest answer class in that item set")
     for r in rows:
@@ -200,7 +249,12 @@ def main() -> None:
         print("  upstream providers:", r["upstream_providers"], "| errors:", r["upstream_provider_errors"] or "none")
         if r["differs_under_modern_chart"]:
             print("  differs under modern chart:", r["differs_under_modern_chart"])
-    print(f"\nwrote {out}")
+    print(f"\nwrote {out}\nwrote {curve_path}")
+    print("\nscaling curve (exact, table format, by total params):")
+    for c in curve:
+        if c["format"] == "table" and c["params_total_b"] not in ("", None) and c["params_total_b"] == c["params_total_b"]:
+            band = f" range {c['exact_epoch_range']:.3f}" if c["epochs"] > 1 else " (1 epoch)"
+            print(f"  {c['params_total_b']:>7.1f}B  {c['model']:<40} {c['exact']:.3f} +/- {c['exact_stderr']}{band}  active {c['params_active_b']}B {c['quant']}")
 
 
 if __name__ == "__main__":

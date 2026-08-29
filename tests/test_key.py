@@ -180,6 +180,18 @@ def test_chart_rows_matches_table_cell_for_cell():
     assert "Each line is one attacking type" in sp and "| attack" not in sp
 
 
+def test_model_registry():
+    from src.models import LADDER, DEV_ONLY, BY_ID
+    ids = [m.id for m in LADDER + DEV_ONLY]
+    assert len(ids) == len(set(ids))
+    for m in LADDER:
+        assert m.host and m.quant and m.max_tokens >= 1024
+        if m.params_total_b == m.params_total_b:  # not NaN
+            assert 0 < m.params_active_b <= m.params_total_b
+    assert BY_ID["qwen/qwen3-30b-a3b-instruct-2507"].moe and not BY_ID["google/gemma-3-12b-it"].moe
+    assert '"allow_fallbacks":false' in LADDER[0].provider_arg
+
+
 def test_closeness_values():
     # exact
     assert closeness_of("2", "2") == {"bucket": 1.0, "steps": 0.0}
