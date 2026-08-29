@@ -21,7 +21,7 @@ from pathlib import Path
 
 from inspect_ai import Task, task
 from inspect_ai.dataset import MemoryDataset, Sample
-from inspect_ai.scorer import choice
+from inspect_ai.scorer import accuracy, choice, grouped, stderr
 from inspect_ai.solver import multiple_choice, system_message
 
 from .key import MULTIPLIERS, PROCESSED, chart_table
@@ -92,4 +92,5 @@ def pokemon_gen1(chart: str = "none", show_types: bool = False, items: str = "it
         dataset=MemoryDataset(build_samples(rows, chart, show_types), name=f"gen1_{chart}_{'types' if show_types else 'notypes'}"),
         solver=[system_message(SYSTEM), multiple_choice(shuffle=False)],
         scorer=choice(),
+        metrics=[accuracy(), stderr(), grouped(accuracy(), "stratum", all=False)],
     )

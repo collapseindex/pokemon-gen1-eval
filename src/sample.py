@@ -36,18 +36,30 @@ def stratum(c: Cell) -> str:
     return "dual" if c.dual else "single"
 
 
-def draw(cells: list[Cell], n: int, seed: int) -> list[Cell]:
+def draw(cells: list[Cell], n: int, seed: int, exclude: set[tuple[str, str]] | None = None, with_differs: bool = True) -> list[Cell]:
+    """``exclude`` is a set of (attack_type, pokemon) already spent (a pinned
+    set); ``with_differs=False`` skips the differs stratum entirely, for a
+    development draw when the pinned set already holds all of them."""
     rng = random.Random(seed)
     pools: dict[str, list[Cell]] = {s: [] for s in STRATA}
     for c in cells:
+        if exclude and (c.attack_type, c.pokemon) in exclude:
+            continue
         pools[stratum(c)].append(c)
-    chosen = list(pools["differs"])
+    chosen = list(pools["differs"]) if with_differs else []
     budget = n - len(chosen)
     if budget < 0:
         raise ValueError(f"n={n} is smaller than the {len(chosen)} differing cells")
+    taken: set[tuple[str, str]] = set()
     for s, share in SHARES.items():
         k = min(round(budget * share), len(pools[s]))
-        chosen.extend(rng.sample(pools[s], k))
+        picked = rng.sample(pools[s], k)
+        chosen.extend(picked)
+        taken.update((c.attack_type, c.pokemon) for c in picked)
+    # rounding across strata can leave the draw a cell short; top up from dual
+    spare = [c for c in pools["dual"] if (c.attack_type, c.pokemon) not in taken]
+    while len(chosen) < n and spare:
+        chosen.append(spare.pop(rng.randrange(len(spare))))
     rng.shuffle(chosen)
     return chosen
 
@@ -64,10 +76,17 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--n", type=int, default=400)
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--exclude", default=None, help="an items csv whose cells must not be drawn again")
+    ap.add_argument("--no-differs", action="store_true", help="skip the differs stratum")
+    ap.add_argument("--tag", default="items", help="filename prefix (items, dev)")
     a = ap.parse_args()
     cells = read_key(PROCESSED / "gen1_key.csv")
-    items = draw(cells, a.n, a.seed)
-    out = PROCESSED / f"items_s{a.seed}_n{a.n}.csv"
+    exclude = None
+    if a.exclude:
+        with (PROCESSED / a.exclude).open(newline="", encoding="utf-8") as fh:
+            exclude = {(r["attack_type"], r["pokemon"]) for r in csv.DictReader(fh)}
+    items = draw(cells, a.n, a.seed, exclude=exclude, with_differs=not a.no_differs)
+    out = PROCESSED / f"{a.tag}_s{a.seed}_n{a.n}.csv"
     write_items(items, out)
     print(f"wrote {len(items)} items to {out}")
     print("strata:", dict(Counter(stratum(c) for c in items)))

@@ -113,6 +113,15 @@ def test_sample_takes_all_differing_and_is_deterministic(cells):
     assert {stratum(c) for c in a} == set(STRATA)
 
 
+def test_dev_draw_is_disjoint_from_pinned_set(cells):
+    pinned = draw(cells, 400, 0)
+    spent = {(c.attack_type, c.pokemon) for c in pinned}
+    dev = draw(cells, 100, 1, exclude=spent, with_differs=False)
+    assert len(dev) == 100
+    assert not ({(c.attack_type, c.pokemon) for c in dev} & spent)
+    assert not any(c.differs for c in dev)
+
+
 def test_targets_are_letters_of_the_right_multiplier(tmp_path, cells):
     rows = [
         {"item_id": "i0", "stratum": "differs", "attack_type": "ghost", "pokemon_id": "65", "pokemon": "alakazam",
