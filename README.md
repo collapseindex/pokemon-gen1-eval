@@ -13,6 +13,10 @@ reported beside it, never blended in.
 
 ## Status
 
+Submitted 2026-08-29 to the NeurIPS 2026 workshops LIGHT (Deployable Small
+Foundation Models, benchmark contribution, 8 pages) and NewInML, both
+non-archival, anonymous PDF with the NeurIPS checklist. Preprint next.
+
 Run, replication and review round complete, 2026-08-29. Nine open models
 from 1B to 235B plus a ceiling model on the pinned 400, two chart formats;
 the four knee rungs replicated on a second disjoint 400; the one truncated
