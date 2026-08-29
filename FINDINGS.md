@@ -32,6 +32,7 @@ Ids are permanent. PLAN.md is never edited; a mistake in it is a D entry here.
 | [O-006](#o-006) | rows x3, four knee rungs (REVIEW.md run 1) | the format gain has a band: rows minus table exceeds the sum of both epoch ranges by 2 to 3x for all four (V1 held); every one-epoch rows number within 0.02 of its three-epoch mean (V2 held) | scored |
 | [O-007](#o-007) | qwen3-235b-a22b on a second host (REVIEW.md run 2) | DeepInfra 0.725 [0.679, 0.766] against GMICloud 0.764 [0.720, 0.803]: inside the interval (V3 held, at the edge); the host moves the number by 0.04; on both hosts the 235B MoE is below the 32B dense model (0.828) | scored |
 | [D-013](#d-013) | git history | two internal files (the method checklist and a verbatim reviewer text) were purged from history before publication; every commit after the first of them was rewritten, so the commit ids recorded for the addendum, replication and review registrations changed; the blob hashes did not | recorded |
+| [O-008](#o-008) | lookup residual and list position (review 2) | below 4B, 15 to 45% of lookup misses state a wrong typing for the defender; from 27B up, 0 to 1%: the small models fail to find the line, the large ones misread the cell; accuracy by list position shows a small primacy effect and no middle dip | recorded |
 | [O-004](#o-004) | the ladder, pinned set | the knee is between 8B and 12B total params; nothing under 12B beats always-"1"; the MoE sits with its total size; rows beats table for 9 of 10 models, by up to +0.23; predictions scored: P1, P3, A6 (accuracy clause) held; A1, A2 (bucket clause), A4, A5, A6 (transposition clause), A7 (MoE clause) failed | scored |
 | [D-010](#d-010) | model list | the question changed from "four labs" to "how small a model can do this": a nine-model size ladder replaces the addendum's list; Haiku and Flash-Lite drop from the pinned run (dev numbers kept); host, quantisation and parameter counts pinned in a registry; A7 registered | deviation declared |
 
@@ -675,3 +676,48 @@ carry the new ones:
 
 Anyone holding an old commit id can match it by commit message; the messages
 were not changed.
+
+### O-008
+**Inside the lookup residual, and where in the list the misses are**
+all ten models, table format, pinned 400 · `src/lookup_analysis.py` · 2026-08-29
+
+Asked by the second review: `lookup` was the largest miss category at every
+rung and a residual. Two automated reads of the reasoning, both from
+`data/results/20260829_074749_lookup_pinned.json`.
+
+**Stated typing.** For each lookup miss, the type words within 220 characters
+after the first mention of the defender's name, with two exclusions a hand
+check of 20 cases forced: the attacking type (the reasoning names it beside
+the defender, "Ice attacks against Electric-type") and "normal" when followed
+by "damage" or "effectiveness". Before the exclusions the classifier called
+39% of llama-8b's lookup misses wrong-line; after, 4%, and every remaining
+flagged case in a 13-case hand read was a genuine wrong typing ("Golduck,
+which is Water/Psychic"; "Hypno's Psychic type, Ice and Rock are super
+effective") or a partial one ("Beedrill: Bug").
+
+| model | lookup misses | wrong typing | right typing | none stated |
+|---|---|---|---|---|
+| llama-3.2-1b | 329 | 0.45 | 0.25 | 0.30 |
+| llama-3.2-3b | 468 | 0.16 | 0.54 | 0.30 |
+| gemma-3-4b | 492 | 0.15 | 0.81 | 0.03 |
+| llama-3.1-8b | 466 | 0.04 | 0.88 | 0.07 |
+| gemma-3-12b | 311 | 0.08 | 0.92 | 0.00 |
+| gemma-3-27b | 146 | 0.01 | 0.99 | 0.00 |
+| qwen3-30b-a3b | 170 | 0.00 | 0.99 | 0.01 |
+| qwen3-32b | 93 | 0.01 | 0.61 | 0.38 |
+| qwen3-235b-a22b | 100 | 0.00 | 1.00 | 0.00 |
+| gpt-5-nano | 24 | 0.00 | 0.46 | 0.54 |
+
+Below 4B a sixth to a half of lookup misses have the wrong line (or a
+recalled typing that is wrong); from 8B up almost all have the right line
+and misread the chart. The "none stated" share at 32B and the ceiling is
+reasoning that skips the typing sentence, not a failure.
+
+**Position in the list.** Accuracy by dex bin (1-30, 31-60, 61-90, 91-120,
+121-151): the first bin is best for eight of ten models, by 0.02 to 0.11
+(llama-3.2-3b 0.33 against 0.18 to 0.27; gemma-3-27b 0.72 against 0.56 to
+0.60); the other four bins are flat within each model. A primacy effect, no
+middle dip. This is not the lost-in-the-middle shape; a 151-line list may be
+too short to show it, and the small models fail across the whole list.
+
+Not registered; reported as an observation. Cost: none (existing logs).
