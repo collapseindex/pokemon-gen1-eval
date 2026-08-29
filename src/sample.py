@@ -104,18 +104,28 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--n", type=int, default=400)
     ap.add_argument("--seed", type=int, default=0)
-    ap.add_argument("--exclude", default=None, help="an items csv whose cells must not be drawn again")
+    ap.add_argument("--exclude", default=None, help="comma-separated items csvs whose cells must not be drawn again")
     ap.add_argument("--no-differs", action="store_true", help="skip the differs stratum")
     ap.add_argument("--tag", default="items", help="filename prefix (items, dev)")
     ap.add_argument("--balance", action="store_true", help="round-robin across attack types within each stratum")
+    ap.add_argument("--prepend", default=None, help="an items csv whose cells are placed first (re-numbered); n counts the new draw only")
     a = ap.parse_args()
     cells = read_key(PROCESSED / "gen1_key.csv")
     exclude = None
     if a.exclude:
-        with (PROCESSED / a.exclude).open(newline="", encoding="utf-8") as fh:
-            exclude = {(r["attack_type"], r["pokemon"]) for r in csv.DictReader(fh)}
+        exclude = set()
+        for name in a.exclude.split(","):
+            with (PROCESSED / name).open(newline="", encoding="utf-8") as fh:
+                exclude |= {(r["attack_type"], r["pokemon"]) for r in csv.DictReader(fh)}
     items = draw(cells, a.n, a.seed, exclude=exclude, with_differs=not a.no_differs, balance=a.balance)
-    out = PROCESSED / f"{a.tag}_s{a.seed}_n{a.n}.csv"
+    total = a.n
+    if a.prepend:
+        by = {(c.attack_type, c.pokemon): c for c in cells}
+        with (PROCESSED / a.prepend).open(newline="", encoding="utf-8") as fh:
+            first = [by[(r["attack_type"], r["pokemon"])] for r in csv.DictReader(fh)]
+        items = first + items
+        total = len(items)
+    out = PROCESSED / f"{a.tag}_s{a.seed}_n{total}.csv"
     write_items(items, out)
     print(f"wrote {len(items)} items to {out}")
     print("strata:", dict(Counter(stratum(c) for c in items)))
